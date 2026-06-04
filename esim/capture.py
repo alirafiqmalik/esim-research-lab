@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
 
-from esim.device import Device
+from esim.device import Device, EuiccState
 
 LPA_LOG_TAGS = [
     "EuiccManager", "EuiccCardController", "EuiccController",
@@ -27,7 +27,7 @@ class CaptureSession:
 class Capture:
     def __init__(self, device: Device, port: int = 8080,
                  filters: list[str] | None = None,
-                 sessions_root: "Path | str" = "sessions"):
+                 sessions_root: Path | str = "sessions"):
         self.device = device
         self.port = port
         self.filters = filters or ["ES9+", "ES11"]
@@ -37,7 +37,7 @@ class Capture:
         self._logcat_lines: list[str] = []
         self._session_dir: Path | None = None
         self._start_time: datetime | None = None
-        self._euicc_state_start = None
+        self._euicc_state_start: EuiccState | None = None
 
     def __enter__(self) -> "Capture":
         ts = datetime.now(timezone.utc).strftime("%Y%m%d-T%H%M%S")
@@ -65,7 +65,8 @@ class Capture:
         return self
 
     def _collect_logcat(self) -> None:
-        assert self._logcat_proc and self._logcat_proc.stdout
+        if not self._logcat_proc or not self._logcat_proc.stdout:
+            return
         for line in self._logcat_proc.stdout:
             self._logcat_lines.append(line.rstrip())
 
@@ -76,22 +77,30 @@ class Capture:
         if self._logcat_proc:
             self._logcat_proc.terminate()
             self._logcat_proc.wait(timeout=5)
+        if hasattr(self, "_logcat_thread"):
+            self._logcat_thread.join(timeout=2)
 
-    def save(self, out_dir: "Path | str | None" = None) -> CaptureSession:
-        assert self._session_dir and self._start_time
+    def save(self, out_dir: Path | str | None = None) -> CaptureSession:
+        if not self._session_dir or not self._start_time:
+            raise RuntimeError("save() called before __enter__")
         target = Path(out_dir) if out_dir else self._session_dir
         target.mkdir(parents=True, exist_ok=True)
 
         (target / "logcat.txt").write_text("\n".join(self._logcat_lines))
+        start_state = dataclasses.asdict(self._euicc_state_start) if self._euicc_state_start is not None else {}
+        try:
+            end_state = dataclasses.asdict(self.device.get_euicc_state())
+        except Exception:
+            end_state = {}
         (target / "euicc_state.json").write_text(json.dumps({
-            "start": self._state_to_dict(self._euicc_state_start),
-            "end": self._state_to_dict(self.device.get_euicc_state()),
+            "start": start_state,
+            "end": end_state,
         }, indent=2))
 
         meta = {
             "serial": self.device.serial,
             "eid": self._safe_eid(),
-            "subscriptions": [vars(s) for s in self.device.list_subscriptions()],
+            "subscriptions": [dataclasses.asdict(s) for s in self.device.list_subscriptions()],
             "started_at": self._start_time.isoformat(),
             "duration_s": (datetime.now(timezone.utc) - self._start_time).total_seconds(),
         }
@@ -106,20 +115,6 @@ class Capture:
         # or use Session._load_flows() via the Analysis API.
 
         return CaptureSession(session_dir=target, metadata=meta)
-
-    @staticmethod
-    def _state_to_dict(state) -> dict:
-        """Convert an EuiccState (or similar) to a JSON-safe dict."""
-        if state is None:
-            return {}
-        if dataclasses.is_dataclass(state) and not isinstance(state, type):
-            return dataclasses.asdict(state)
-        # Fallback: pull only string/number attributes to avoid mock internals
-        try:
-            return {k: v for k, v in vars(state).items()
-                    if isinstance(v, (str, int, float, bool, type(None)))}
-        except TypeError:
-            return {}
 
     def _safe_eid(self) -> str:
         try:

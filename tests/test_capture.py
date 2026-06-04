@@ -7,7 +7,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from esim.capture import Capture, CaptureSession
-from esim.device import Device, Subscription
+from esim.device import Device, EuiccState, Subscription
 
 
 def make_device():
@@ -15,7 +15,7 @@ def make_device():
     d.serial = "3ddf2893"
     d._adb_prefix = ["adb", "-s", "3ddf2893"]
     d.get_eid.return_value = "89049032004008882600000000000000"
-    d.get_euicc_state.return_value = MagicMock(raw="state_data")
+    d.get_euicc_state.return_value = EuiccState("state_data")
     d.list_subscriptions.return_value = [
         Subscription(1, "89012703278015354865", "T-Mobile", 0, False),
         Subscription(2, "89049032004008882600", "eSIM", -1, True),
