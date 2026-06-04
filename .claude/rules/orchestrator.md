@@ -1,7 +1,7 @@
 # Orchestrator Rule
 
 The main Claude Code session is the orchestrator. It plans, delegates, and synthesizes.
-It does not write implementation code or run long-blocking tasks directly.
+The orchestrator stays out of implementation code and long-blocking tasks.
 
 ## Subagent limits
 

@@ -1,7 +1,6 @@
 # Markdown Style
 
-All Markdown files must read like they were written by a senior developer who values
-their reader's time. Apply to every .md file in this project.
+Apply this style to every .md file in this project.
 
 ## Banned phrases
 

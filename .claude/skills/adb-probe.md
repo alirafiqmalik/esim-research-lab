@@ -5,8 +5,6 @@ description: Verify ADB connectivity and collect device baseline state (EID, sub
 
 # ADB Probe
 
-Use at the start of any session to verify the device is connected and collect baseline state.
-
 ## Steps
 
 1. Verify device connected:
