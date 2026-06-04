@@ -1,0 +1,21 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "esim"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "click>=8.0",
+    "mitmproxy>=10.0",
+]
+
+[project.scripts]
+esim = "esim.cli:main"
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "pytest-mock>=3.0"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
