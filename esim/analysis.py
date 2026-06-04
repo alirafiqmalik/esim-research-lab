@@ -27,6 +27,7 @@ class Session:
         self._metadata = json.loads((self._dir / "metadata.json").read_text())
         self._logcat_raw = (self._dir / "logcat.txt").read_text()
         self._flows = self._load_flows()
+        self._rsp_calls_cache: list[RSPCall] | None = None
 
     @classmethod
     def load(cls, path: "str | Path") -> "Session":
@@ -89,7 +90,12 @@ class Session:
             })
         return sorted(items, key=lambda x: x["t_ms"])
 
-    def _parse_rsp_calls(self) -> list:
+    def _parse_rsp_calls(self) -> list[RSPCall]:
+        if self._rsp_calls_cache is None:
+            self._rsp_calls_cache = self._build_rsp_calls()
+        return self._rsp_calls_cache
+
+    def _build_rsp_calls(self) -> list[RSPCall]:
         calls = []
         for flow in self._flows:
             url = flow.request.pretty_url
@@ -137,9 +143,12 @@ def _parse_logcat_line(line: str) -> "LogEvent | None":
     if not m:
         return None
     try:
-        from datetime import datetime
-        dt = datetime.strptime(m.group(1), "%m-%d %H:%M:%S.%f")
-        t_ms = (dt.hour * 3600 + dt.minute * 60 + dt.second) * 1000 + dt.microsecond / 1000
-    except ValueError:
+        ts = m.group(1)  # "MM-DD HH:MM:SS.fff"
+        time_part = ts[6:]  # "HH:MM:SS.fff"
+        h, rest = time_part.split(":", 1)
+        mins, rest = rest.split(":", 1)
+        secs, ms = rest.split(".", 1)
+        t_ms = (int(h) * 3600 + int(mins) * 60 + int(secs)) * 1000 + int(ms)
+    except (ValueError, IndexError):
         t_ms = 0.0
     return LogEvent(timestamp_ms=t_ms, tag=m.group(2), message=m.group(3))
