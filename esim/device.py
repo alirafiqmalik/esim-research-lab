@@ -40,18 +40,32 @@ class Device:
         return result.stdout
 
     def get_eid(self) -> str:
+        # euicc_card_controller exists only when eUICC hardware is active
         output = self._run("shell", "dumpsys", "euicc_card_controller")
         match = re.search(r"EID[:\s]+([0-9A-Fa-f]{32})", output, re.IGNORECASE)
-        if not match:
-            raise ADBError("EID not found in euicc_card_controller output")
-        return match.group(1).upper()
+        if match:
+            return match.group(1).upper()
+        # Service missing or no EID — check isub for a better error message
+        isub_output = self._run("shell", "dumpsys", "isub")
+        if re.search(r"Euicc enabled=false", isub_output):
+            raise ADBError("eUICC hardware not present or disabled (Euicc enabled=false)")
+        eid_match = re.search(r"EID[:\s]+([0-9A-Fa-f]{32})", isub_output, re.IGNORECASE)
+        if eid_match:
+            return eid_match.group(1).upper()
+        raise ADBError("EID not found — no euicc_card_controller service and no EID in isub output")
 
     def list_subscriptions(self) -> list[Subscription]:
+        # dumpsys isub (Android 13+) is more reliable; fall back to dumpsys phone
+        output = self._run("shell", "dumpsys", "isub")
+        subs = _parse_subscriptions_isub(output)
+        if subs:
+            return subs
         output = self._run("shell", "dumpsys", "phone")
         return _parse_subscriptions(output)
 
     def get_euicc_state(self) -> EuiccState:
-        output = self._run("shell", "dumpsys", "euicc_card_controller")
+        # dumpsys isub is always present; euicc_card_controller may not exist
+        output = self._run("shell", "dumpsys", "isub")
         return EuiccState(raw=output)
 
     def enable_profile(self, sub_id: int) -> bool:
@@ -79,7 +93,46 @@ class Device:
         return path
 
 
+def _parse_subscriptions_isub(output: str) -> list[Subscription]:
+    """Parse SubscriptionInfoInternal records from dumpsys isub (Android 13+)."""
+    seen: set[int] = set()
+    subs = []
+    for line in output.splitlines():
+        if "SubscriptionInfoInternal:" not in line:
+            continue
+        m = re.search(r'\[SubscriptionInfoInternal:\s+(.+)', line)
+        if not m:
+            continue
+        block = m.group(1).rstrip(']').strip()
+        sub = _parse_isub_block(block)
+        if sub is not None and sub.sub_id not in seen:
+            seen.add(sub.sub_id)
+            subs.append(sub)
+    return subs
+
+
+def _parse_isub_block(block: str) -> "Subscription | None":
+    """Parse a single SubscriptionInfoInternal block (space-separated key=value)."""
+    def field(key: str) -> str:
+        m = re.search(rf'\b{key}=(\S*)', block)
+        return m.group(1) if m else ""
+
+    try:
+        sub_id_raw = field("id")
+        slot_raw = field("simSlotIndex")
+        return Subscription(
+            sub_id=int(sub_id_raw) if sub_id_raw else -1,
+            iccid=field("iccId"),
+            display_name=field("displayName") or field("carrierName"),
+            slot=int(slot_raw) if slot_raw.lstrip("-").isdigit() else -1,
+            is_esim=field("isEmbedded") == "1",
+        )
+    except ValueError:
+        return None
+
+
 def _parse_subscriptions(output: str) -> list[Subscription]:
+    """Parse SubscriptionInfo records from dumpsys phone (older format)."""
     subs = []
     for line in output.splitlines():
         if "SubscriptionInfo" not in line:
@@ -94,8 +147,8 @@ def _parse_subscriptions(output: str) -> list[Subscription]:
 
 
 def _parse_sub_block(block: str) -> "Subscription | None":
+    """Parse a single SubscriptionInfo block (comma-separated key=value)."""
     def field(key: str) -> str:
-        # Match value until next ", key=" pattern or end-of-block
         m = re.search(rf"\b{key}=(.+?)(?:,\s*\w+=|\Z)", block)
         return m.group(1).strip().rstrip(",").strip() if m else ""
 

@@ -134,3 +134,7 @@ def bugreport(ctx, out_dir: str) -> None:
         click.echo(f"Saved: {path}")
     except ADBError as e:
         raise click.ClickException(str(e))
+
+
+if __name__ == "__main__":
+    main()

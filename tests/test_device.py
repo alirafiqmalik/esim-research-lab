@@ -172,3 +172,101 @@ def test_get_euicc_state_returns_euicc_state(mock_run):
     state = Device().get_euicc_state()
     assert isinstance(state, EuiccState)
     assert state.raw == "some state output"
+
+
+@patch("subprocess.run")
+def test_get_euicc_state_uses_isub(mock_run):
+    mock_run.return_value = make_result("isub output")
+    Device().get_euicc_state()
+    args = mock_run.call_args[0][0]
+    assert args[-1] == "isub"
+
+
+# --- isub (SubscriptionInfoInternal) format tests ---
+
+DUMPSYS_ISUB_ONE_PHYSICAL = """
+SubscriptionManagerService:
+Active subscriptions:
+  [SubscriptionInfoInternal: id=1 iccId=890126022TEST simSlotIndex=0 portIndex=0 isEmbedded=0 isRemovableEmbedded=0 carrierId=1 displayName=T-Mobile carrierName=T-Mobile]
+
+Embedded subscriptions: []
+Euicc enabled=false
+"""
+
+DUMPSYS_ISUB_WITH_ESIM = """
+SubscriptionManagerService:
+Active subscriptions:
+  [SubscriptionInfoInternal: id=1 iccId=890126022PHYS simSlotIndex=0 portIndex=0 isEmbedded=0 displayName=T-Mobile]
+  [SubscriptionInfoInternal: id=2 iccId=89049032ESIM simSlotIndex=0 portIndex=1 isEmbedded=1 isRemovableEmbedded=1 displayName=eSIM Profile]
+
+Euicc enabled=true
+"""
+
+
+@patch("subprocess.run")
+def test_list_subscriptions_isub_physical(mock_run):
+    mock_run.return_value = make_result(DUMPSYS_ISUB_ONE_PHYSICAL)
+    subs = Device().list_subscriptions()
+    assert len(subs) == 1
+    assert subs[0].sub_id == 1
+    assert subs[0].iccid == "890126022TEST"
+    assert subs[0].display_name == "T-Mobile"
+    assert subs[0].slot == 0
+    assert subs[0].is_esim is False
+
+
+@patch("subprocess.run")
+def test_list_subscriptions_isub_with_esim(mock_run):
+    mock_run.return_value = make_result(DUMPSYS_ISUB_WITH_ESIM)
+    subs = Device().list_subscriptions()
+    # Active subscriptions block has 2 entries, All subscriptions block may duplicate them
+    phys = next(s for s in subs if not s.is_esim)
+    esim = next(s for s in subs if s.is_esim)
+    assert phys.iccid == "890126022PHYS"
+    assert esim.iccid == "89049032ESIM"
+    assert esim.is_esim is True
+
+
+@patch("subprocess.run")
+def test_list_subscriptions_prefers_isub(mock_run):
+    """When isub returns subscriptions, dumpsys phone is never called."""
+    mock_run.return_value = make_result(DUMPSYS_ISUB_ONE_PHYSICAL)
+    Device().list_subscriptions()
+    assert mock_run.call_count == 1
+    args = mock_run.call_args[0][0]
+    assert "isub" in args
+
+
+@patch("subprocess.run")
+def test_get_eid_euicc_disabled(mock_run):
+    """Raises a clear ADBError when dumpsys isub shows Euicc enabled=false."""
+    def side_effect(cmd, **_):
+        r = MagicMock()
+        r.returncode = 0
+        r.stderr = ""
+        if "euicc_card_controller" in cmd:
+            r.stdout = "Can't find service: euicc_card_controller"
+        else:
+            r.stdout = "Euicc enabled=false\nEmbedded subscriptions: []"
+        return r
+
+    mock_run.side_effect = side_effect
+    with pytest.raises(ADBError, match="eUICC hardware not present"):
+        Device().get_eid()
+
+
+@patch("subprocess.run")
+def test_get_eid_found_via_isub(mock_run):
+    """Returns EID from isub when euicc_card_controller has no EID."""
+    def side_effect(cmd, **_):
+        r = MagicMock()
+        r.returncode = 0
+        r.stderr = ""
+        if "euicc_card_controller" in cmd:
+            r.stdout = "Can't find service: euicc_card_controller"
+        else:
+            r.stdout = "EID: 89049032004008882600000000000001\nEuicc enabled=true"
+        return r
+
+    mock_run.side_effect = side_effect
+    assert Device().get_eid() == "89049032004008882600000000000001"
