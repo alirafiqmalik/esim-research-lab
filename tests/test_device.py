@@ -1,3 +1,4 @@
+import subprocess
 from unittest.mock import patch, MagicMock
 import pytest
 from esim.device import Device, Subscription, ADBError
@@ -99,3 +100,75 @@ def test_serial_prepended(mock_run):
     Device(serial="abc123").get_eid()
     args = mock_run.call_args[0][0]
     assert args[:3] == ["adb", "-s", "abc123"]
+
+
+# --- New tests ---
+
+DUMPSYS_PHONE_NESTED = """
+Phone {id=0}:
+  mSubscriptions:
+    SubscriptionInfo {id=1, iccId=89012703278015354865, simSlotIndex=0, displayName=AT&T Prepaid, groupUuid={00000000-0000-0000-0000-000000000000}, isEmbedded=false}
+    SubscriptionInfo {id=2, iccId=89049032004008882600, simSlotIndex=-1, displayName=eSIM Profile, isEmbedded=true}
+"""
+
+
+@patch("subprocess.run")
+def test_list_subscriptions_display_name_with_spaces(mock_run):
+    mock_run.return_value = make_result(DUMPSYS_PHONE_NESTED)
+    subs = Device().list_subscriptions()
+    phys = next(s for s in subs if not s.is_esim)
+    assert phys.display_name == "AT&T Prepaid"
+
+
+@patch("subprocess.run")
+def test_list_subscriptions_nested_braces(mock_run):
+    mock_run.return_value = make_result(DUMPSYS_PHONE_NESTED)
+    subs = Device().list_subscriptions()
+    assert len(subs) == 2
+    phys = next(s for s in subs if not s.is_esim)
+    assert phys.sub_id == 1
+    assert phys.slot == 0
+
+
+@patch("subprocess.run")
+def test_list_subscriptions_empty(mock_run):
+    mock_run.return_value = make_result("")
+    assert Device().list_subscriptions() == []
+
+
+@patch("subprocess.run")
+def test_list_subscriptions_garbage(mock_run):
+    mock_run.return_value = make_result("this is garbage\nno subscriptions here")
+    assert Device().list_subscriptions() == []
+
+
+def test_timeout_raises_adb_error():
+    with patch("subprocess.run", side_effect=subprocess.TimeoutExpired(cmd="adb", timeout=30)):
+        with pytest.raises(ADBError, match="timed out"):
+            Device().get_eid()
+
+
+@patch("subprocess.run")
+def test_adb_error_prefers_stderr(mock_run):
+    r = MagicMock()
+    r.stdout = ""
+    r.stderr = "error from stderr"
+    r.returncode = 1
+    mock_run.return_value = r
+    with pytest.raises(ADBError, match="error from stderr"):
+        Device().get_eid()
+
+
+@patch("subprocess.run")
+def test_get_eid_case_insensitive(mock_run):
+    mock_run.return_value = make_result("eid: 89049032004008882600000000000000\n")
+    assert Device().get_eid() == "89049032004008882600000000000000"
+
+
+@patch("subprocess.run")
+def test_get_euicc_state_returns_euicc_state(mock_run):
+    mock_run.return_value = make_result("some state output")
+    from esim.device import EuiccState
+    state = Device().get_euicc_state()
+    assert isinstance(state, EuiccState)
+    assert state.raw == "some state output"

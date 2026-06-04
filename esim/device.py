@@ -13,6 +13,11 @@ class Subscription:
     is_esim: bool
 
 
+@dataclass
+class EuiccState:
+    raw: str
+
+
 class ADBError(Exception):
     pass
 
@@ -23,17 +28,20 @@ class Device:
         self._adb_prefix = ["adb"] + (["-s", serial] if serial else [])
 
     def _run(self, *args: str) -> str:
-        result = subprocess.run(
-            self._adb_prefix + list(args),
-            capture_output=True, text=True, timeout=30,
-        )
+        try:
+            result = subprocess.run(
+                self._adb_prefix + list(args),
+                capture_output=True, text=True, timeout=30,
+            )
+        except subprocess.TimeoutExpired as e:
+            raise ADBError(f"ADB command timed out: {' '.join(args)}") from e
         if result.returncode != 0:
             raise ADBError(result.stderr.strip() or result.stdout.strip())
         return result.stdout
 
     def get_eid(self) -> str:
         output = self._run("shell", "dumpsys", "euicc_card_controller")
-        match = re.search(r"EID[:\s]+([0-9A-Fa-f]{32})", output)
+        match = re.search(r"EID[:\s]+([0-9A-Fa-f]{32})", output, re.IGNORECASE)
         if not match:
             raise ADBError("EID not found in euicc_card_controller output")
         return match.group(1).upper()
@@ -42,16 +50,18 @@ class Device:
         output = self._run("shell", "dumpsys", "phone")
         return _parse_subscriptions(output)
 
-    def get_euicc_state(self) -> dict[str, str]:
+    def get_euicc_state(self) -> EuiccState:
         output = self._run("shell", "dumpsys", "euicc_card_controller")
-        return {"raw": output}
+        return EuiccState(raw=output)
 
     def enable_profile(self, sub_id: int) -> bool:
+        # 193 is the Binder transaction code for IPhoneSubInfo.setSubscriptionEnabled on this OEM
         self._run("shell", "service", "call", "phone", "193",
                   "i32", str(sub_id), "i32", "1")
         return True
 
     def disable_profile(self, sub_id: int) -> bool:
+        # 193 is the Binder transaction code for IPhoneSubInfo.setSubscriptionEnabled on this OEM
         self._run("shell", "service", "call", "phone", "193",
                   "i32", str(sub_id), "i32", "0")
         return True
@@ -69,22 +79,35 @@ class Device:
         return path
 
 
-_SUB_PATTERN = re.compile(r"SubscriptionInfo\s*\{([^}]+)\}", re.DOTALL)
-_FIELD = re.compile(r"(\w+)=([^,\s}]+)")
-
-
 def _parse_subscriptions(output: str) -> list[Subscription]:
     subs = []
-    for m in _SUB_PATTERN.finditer(output):
-        fields = dict(_FIELD.findall(m.group(1)))
-        try:
-            subs.append(Subscription(
-                sub_id=int(fields.get("id", fields.get("subId", -1))),
-                iccid=fields.get("iccId", fields.get("iccid", "")),
-                display_name=fields.get("displayName", ""),
-                slot=int(fields.get("simSlotIndex", -1)),
-                is_esim=fields.get("isEmbedded", "false").lower() == "true",
-            ))
-        except ValueError:
+    for line in output.splitlines():
+        if "SubscriptionInfo" not in line:
             continue
+        m = re.search(r"SubscriptionInfo\s*\{(.+)\}", line)
+        if not m:
+            continue
+        sub = _parse_sub_block(m.group(1))
+        if sub is not None:
+            subs.append(sub)
     return subs
+
+
+def _parse_sub_block(block: str) -> "Subscription | None":
+    def field(key: str) -> str:
+        # Match value until next ", key=" pattern or end-of-block
+        m = re.search(rf"\b{key}=(.+?)(?:,\s*\w+=|\Z)", block)
+        return m.group(1).strip().rstrip(",").strip() if m else ""
+
+    try:
+        sub_id_raw = field("id") or field("subId")
+        slot_raw = field("simSlotIndex")
+        return Subscription(
+            sub_id=int(sub_id_raw) if sub_id_raw else -1,
+            iccid=field("iccId") or field("iccid"),
+            display_name=field("displayName"),
+            slot=int(slot_raw) if slot_raw.lstrip("-").isdigit() else -1,
+            is_esim=field("isEmbedded").lower() == "true",
+        )
+    except ValueError:
+        return None
