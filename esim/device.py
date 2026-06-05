@@ -112,20 +112,28 @@ def _parse_subscriptions_isub(output: str) -> list[Subscription]:
 
 
 def _parse_isub_block(block: str) -> "Subscription | None":
-    """Parse a single SubscriptionInfoInternal block (space-separated key=value)."""
-    def field(key: str) -> str:
-        m = re.search(rf'\b{key}=(\S*)', block)
-        return m.group(1) if m else ""
+    """Parse a single SubscriptionInfoInternal block (space-separated key=value).
+
+    Values can contain spaces (e.g. displayName=eSIM Go), so we build a field
+    map by treating each space+word+equals as the start of the next field.
+    """
+    fields: dict[str, str] = {}
+    for m in re.finditer(r'\b(\w+)=', block):
+        key = m.group(1)
+        val_start = m.end()
+        nxt = re.search(r'\s+\w+=', block[val_start:])
+        val_end = val_start + nxt.start() if nxt else len(block)
+        fields[key] = block[val_start:val_end].strip()
 
     try:
-        sub_id_raw = field("id")
-        slot_raw = field("simSlotIndex")
+        sub_id_raw = fields.get("id", "")
+        slot_raw = fields.get("simSlotIndex", "")
         return Subscription(
             sub_id=int(sub_id_raw) if sub_id_raw else -1,
-            iccid=field("iccId"),
-            display_name=field("displayName") or field("carrierName"),
+            iccid=fields.get("iccId", ""),
+            display_name=fields.get("displayName", "") or fields.get("carrierName", ""),
             slot=int(slot_raw) if slot_raw.lstrip("-").isdigit() else -1,
-            is_esim=field("isEmbedded") == "1",
+            is_esim=fields.get("isEmbedded", "") == "1",
         )
     except ValueError:
         return None
