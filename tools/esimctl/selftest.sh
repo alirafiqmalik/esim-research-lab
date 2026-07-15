@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -u
+cd "$(dirname "$0")"
+E="python3 esimctl.py"
+fail=0
+check() { # name  expected_exit  jq_filter  (reads stdin json)
+  local name="$1" exp="$2" filt="$3"; shift 3
+  if [ "$rc" = "$exp" ] && echo "$out" | python3 -c "import json,sys;d=json.load(sys.stdin);sys.exit(0 if ($filt) else 1)" 2>/dev/null; then
+    echo "PASS $name"; else echo "FAIL $name (rc=$rc exp=$exp)"; fail=1; fi
+}
+out=$($E list); rc=$?;  check "list"  0 "d['count']>=0 and 'profiles' in d"
+out=$($E eid);  rc=$?;  check "eid"   0 "len(d.get('eid') or '')==32"
+out=$($E info); rc=$?;  check "info"  0 "d.get('ok') is True"
+out=$($E download 'LPA:1$rsp-eu.redteamobile.com$5901981126831169'); rc=$?
+check "download-capture" 2 "d.get('ok') is False and len(d.get('rsp',[]))>=2"
+# cycle must be wired on the default backend (was the silent regression)
+$E --help >/dev/null 2>&1
+out=$($E cycle --code 'LPA:1$rsp-eu.redteamobile.com$5901981126831169' --times 1); rc=$?
+check "cycle-default-backend" 0 "d.get('op')=='cycle' and len(d['iterations'])==1"
+[ $fail -eq 0 ] && echo "ALL PASS" || echo "SOME FAILED"
+exit $fail

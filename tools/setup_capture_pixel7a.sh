@@ -7,7 +7,7 @@
 # Prereqs: device rooted (Magisk), mitmproxy CA in ~/.mitmproxy, adb authorized.
 set -euo pipefail
 
-SERIAL="${1:-35181JEHN08662}"
+SERIAL="${1:-${ESIMCTL_SERIAL:-$(adb devices | awk '$2=="device"{print $1;exit}')}}"
 PORT="${2:-8083}"
 CONFDIR="${HOME}/.mitmproxy"
 SESS="sessions/pixel7a-$(date +%Y%m%d)"

@@ -1,0 +1,6 @@
+# ICCIDs listed here (one per line) are protected from `esimctl delete` unless
+# --force is passed. Blank lines and lines starting with # are ignored.
+# Also settable via env: ESIMCTL_PROTECTED_ICCIDS=<iccid1>,<iccid2>
+#
+# Example (BetterRoaming, profile #1 — our protected anchor profile):
+# 8944476500015257715

@@ -5,6 +5,17 @@ Drive the phone's eUICC from the command line, no LLM. Every op auto-starts full
 plaintext lands in that log. Output is JSON; exit code 0 = ok. Compose ops in
 shell or Python to run sequences.
 
+## Reproduce from scratch
+
+```bash
+bash tools/setup_testbed.sh
+```
+
+Clones/builds/installs the patched OpenEUICC, provisions frida-server, sets
+the required datastore prefs, then runs `selftest.sh`. Idempotent — safe to
+re-run. A first-time privileged install triggers one reboot; rerun the script
+after the phone comes back up.
+
 ## Requirements
 - Rooted Pixel with our privileged **OpenEUICC** build (includes `EsimCtlActivity`
   — see `openeuicc/`) and `verbose_logging` enabled (already set).

@@ -268,9 +268,10 @@ def op_delete(serial, sess, args):
 # ------------------------------ frida RSP hook ------------------------------
 
 def _attach_frida(serial: str, sess: Session):
-    adb(serial, "shell", "su", "-c",
-        "pgrep -f frida-server >/dev/null || (nohup /data/local/tmp/frida-server >/dev/null 2>&1 &)", check=False)
-    time.sleep(1)
+    r = subprocess.run(["bash", str(REPO / "tools/frida/ensure_frida.sh")],
+                       capture_output=True, text=True, env={**os.environ, "ESIMCTL_SERIAL": serial})
+    if r.returncode != 0:
+        raise RuntimeError(f"frida-server not ready: {r.stderr.strip()}")
     out = open(sess.dir / "frida.txt", "w")
     p = subprocess.Popen(
         f"tail -f /dev/null | frida -U -n {PKG} -l {REPO}/tools/frida/google_lpa_rsp.js "
@@ -360,15 +361,72 @@ def av_switch(enable):
     return fn
 
 
+def protected_iccids() -> set[str]:
+    vals = set(filter(None, os.environ.get("ESIMCTL_PROTECTED_ICCIDS", "").split(",")))
+    f = REPO / "tools/esimctl/protected_iccids.txt"
+    if f.exists():
+        vals |= {ln.strip() for ln in f.read_text().splitlines()
+                 if ln.strip() and not ln.startswith("#")}
+    return vals
+
+
 def av_delete(serial, sess, args):
-    iccid = _resolve_iccid(serial, sess, args.target, args.backend)
-    return _activity(serial, sess, "delete", args.backend, iccid=iccid)
+    return _do_delete(serial, sess, args.backend, args.target,
+                      yes=args.yes, dry_run=getattr(args, "dry_run", False),
+                      force=args.force)
+
+
+def _do_delete(serial, sess, backend, target, *, yes, dry_run, force):
+    profs = _activity(serial, sess, "list", backend)["profiles"]
+    idx = int(target) - 1
+    if idx < 0 or idx >= len(profs):
+        raise SystemExit(f"profile #{target} not found ({len(profs)} profiles)")
+    iccid = profs[idx]["iccid"]
+    base = {"op": "delete", "iccid": iccid, "index": idx + 1}
+    if dry_run:
+        return {**base, "ok": True, "dry_run": True}
+    if not force and iccid in protected_iccids():
+        return {**base, "ok": False, "error": f"protected iccid {iccid}; use --force"}
+    if not force and len(profs) <= 1:
+        return {**base, "ok": False, "error": "refusing to delete the last profile; use --force"}
+    if not yes:
+        return {**base, "ok": False, "error": "refusing to delete without --yes (or --dry-run)"}
+    r = _activity(serial, sess, "delete", backend, iccid=iccid)
+    return {**base, **r}
+
+
+def av_cycle(serial, sess, args):
+    iterations = []
+    for i in range(1, args.times + 1):
+        it_sess = Session(serial, f"cycle{i}-download")
+        it_sess.start_logging()
+        try:
+            before = {p["iccid"] for p in _activity(serial, it_sess, "list", args.backend)["profiles"]}
+            dl = _activity(serial, it_sess, "download", args.backend, timeout=180,
+                           raise_on_fail=False, code=args.code)
+            dl["rsp"] = _extract_rsp(it_sess.read_log())
+            after = _activity(serial, it_sess, "list", args.backend)["profiles"]
+        finally:
+            it_sess.stop_logging()
+        rec = {"iteration": i, "download": dl, "log_dir": str(it_sess.dir)}
+        new = [p["iccid"] for p in after if p["iccid"] not in before]
+        if new:
+            d_sess = Session(serial, f"cycle{i}-delete")
+            d_sess.start_logging()
+            try:
+                rec["delete"] = _activity(serial, d_sess, "delete", args.backend, iccid=new[0])
+            finally:
+                d_sess.stop_logging()
+            rec["deleted_iccid"] = new[0]
+        iterations.append(rec)
+    return {"op": "cycle", "times": args.times, "ok": True, "iterations": iterations}
 
 
 ACT_OPS = {
     "list": av_read("list"), "eid": av_read("eid"), "info": av_read("info"),
     "notifications": av_read("notifications"), "download": av_download,
     "enable": av_switch(True), "disable": av_switch(False), "delete": av_delete,
+    "cycle": av_cycle,
 }
 
 
@@ -418,14 +476,19 @@ def main():
     sub.add_parser("notifications")
     d = sub.add_parser("download"); d.add_argument("code")
     d.add_argument("--capture-rsp", action="store_true", default=True)
-    for name in ("enable", "disable", "delete"):
+    for name in ("enable", "disable"):
         p = sub.add_parser(name); p.add_argument("target", help="profile index (#N)")
+    dele = sub.add_parser("delete"); dele.add_argument("target")
+    dele.add_argument("--yes", action="store_true", help="required to actually delete")
+    dele.add_argument("--dry-run", action="store_true")
+    dele.add_argument("--force", action="store_true",
+                      help="override last-profile and protected-ICCID guards")
     c = sub.add_parser("cycle")
     c.add_argument("--code", required=True); c.add_argument("--times", type=int, default=3)
     c.add_argument("--capture-rsp", action="store_true", default=True)
     args = ap.parse_args()
 
-    serial = args.serial or detect_serial()
+    serial = args.serial or os.environ.get("ESIMCTL_SERIAL") or detect_serial()
     subprocess.run(["bash", str(REPO / "tools/keep_phone_awake.sh")],
                    capture_output=True)  # ensure awake/unlocked
     # ui backend = OpenEUICC UI automation; lpac/fw = headless EsimCtlActivity
@@ -445,6 +508,8 @@ def main():
         sess.stop_logging()
     result["log_dir"] = str(sess.dir)
     print(json.dumps(result, indent=2))
+    if result.get("ok") is False:
+        sys.exit(2)
 
 
 if __name__ == "__main__":
