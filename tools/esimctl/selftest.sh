@@ -17,5 +17,10 @@ check "download-capture" 2 "d.get('ok') is False and len(d.get('rsp',[]))>=2"
 $E --help >/dev/null 2>&1
 out=$($E cycle --code 'LPA:1$rsp-eu.redteamobile.com$5901981126831169' --times 1); rc=$?
 check "cycle-default-backend" 0 "d.get('op')=='cycle' and len(d['iterations'])==1"
+# framework EuiccManager backend (sync read + async action via a mutable PendingIntent)
+out=$($E --backend fw eid); rc=$?
+check "fw-eid" 0 "len(d.get('eid') or '')==32 and d.get('ok') is True"
+out=$($E --backend fw download 'LPA:1$rsp-eu.redteamobile.com$5901981126831169'); rc=$?
+check "fw-download" 2 "d.get('ok') is False and 'resultCode' in d"
 [ $fail -eq 0 ] && echo "ALL PASS" || echo "SOME FAILED"
 exit $fail

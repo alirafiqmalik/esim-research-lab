@@ -51,7 +51,10 @@ class EsimCtlActivity : BaseEuiccAccessActivity() {
             val out = JSONObject().put("op", op).put("backend", backend)
             try {
                 if (backend == "fw") runFramework(op, out) else runLpac(op, out)
-                out.put("ok", true)
+                // fw action ops carry a framework resultCode (0 = OK); treat non-zero as failure
+                // so `ok` and esimctl exit codes match the lpac backend's semantics.
+                val rc = if (out.has("resultCode")) out.getInt("resultCode") else 0
+                out.put("ok", rc == 0)
             } catch (e: Throwable) {
                 // keep the line under logcat's ~4KB limit (download exceptions dump byte arrays)
                 val msg = e.toString().let { if (it.length > 400) it.substring(0, 400) + "…" else it }
@@ -166,7 +169,10 @@ class EsimCtlActivity : BaseEuiccAccessActivity() {
             }
         }
         registerReceiver(rx, IntentFilter(actionName), Context.RECEIVER_EXPORTED)
-        val pi = PendingIntent.getBroadcast(this, 0, Intent(actionName),
+        // explicit (setPackage) so a FLAG_MUTABLE PendingIntent is allowed on Android 14+ (U);
+        // EuiccManager needs it mutable to fill in the result extras.
+        val pi = PendingIntent.getBroadcast(this, 0,
+            Intent(actionName).setPackage(packageName),
             PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
         action(pi)
         val code = done.await()

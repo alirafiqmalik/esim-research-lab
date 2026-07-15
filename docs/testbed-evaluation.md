@@ -112,3 +112,38 @@ drift). Fine as a fallback; not CI-grade.
 4. **Fix exit-code semantics** (non-zero on `ok:false` or `--strict`).
 5. **Stabilize or de-scope Frida**; provision `frida-server` via the setup script with a pinned version.
 6. **Add a config file** (serial, activation-code catalog, paths) and drop hardcoded serials.
+
+---
+
+## Re-evaluation (2026-07-15, after fix commit 9732a8b)
+
+Re-ran the walkthrough. All three first-pass MAJOR issues are resolved and
+verified on-device; `selftest.sh` is green; the eUICC stays at its original 2
+disabled profiles.
+
+**Verified fixed:**
+- Reproducibility — `tools/setup_testbed.sh` runs end-to-end → `TESTBED READY`.
+  (Verification also caught + fixed a malformed-XML bug in the fresh-clone
+  manifest awk-patch: it anchored on the `AppLocalesMetadataHolderService`
+  attribute line, injecting `<activity>` inside `<service>`. Now anchors on
+  `</application>` + validates the XML.)
+- `cycle` on the default backend — works, captures RSP, skips delete when nothing installs.
+- `delete` safety rails — `--dry-run`, refuse-without-`--yes` (exit 2), protected-ICCID refuse, last-profile floor.
+- Exit codes — op failure → 2, harness error → 1, ok → 0.
+- Frida — single health-checked instance via `ensure_frida.sh`.
+
+**New issue found + fixed this pass:**
+- **MAJOR — `fw` (framework EuiccManager) action ops broken on Android 14+.**
+  `EuiccManager` requires a `FLAG_MUTABLE` PendingIntent, but an *implicit*
+  mutable PendingIntent is disallowed on U+ (`IllegalArgumentException:
+  Targeting U+ ... disallows ... FLAG_MUTABLE`). `fw download`/`delete`/`switch`
+  threw; only the synchronous `fw eid`/`info` worked, which is why the first
+  eval (testing only `eid`/`info`) missed it. Fix: make the intent explicit via
+  `setPackage`. Also mapped `fw` `ok`/exit-codes to the framework `resultCode`
+  (0 = OK) for parity with lpac. Added `fw-eid` + `fw-download` to `selftest.sh`.
+
+**Grade movement:** the reproducibility, safety, and cross-backend-consistency
+blockers are closed; the testbed sets up from one command and a 7-check smoke
+test guards regressions. Remaining minors (non-blocking, documented): the `ui`
+fallback backend's results carry no `ok` field; the from-scratch setup path
+still needs one privileged-install reboot.
