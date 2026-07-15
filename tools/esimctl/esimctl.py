@@ -24,9 +24,11 @@ import argparse
 import json
 import os
 import re
+import shlex
 import subprocess
 import sys
 import time
+import uuid
 from datetime import datetime
 from pathlib import Path
 
@@ -294,6 +296,82 @@ def _extract_rsp(log: str) -> list[dict]:
     return msgs
 
 
+# ------------------------------ activity backend (robust, non-UI) ------------------------------
+# Drives OpenEUICC's headless EsimCtlActivity, which runs the op via its own
+# lpac stack (backend=lpac, full plaintext in this op's logcat) or the framework
+# EuiccManager (backend=fw), and logs `ESIMCTL: <id> RESULT <json>`.
+ACT = f"{PKG}/.ui.EsimCtlActivity"
+
+
+def _activity(serial: str, sess: Session, op: str, backend: str = "lpac",
+              timeout: int = 120, raise_on_fail: bool = True, **extras) -> dict:
+    reqid = uuid.uuid4().hex[:8]
+    parts = [f"am start -n {ACT}", f"--es id {reqid}", f"--es op {op}",
+             f"--es backend {backend}"]
+    for k, v in extras.items():
+        if v is not None:
+            parts.append(f"--es {k} {shlex.quote(str(v))}")  # keep $ literal on device
+    adb(serial, "shell", " ".join(parts), check=False)
+    pat = re.compile(rf"{reqid} RESULT (\{{.*\}})")
+    end = time.time() + timeout
+    while time.time() < end:
+        for line in sess.read_log().splitlines():
+            m = pat.search(line)
+            if m:
+                r = json.loads(m.group(1))
+                if raise_on_fail and not r.get("ok", False):
+                    raise RuntimeError(r.get("error", "activity op failed"))
+                return r
+        time.sleep(1)
+    raise RuntimeError(f"activity op '{op}' timed out (no ESIMCTL result)")
+
+
+def _resolve_iccid(serial: str, sess: Session, target: str, backend: str) -> str:
+    if len(target) >= 15 and target.isdigit():
+        return target  # already an iccid
+    idx = int(target) - 1
+    profs = _activity(serial, sess, "list", backend)["profiles"]
+    if idx < 0 or idx >= len(profs):
+        raise SystemExit(f"profile #{target} not found ({len(profs)} profiles)")
+    return profs[idx]["iccid"]
+
+
+def av_read(op):
+    def fn(serial, sess, args):
+        return _activity(serial, sess, op, args.backend)
+    return fn
+
+
+def av_download(serial, sess, args):
+    # a server-side failure (e.g. matchingId refused / pool empty) is still a
+    # valid captured outcome — don't raise; the RSP plaintext is the deliverable.
+    r = _activity(serial, sess, "download", args.backend, timeout=180,
+                  raise_on_fail=False, code=args.code)
+    r["rsp"] = _extract_rsp(sess.read_log())
+    sess.save("rsp.json", r["rsp"])
+    return r
+
+
+def av_switch(enable):
+    def fn(serial, sess, args):
+        iccid = _resolve_iccid(serial, sess, args.target, args.backend)
+        return _activity(serial, sess, "enable" if enable else "disable",
+                         args.backend, iccid=iccid)
+    return fn
+
+
+def av_delete(serial, sess, args):
+    iccid = _resolve_iccid(serial, sess, args.target, args.backend)
+    return _activity(serial, sess, "delete", args.backend, iccid=iccid)
+
+
+ACT_OPS = {
+    "list": av_read("list"), "eid": av_read("eid"), "info": av_read("info"),
+    "notifications": av_read("notifications"), "download": av_download,
+    "enable": av_switch(True), "disable": av_switch(False), "delete": av_delete,
+}
+
+
 # ------------------------------ compound ops ------------------------------
 
 def op_cycle(serial: str, sess: Session, args) -> dict:
@@ -332,9 +410,12 @@ def main():
     ap = argparse.ArgumentParser(prog="esimctl", description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("-s", "--serial", help="adb serial (auto-detect if omitted)")
-    ap.add_argument("--backend", choices=["lpac", "fw"], default="lpac")
+    ap.add_argument("--backend", choices=["lpac", "fw", "ui"], default="lpac",
+                    help="lpac=OpenEUICC activity (full plaintext); fw=framework "
+                         "EuiccManager; ui=OpenEUICC UI automation (fallback)")
     sub = ap.add_subparsers(dest="op", required=True)
     sub.add_parser("list"); sub.add_parser("eid"); sub.add_parser("info")
+    sub.add_parser("notifications")
     d = sub.add_parser("download"); d.add_argument("code")
     d.add_argument("--capture-rsp", action="store_true", default=True)
     for name in ("enable", "disable", "delete"):
@@ -345,16 +426,16 @@ def main():
     args = ap.parse_args()
 
     serial = args.serial or detect_serial()
-    if args.backend == "fw":
-        raise SystemExit(
-            "backend 'fw' (framework EuiccManager) is not built yet — see "
-            "tools/esimctl/README.md 'Roadmap'. Use the default 'lpac' backend.")
     subprocess.run(["bash", str(REPO / "tools/keep_phone_awake.sh")],
                    capture_output=True)  # ensure awake/unlocked
+    # ui backend = OpenEUICC UI automation; lpac/fw = headless EsimCtlActivity
+    table = OPS if args.backend == "ui" else ACT_OPS
+    if args.op not in table:
+        raise SystemExit(f"op '{args.op}' not available on backend '{args.backend}'")
     sess = Session(serial, args.op)
     sess.start_logging()
     try:
-        result = OPS[args.op](serial, sess, args)
+        result = table[args.op](serial, sess, args)
     except (UiError, RuntimeError) as e:
         sess.stop_logging()
         print(json.dumps({"op": args.op, "error": str(e),
