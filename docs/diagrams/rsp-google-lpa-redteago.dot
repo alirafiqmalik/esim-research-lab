@@ -1,0 +1,78 @@
+digraph RSP_GoogleLPA {
+  rankdir=TB; splines=line; nodesep=0.30; ranksep=0.42; fontname="Helvetica"; labelloc=t;
+  label="eSIM RSP — STOCK Google LPA + Frida — RedteaGO production-CI\lsteps from logcat; ES9+ bodies OPAQUE to Frida (see rsp-redteago for content)\l";
+  node [fontname="Helvetica", fontsize=10]; edge [fontname="Helvetica", fontsize=9];
+  { rank=same;
+    "eUICC__h" [shape=box,style="filled,bold",fillcolor="#fff1c2",label="eUICC (SE)"];
+    "LPA__h" [shape=box,style="filled,bold",fillcolor="#fff1c2",label="Google LPA\n(EuiccServiceImpl /\nProfileDownloadTransaction)"];
+    "DP__h" [shape=box,style="filled,bold",fillcolor="#fff1c2",label="SM-DP+\nrsp-eu.redteamobile.com"];
+    "eUICC__h" -> "LPA__h" [style=invis]; "LPA__h" -> "DP__h" [style=invis]; }
+  { rank=same;
+    "eUICC_0" [shape=point,width=0.02,color="#8c959f"];
+    "LPA_0" [shape=point,width=0.02,color="#8c959f"];
+    "DP_0" [shape=point,width=0.02,color="#8c959f"];
+    "eUICC_0" -> "LPA_0" [style=invis]; "LPA_0" -> "DP_0" [style=invis]; }
+  { rank=same;
+    "eUICC_1" [shape=point,width=0.02,color="#8c959f"];
+    "LPA_1" [shape=point,width=0.02,color="#8c959f"];
+    "DP_1" [shape=point,width=0.02,color="#8c959f"];
+    "eUICC_1" -> "LPA_1" [style=invis]; "LPA_1" -> "DP_1" [style=invis]; }
+  { rank=same;
+    "eUICC_2" [shape=point,width=0.02,color="#8c959f"];
+    "LPA_2" [shape=point,width=0.02,color="#8c959f"];
+    "DP_2" [shape=point,width=0.02,color="#8c959f"];
+    "eUICC_2" -> "LPA_2" [style=invis]; "LPA_2" -> "DP_2" [style=invis]; }
+  { rank=same;
+    "eUICC_3" [shape=point,width=0.02,color="#8c959f"];
+    "LPA_3" [shape=point,width=0.02,color="#8c959f"];
+    "DP_3" [shape=point,width=0.02,color="#8c959f"];
+    "eUICC_3" -> "LPA_3" [style=invis]; "LPA_3" -> "DP_3" [style=invis]; }
+  { rank=same;
+    "eUICC_4" [shape=point,width=0.02,color="#8c959f"];
+    "LPA_4" [shape=point,width=0.02,color="#8c959f"];
+    "DP_4" [shape=point,width=0.02,color="#8c959f"];
+    "eUICC_4" -> "LPA_4" [style=invis]; "LPA_4" -> "DP_4" [style=invis]; }
+  { rank=same;
+    "eUICC_5" [shape=point,width=0.02,color="#8c959f"];
+    "LPA_5" [shape=point,width=0.02,color="#8c959f"];
+    "DP_5" [shape=point,width=0.02,color="#8c959f"];
+    "eUICC_5" -> "LPA_5" [style=invis]; "LPA_5" -> "DP_5" [style=invis]; }
+  { rank=same;
+    "eUICC_6" [shape=point,width=0.02,color="#8c959f"];
+    "LPA_6" [shape=point,width=0.02,color="#8c959f"];
+    "DP_6" [shape=point,width=0.02,color="#8c959f"];
+    "eUICC_6" -> "LPA_6" [style=invis]; "LPA_6" -> "DP_6" [style=invis]; }
+  { rank=same;
+    "eUICC_7" [shape=point,width=0.02,color="#8c959f"];
+    "LPA_7" [shape=point,width=0.02,color="#8c959f"];
+    "DP_7" [shape=point,width=0.02,color="#8c959f"];
+    "eUICC_7" -> "LPA_7" [style=invis]; "LPA_7" -> "DP_7" [style=invis]; }
+  { rank=same;
+    "eUICC_8" [shape=point,width=0.02,color="#8c959f"];
+    "LPA_8" [shape=point,width=0.02,color="#8c959f"];
+    "DP_8" [shape=point,width=0.02,color="#8c959f"];
+    "eUICC_8" -> "LPA_8" [style=invis]; "LPA_8" -> "DP_8" [style=invis]; }
+  { rank=same;
+    "eUICC_9" [shape=point,width=0.02,color="#8c959f"];
+    "LPA_9" [shape=point,width=0.02,color="#8c959f"];
+    "DP_9" [shape=point,width=0.02,color="#8c959f"];
+    "eUICC_9" -> "LPA_9" [style=invis]; "LPA_9" -> "DP_9" [style=invis]; }
+  { rank=same;
+    "eUICC_10" [shape=point,width=0.02,color="#8c959f"];
+    "LPA_10" [shape=point,width=0.02,color="#8c959f"];
+    "DP_10" [shape=point,width=0.02,color="#8c959f"];
+    "eUICC_10" -> "LPA_10" [style=invis]; "LPA_10" -> "DP_10" [style=invis]; }
+  "eUICC__h" -> "eUICC_0" -> "eUICC_1" -> "eUICC_2" -> "eUICC_3" -> "eUICC_4" -> "eUICC_5" -> "eUICC_6" -> "eUICC_7" -> "eUICC_8" -> "eUICC_9" -> "eUICC_10" [style=solid,color="#8c959f",arrowhead=none,weight=100];
+  "LPA__h" -> "LPA_0" -> "LPA_1" -> "LPA_2" -> "LPA_3" -> "LPA_4" -> "LPA_5" -> "LPA_6" -> "LPA_7" -> "LPA_8" -> "LPA_9" -> "LPA_10" [style=solid,color="#8c959f",arrowhead=none,weight=100];
+  "DP__h" -> "DP_0" -> "DP_1" -> "DP_2" -> "DP_3" -> "DP_4" -> "DP_5" -> "DP_6" -> "DP_7" -> "DP_8" -> "DP_9" -> "DP_10" [style=solid,color="#8c959f",arrowhead=none,weight=100];
+  "LPA_0" -> "eUICC_1" [label="ES10b GetEUICCChallenge",color="#24292f",constraint=false];
+  "eUICC_1" -> "LPA_2" [label="r_E ←$ {0,1}¹²⁸",color="#24292f",constraint=false];
+  "LPA_2" -> "eUICC_3" [label="ES10b GetEUICCInfo1",color="#24292f",constraint=false];
+  "eUICC_3" -> "LPA_4" [label="euiccInfo1 ⊇ {PKID_CI = 81370F…}",color="#24292f",constraint=false];
+  "LPA_4" -> "DP_5" [label="ES9+ initiateAuthentication(r_E, euiccInfo1)  ⟨body opaque⟩",color="#24292f",constraint=false];
+  "DP_5" -> "LPA_6" [label="Executed-Success ⟨srvSigned1, σ_DP, CERT.DPauth⟩",color="#1a7f37",constraint=false];
+  "LPA_6" -> "eUICC_7" [label="ES10b AuthenticateServer: Vrfy(CERT.DPauth ↗ CI) ∧ PKID_CI ∈ trusted → ✓",color="#1a7f37",constraint=false];
+  "eUICC_7" -> "LPA_8" [label="authServerResp ⟨σ_eUICC⟩",color="#24292f",constraint=false];
+  "LPA_8" -> "DP_9" [label="ES9+ authenticateClient(…)  ⟨body opaque⟩",color="#24292f",constraint=false];
+  "DP_9" -> "LPA_10" [label="✗ 9.4/10.1  campaign resource pool is empty  → download halts",color="#cf222e",fontcolor="#cf222e",style=dashed,penwidth=1.3,constraint=false];
+}

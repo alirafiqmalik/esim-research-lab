@@ -1,0 +1,61 @@
+// SGP.22 RSP profile download — message sequence diagram.
+// Source notes: sessions/betterroaming-live-rsp-20260629/decoded_handshake.txt
+//               .claude/notes/openeuicc-experiments.md
+// Render:  tools/msd/render.sh docs/msd/rsp-download.dot
+// Verify:  tools/msd/analyze.sh docs/msd/rsp-download.dot
+digraph RSP {
+  rankdir=TB; labelloc=t; fontname="Helvetica";
+  label="SGP.22 Consumer RSP — Common Mutual Authentication + Profile Download";
+  node [fontname="Helvetica"]; edge [fontname="Helvetica", fontsize=10];
+
+  { rank=same;
+    LPA [role="actor", shape=box, style=filled, fillcolor="#e8eef7", label="LPA\n(OpenEUICC)"];
+    EU  [role="actor", shape=box, style=filled, fillcolor="#e8f7ec", label="eUICC\n(ISD-R, secure element)"];
+    DP  [role="actor", shape=box, style=filled, fillcolor="#f7efe8", label="SM-DP+\n(rsp.truphone.com)"];
+    edge [style=invis]; LPA -> EU -> DP;
+  }
+
+  node [shape=point, width=0.01, color="#9aa0a6"];
+  { rank=same; LPA1 EU1 DP1 } { rank=same; LPA2 EU2 DP2 }
+  { rank=same; LPA3 EU3 DP3 } { rank=same; LPA4 EU4 DP4 }
+  { rank=same; LPA5 EU5 DP5 } { rank=same; LPA6 EU6 DP6 }
+  { rank=same; LPA7 EU7 DP7 } { rank=same; LPA8 EU8 DP8 }
+  { rank=same; LPA9 EU9 DP9 } { rank=same; LPA10 EU10 DP10 }
+  { rank=same; LPA11 EU11 DP11 }
+
+  edge [kind="life", arrowhead=none, style=dashed, color="#9aa0a6", constraint=true];
+  LPA -> LPA1 -> LPA2 -> LPA3 -> LPA4 -> LPA5 -> LPA6 -> LPA7 -> LPA8 -> LPA9 -> LPA10 -> LPA11;
+  EU  -> EU1  -> EU2  -> EU3  -> EU4  -> EU5  -> EU6  -> EU7  -> EU8  -> EU9  -> EU10  -> EU11;
+  DP  -> DP1  -> DP2  -> DP3  -> DP4  -> DP5  -> DP6  -> DP7  -> DP8  -> DP9  -> DP10  -> DP11;
+
+  edge [kind="life", arrowhead=none, style=invis, constraint=false];
+  LPA1->EU1->DP1; LPA2->EU2->DP2; LPA3->EU3->DP3; LPA4->EU4->DP4; LPA5->EU5->DP5;
+  LPA6->EU6->DP6; LPA7->EU7->DP7; LPA8->EU8->DP8; LPA9->EU9->DP9; LPA10->EU10->DP10; LPA11->EU11->DP11;
+
+  edge [kind="msg", constraint=false, arrowhead=normal, color=black, fontsize=10];
+
+  // --- ES10b: challenge + capabilities ---
+  LPA1 -> EU1  [seq="1", style=solid,  label="ES10b.GetEUICCChallenge()"];
+  EU2  -> LPA2 [seq="2", style=dashed, label="r_E ←$ {0,1}¹²⁸  =  7C08…05FD"];
+  LPA3 -> EU3  [seq="3", style=solid,  label="ES10b.GetEUICCInfo1()"];
+  EU4  -> LPA4 [seq="4", style=dashed, label="Info1 = ⟨svn=2.3, PKID_CI = 81370F…BEBFB⟩"];
+
+  // --- ES9+ InitiateAuthentication ;  DP check: PKID_CI ∈ DP.CIset ---
+  LPA5 -> DP5  [seq="5", style=solid,  label="ES9+.InitiateAuthentication(r_E, Info1)"];
+  DP6  -> LPA6 [seq="6", style=dashed,
+                label="[PKID_CI ∈ CIset_DP]   txID, S1=⟨txID,r_E,r_DP,PKID_CI⟩,\nσ_S1=Sign_{sk_DPauth}(S1), CERT.DPauth\n(else ✗ 8.8.4/3.7)"];
+
+  // --- ES10b AuthenticateServer ; eUICC verifies chain to CI, signs ---
+  LPA7 -> EU7  [seq="7", style=solid,  label="ES10b.AuthenticateServer(S1, σ_S1, CERT.DPauth)"];
+  EU8  -> LPA8 [seq="8", style=dashed,
+                label="Vrfy_{pk_CI}(CERT.DPauth) ∧ Vrfy_{pk_DPauth}(σ_S1) ≟ 1\n⇒ E1=⟨r_DP, MID, DevInfo⟩, σ_E1=Sign_{sk_eUICC}(E1), CERT.eUICC"];
+
+  // --- ES9+ AuthenticateClient ; DP check: MID ∈ valid ---
+  LPA9 -> DP9  [seq="9", style=solid,  label="ES9+.AuthenticateClient(txID, ⟨E1,σ_E1,CERT.eUICC⟩)"];
+  DP10 -> LPA10 [seq="10", style=dashed,
+                 label="[MID ∈ MIDset]   metadata, S2, σ_S2, CERT.DPpb\n(else ✗ 8.2.6/3.8 ; pool∅ ✗ 9.4/10.1)"];
+
+  // --- ES8+ bound profile package (sealed end-to-end to the eUICC) ---
+  LPA11 -> EU11 [seq="11", style=solid,
+                 label="ES8+.LoadBoundProfilePackage:\nBPP = Enc_{SCP03t, K_{DP↔eUICC}}(profile)   — opaque to LPA"];
+}

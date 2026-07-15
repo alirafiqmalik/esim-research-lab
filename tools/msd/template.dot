@@ -1,0 +1,45 @@
+// Message Sequence Diagram — Graphviz DOT template.
+// Time flows top->bottom; actors are columns. Render: tools/msd/render.sh this.dot
+// Verify:                                              tools/msd/analyze.sh this.dot
+//
+// CONVENTIONS (enforced by the notes-to-msd skill):
+//   * actor header node:  role="actor"
+//   * message edge:       kind="msg", seq="<int order>", label="<MATH notation>"
+//   * lifeline/ordering:  kind="life" (dashed vertical + invisible row ordering)
+//   * request  = solid arrow ;  response = dashed arrow
+//   * Prefer symbols over English in labels:
+//       ←$ random sample   Sign_sk / Vrfy_pk   σ signature   ‖ concat
+//       H(·) hash   ∈ ∧ ∨ ¬ ≟ (check)   ⟨a,b⟩ tuple/struct   {0,1}ⁿ bitstring
+digraph MSD {
+  rankdir=TB; labelloc=t; fontname="Helvetica";
+  label="⟨Procedure title⟩";
+  node [fontname="Helvetica"]; edge [fontname="Helvetica", fontsize=10];
+
+  // ---- actors (columns, fixed left->right) ----
+  { rank=same;
+    A [role="actor", shape=box, style=filled, fillcolor="#e8eef7", label="A"];
+    B [role="actor", shape=box, style=filled, fillcolor="#e8eef7", label="B"];
+    C [role="actor", shape=box, style=filled, fillcolor="#e8eef7", label="C"];
+    edge [style=invis]; A -> B -> C;
+  }
+
+  // ---- lifeline waypoints (one per actor per time step) ----
+  node [shape=point, width=0.01, color="#9aa0a6"];
+  { rank=same; A1 B1 C1 }
+  { rank=same; A2 B2 C2 }
+  { rank=same; A3 B3 C3 }
+
+  // ---- lifelines: dashed verticals ----
+  edge [kind="life", arrowhead=none, style=dashed, color="#9aa0a6", constraint=true];
+  A -> A1 -> A2 -> A3;  B -> B1 -> B2 -> B3;  C -> C1 -> C2 -> C3;
+
+  // ---- per-row left->right ordering (invisible) ----
+  edge [kind="life", arrowhead=none, style=invis, constraint=false];
+  A1 -> B1 -> C1;  A2 -> B2 -> C2;  A3 -> B3 -> C3;
+
+  // ---- messages (math notation) ----
+  edge [kind="msg", constraint=false, arrowhead=normal, color=black, fontsize=10];
+  A1 -> B1 [seq="1", style=solid,  label="m₁ : r ←$ {0,1}¹²⁸"];
+  B2 -> C2 [seq="2", style=solid,  label="m₂ : σ = Sign_sk(r ‖ id)"];
+  C3 -> B3 [seq="3", style=dashed, label="m₃ : Vrfy_pk(σ) ≟ 1"];
+}

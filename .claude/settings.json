@@ -1,0 +1,29 @@
+{
+  "env": {
+    "CLAUDE_CODE_TMPDIR": "/home/ahm/Desktop/project/Research/exp/eSIM_phone_mitm/tmp",
+    "TMPDIR": "/home/ahm/Desktop/project/Research/exp/eSIM_phone_mitm/tmp"
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash tools/keep_phone_awake.sh || true"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "f=$(jq -r '.tool_input.file_path // .tool_response.filePath // empty'); case \"$f\" in *.dot) bash \"${CLAUDE_PROJECT_DIR:-.}/tools/msd/render.sh\" \"$f\" >&2 || true;; esac"
+          }
+        ]
+      }
+    ]
+  }
+}

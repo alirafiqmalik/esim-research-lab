@@ -1,0 +1,49 @@
+digraph RSP {
+  rankdir=TB; splines=line; nodesep=0.30; ranksep=0.42;
+  fontname="Helvetica"; labelloc=t;
+  label="eSIM RSP — sysmocom test-CI (rejected)";
+  node [fontname="Helvetica", fontsize=10];
+  edge [fontname="Helvetica", fontsize=9];
+  { rank=same;
+    "eUICC__h" [shape=box, style="filled,bold", fillcolor="#ddf4ff", label="eUICC"];
+    "LPA__h" [shape=box, style="filled,bold", fillcolor="#ddf4ff", label="LPA"];
+    "SM-DP+__h" [shape=box, style="filled,bold", fillcolor="#ddf4ff", label="SM-DP+"];
+    "eUICC__h" -> "LPA__h" [style=invis];
+    "LPA__h" -> "SM-DP+__h" [style=invis];
+  }
+  { rank=same;
+    "eUICC_0" [shape=point, width=0.02, color="#8c959f"];
+    "LPA_0" [shape=point, width=0.02, color="#8c959f"];
+    "SM-DP+_0" [shape=point, width=0.02, color="#8c959f"];
+    "eUICC_0" -> "LPA_0" [style=invis];
+    "LPA_0" -> "SM-DP+_0" [style=invis];
+  }
+  { rank=same;
+    "eUICC_1" [shape=point, width=0.02, color="#8c959f"];
+    "LPA_1" [shape=point, width=0.02, color="#8c959f"];
+    "SM-DP+_1" [shape=point, width=0.02, color="#8c959f"];
+    "eUICC_1" -> "LPA_1" [style=invis];
+    "LPA_1" -> "SM-DP+_1" [style=invis];
+  }
+  { rank=same;
+    "eUICC_2" [shape=point, width=0.02, color="#8c959f"];
+    "LPA_2" [shape=point, width=0.02, color="#8c959f"];
+    "SM-DP+_2" [shape=point, width=0.02, color="#8c959f"];
+    "eUICC_2" -> "LPA_2" [style=invis];
+    "LPA_2" -> "SM-DP+_2" [style=invis];
+  }
+  { rank=same;
+    "eUICC_3" [shape=point, width=0.02, color="#8c959f"];
+    "LPA_3" [shape=point, width=0.02, color="#8c959f"];
+    "SM-DP+_3" [shape=point, width=0.02, color="#8c959f"];
+    "eUICC_3" -> "LPA_3" [style=invis];
+    "LPA_3" -> "SM-DP+_3" [style=invis];
+  }
+  "eUICC__h" -> "eUICC_0" -> "eUICC_1" -> "eUICC_2" -> "eUICC_3" [color="#8c959f", arrowhead=none, weight=100];
+  "LPA__h" -> "LPA_0" -> "LPA_1" -> "LPA_2" -> "LPA_3" [color="#8c959f", arrowhead=none, weight=100];
+  "SM-DP+__h" -> "SM-DP+_0" -> "SM-DP+_1" -> "SM-DP+_2" -> "SM-DP+_3" [color="#8c959f", arrowhead=none, weight=100];
+  "eUICC_0" -> "LPA_0" [label="GetEUICCChallenge → eC ∈ {0,1}¹²⁸", color="#1a7f37", fontcolor="#1a7f37", style="solid", constraint=false, penwidth=1.4];
+  "eUICC_1" -> "LPA_1" [label="GetEUICCInfo1 → eInfo1 = ⟨svn, {pkId_CI}⟩", color="#1a7f37", fontcolor="#1a7f37", style="solid", constraint=false, penwidth=1.4];
+  "LPA_2" -> "SM-DP+_2" [label="ES9+.InitiateAuthentication\n⟨smdpAddr, eC, eInfo1⟩", color="#1a7f37", fontcolor="#1a7f37", style="solid", constraint=false, penwidth=1.4];
+  "SM-DP+_3" -> "LPA_3" [label="✗ Failed  (8.8.4 / 3.7)\n⇒ abort: ∄ valid path", color="#cf222e", fontcolor="#cf222e", style="dashed", constraint=false, penwidth=1.4];
+}

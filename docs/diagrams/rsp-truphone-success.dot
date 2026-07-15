@@ -1,0 +1,121 @@
+digraph RSP {
+  rankdir=TB; splines=line; nodesep=0.30; ranksep=0.42;
+  fontname="Helvetica"; labelloc=t;
+  label="eSIM RSP — Truphone production-CI (full download)";
+  node [fontname="Helvetica", fontsize=10];
+  edge [fontname="Helvetica", fontsize=9];
+  { rank=same;
+    "eUICC__h" [shape=box, style="filled,bold", fillcolor="#ddf4ff", label="eUICC"];
+    "LPA__h" [shape=box, style="filled,bold", fillcolor="#ddf4ff", label="LPA"];
+    "SM-DP+__h" [shape=box, style="filled,bold", fillcolor="#ddf4ff", label="SM-DP+"];
+    "eUICC__h" -> "LPA__h" [style=invis];
+    "LPA__h" -> "SM-DP+__h" [style=invis];
+  }
+  { rank=same;
+    "eUICC_0" [shape=point, width=0.02, color="#8c959f"];
+    "LPA_0" [shape=point, width=0.02, color="#8c959f"];
+    "SM-DP+_0" [shape=point, width=0.02, color="#8c959f"];
+    "eUICC_0" -> "LPA_0" [style=invis];
+    "LPA_0" -> "SM-DP+_0" [style=invis];
+  }
+  { rank=same;
+    "eUICC_1" [shape=point, width=0.02, color="#8c959f"];
+    "LPA_1" [shape=point, width=0.02, color="#8c959f"];
+    "SM-DP+_1" [shape=point, width=0.02, color="#8c959f"];
+    "eUICC_1" -> "LPA_1" [style=invis];
+    "LPA_1" -> "SM-DP+_1" [style=invis];
+  }
+  { rank=same;
+    "eUICC_2" [shape=point, width=0.02, color="#8c959f"];
+    "LPA_2" [shape=point, width=0.02, color="#8c959f"];
+    "SM-DP+_2" [shape=point, width=0.02, color="#8c959f"];
+    "eUICC_2" -> "LPA_2" [style=invis];
+    "LPA_2" -> "SM-DP+_2" [style=invis];
+  }
+  { rank=same;
+    "eUICC_3" [shape=point, width=0.02, color="#8c959f"];
+    "LPA_3" [shape=point, width=0.02, color="#8c959f"];
+    "SM-DP+_3" [shape=point, width=0.02, color="#8c959f"];
+    "eUICC_3" -> "LPA_3" [style=invis];
+    "LPA_3" -> "SM-DP+_3" [style=invis];
+  }
+  { rank=same;
+    "eUICC_4" [shape=point, width=0.02, color="#8c959f"];
+    "LPA_4" [shape=point, width=0.02, color="#8c959f"];
+    "SM-DP+_4" [shape=point, width=0.02, color="#8c959f"];
+    "eUICC_4" -> "LPA_4" [style=invis];
+    "LPA_4" -> "SM-DP+_4" [style=invis];
+  }
+  { rank=same;
+    "eUICC_5" [shape=point, width=0.02, color="#8c959f"];
+    "LPA_5" [shape=point, width=0.02, color="#8c959f"];
+    "SM-DP+_5" [shape=point, width=0.02, color="#8c959f"];
+    "eUICC_5" -> "LPA_5" [style=invis];
+    "LPA_5" -> "SM-DP+_5" [style=invis];
+  }
+  { rank=same;
+    "eUICC_6" [shape=point, width=0.02, color="#8c959f"];
+    "LPA_6" [shape=point, width=0.02, color="#8c959f"];
+    "SM-DP+_6" [shape=point, width=0.02, color="#8c959f"];
+    "eUICC_6" -> "LPA_6" [style=invis];
+    "LPA_6" -> "SM-DP+_6" [style=invis];
+  }
+  { rank=same;
+    "eUICC_7" [shape=point, width=0.02, color="#8c959f"];
+    "LPA_7" [shape=point, width=0.02, color="#8c959f"];
+    "SM-DP+_7" [shape=point, width=0.02, color="#8c959f"];
+    "eUICC_7" -> "LPA_7" [style=invis];
+    "LPA_7" -> "SM-DP+_7" [style=invis];
+  }
+  { rank=same;
+    "eUICC_8" [shape=point, width=0.02, color="#8c959f"];
+    "LPA_8" [shape=point, width=0.02, color="#8c959f"];
+    "SM-DP+_8" [shape=point, width=0.02, color="#8c959f"];
+    "eUICC_8" -> "LPA_8" [style=invis];
+    "LPA_8" -> "SM-DP+_8" [style=invis];
+  }
+  { rank=same;
+    "eUICC_9" [shape=point, width=0.02, color="#8c959f"];
+    "LPA_9" [shape=point, width=0.02, color="#8c959f"];
+    "SM-DP+_9" [shape=point, width=0.02, color="#8c959f"];
+    "eUICC_9" -> "LPA_9" [style=invis];
+    "LPA_9" -> "SM-DP+_9" [style=invis];
+  }
+  { rank=same;
+    "eUICC_10" [shape=point, width=0.02, color="#8c959f"];
+    "LPA_10" [shape=point, width=0.02, color="#8c959f"];
+    "SM-DP+_10" [shape=point, width=0.02, color="#8c959f"];
+    "eUICC_10" -> "LPA_10" [style=invis];
+    "LPA_10" -> "SM-DP+_10" [style=invis];
+  }
+  { rank=same;
+    "eUICC_11" [shape=point, width=0.02, color="#8c959f"];
+    "LPA_11" [shape=point, width=0.02, color="#8c959f"];
+    "SM-DP+_11" [shape=point, width=0.02, color="#8c959f"];
+    "eUICC_11" -> "LPA_11" [style=invis];
+    "LPA_11" -> "SM-DP+_11" [style=invis];
+  }
+  { rank=same;
+    "eUICC_12" [shape=point, width=0.02, color="#8c959f"];
+    "LPA_12" [shape=point, width=0.02, color="#8c959f"];
+    "SM-DP+_12" [shape=point, width=0.02, color="#8c959f"];
+    "eUICC_12" -> "LPA_12" [style=invis];
+    "LPA_12" -> "SM-DP+_12" [style=invis];
+  }
+  "eUICC__h" -> "eUICC_0" -> "eUICC_1" -> "eUICC_2" -> "eUICC_3" -> "eUICC_4" -> "eUICC_5" -> "eUICC_6" -> "eUICC_7" -> "eUICC_8" -> "eUICC_9" -> "eUICC_10" -> "eUICC_11" -> "eUICC_12" [color="#8c959f", arrowhead=none, weight=100];
+  "LPA__h" -> "LPA_0" -> "LPA_1" -> "LPA_2" -> "LPA_3" -> "LPA_4" -> "LPA_5" -> "LPA_6" -> "LPA_7" -> "LPA_8" -> "LPA_9" -> "LPA_10" -> "LPA_11" -> "LPA_12" [color="#8c959f", arrowhead=none, weight=100];
+  "SM-DP+__h" -> "SM-DP+_0" -> "SM-DP+_1" -> "SM-DP+_2" -> "SM-DP+_3" -> "SM-DP+_4" -> "SM-DP+_5" -> "SM-DP+_6" -> "SM-DP+_7" -> "SM-DP+_8" -> "SM-DP+_9" -> "SM-DP+_10" -> "SM-DP+_11" -> "SM-DP+_12" [color="#8c959f", arrowhead=none, weight=100];
+  "eUICC_0" -> "LPA_0" [label="GetEUICCChallenge → eC ∈ {0,1}¹²⁸", color="#1a7f37", fontcolor="#1a7f37", style="solid", constraint=false, penwidth=1.4];
+  "eUICC_1" -> "LPA_1" [label="GetEUICCInfo1 → eInfo1 = ⟨svn, {pkId_CI}⟩", color="#1a7f37", fontcolor="#1a7f37", style="solid", constraint=false, penwidth=1.4];
+  "LPA_2" -> "SM-DP+_2" [label="ES9+.InitiateAuthentication\n⟨smdpAddr, eC, eInfo1⟩", color="#1a7f37", fontcolor="#1a7f37", style="solid", constraint=false, penwidth=1.4];
+  "SM-DP+_3" -> "LPA_3" [label="200 ⟨TID, srvSigned1, σ_DP=Sig_{SK.DPauth}(srvSigned1),\nCERT.DPauth, pkId_CI*⟩", color="#1a7f37", fontcolor="#1a7f37", style="solid", constraint=false, penwidth=1.4];
+  "eUICC_4" -> "eUICC_4" [label="ES10b.AuthenticateServer:\nchk pkId_CI* ∈ trusted ∧ CERT.DPauth ↗ CI\n∧ Vrfy_{PK.DPauth}(σ_DP, srvSigned1)", color="#1a7f37", fontcolor="#1a7f37", style="solid", constraint=false, dir=back, headport=e, tailport=e];
+  "LPA_5" -> "SM-DP+_5" [label="ES9+.AuthenticateClient\n⟨TID, authServerResp =\n⟨euiccSigned1, σ_eUICC, CERT.eUICC, CERT.EUM⟩⟩", color="#1a7f37", fontcolor="#1a7f37", style="solid", constraint=false, penwidth=1.4];
+  "SM-DP+_6" -> "LPA_6" [label="200 ⟨TID, profileMetadata, smdpSigned2,\nσ_DP2, CERT.DPpb⟩", color="#1a7f37", fontcolor="#1a7f37", style="solid", constraint=false, penwidth=1.4];
+  "eUICC_7" -> "eUICC_7" [label="ES10b.PrepareDownload:\nVrfy_{PK.DPpb}(σ_DP2) ⟹\nprepDownloadResp = ⟨euiccSigned2, σ_eUICC2, otPK.eUICC.KA⟩", color="#1a7f37", fontcolor="#1a7f37", style="solid", constraint=false, dir=back, headport=e, tailport=e];
+  "LPA_8" -> "SM-DP+_8" [label="ES9+.GetBoundProfilePackage\n⟨TID, prepDownloadResp⟩", color="#1a7f37", fontcolor="#1a7f37", style="solid", constraint=false, penwidth=1.4];
+  "SM-DP+_9" -> "LPA_9" [label="200 ⟨TID, BPP⟩   (ES8+: SCP03t,\nopaque to LPA)", color="#1a7f37", fontcolor="#1a7f37", style="solid", constraint=false, penwidth=1.4];
+  "eUICC_10" -> "eUICC_10" [label="ES10b.LoadBoundProfilePackage:\nECKA(otPK.DP.KA, otSK.eUICC.KA) → SCP03t keys;\ndecrypt+install PE → ISD-P", color="#1a7f37", fontcolor="#1a7f37", style="solid", constraint=false, dir=back, headport=e, tailport=e];
+  "LPA_11" -> "SM-DP+_11" [label="ES9+.HandleNotification\n⟨pendingNotification =\n⟨seqNo, σ_eUICC(installResult)⟩⟩", color="#1a7f37", fontcolor="#1a7f37", style="solid", constraint=false, penwidth=1.4];
+  "SM-DP+_12" -> "LPA_12" [label="204 (ack)", color="#1a7f37", fontcolor="#1a7f37", style="solid", constraint=false, penwidth=1.4];
+}

@@ -6,12 +6,6 @@ SSID="${1:-esim-research}"
 PASSWORD="${2:-esimresearch}"
 IFACE="${3:-wlan0}"
 
-if ! iw list 2>/dev/null | grep -q "AP"; then
-    echo "Error: no Wi-Fi adapter supports AP mode."
-    echo "Check: iw list | grep -A5 'Supported interface modes'"
-    exit 1
-fi
-
 nmcli connection delete "esim-hotspot" 2>/dev/null || true
 
 nmcli connection add \
