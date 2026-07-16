@@ -176,6 +176,16 @@ class EsimCtlActivity : BaseEuiccAccessActivity() {
                     .put("events", JSONArray().apply { events.forEach { put(it) } })
                     .put("count", events.size)
             }
+            "authenticate" -> { // standalone AuthenticateServer CI-trust probe (no download)
+                val server = requireExtra("server")
+                val rc = euiccChannelManager.withEuiccChannel(slot, port, seId) { it.lpa.authenticateServer(server) }
+                out.put("server", server).put("authRc", rc).put("ciTrusted", rc == 0)
+                    .put("stage", when (rc) {
+                        0 -> "accepted"; -1 -> "challenge_failed"
+                        -2 -> "initiateAuthentication_failed"; -3 -> "authenticateServer_rejected"
+                        else -> "unknown"
+                    })
+            }
             // ---- raw ES10x over the ISD-R (store-data), for commands lpac-jni does not bridge ----
             "apdu" -> {
                 val apdu = requireExtra("hex").replace(" ", "")

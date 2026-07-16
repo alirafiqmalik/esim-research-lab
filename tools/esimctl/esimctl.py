@@ -503,6 +503,12 @@ def av_discovery(serial, sess, args):
                      raise_on_fail=False, smds=args.smds)
 
 
+def av_authenticate(serial, sess, args):
+    # standalone AuthenticateServer CI-trust probe; a rejection is a valid outcome
+    return _activity(serial, sess, "authenticate", args.backend, timeout=120,
+                     raise_on_fail=False, server=args.server)
+
+
 def av_info1(serial, sess, args):
     return _activity(serial, sess, "info1", args.backend)
 
@@ -543,6 +549,7 @@ ACT_OPS = {
     "remove-notification": av_remove_notification,
     "handle-notification": av_handle_notification, "reset": av_reset,
     "info1": av_info1, "challenge": av_challenge, "discovery": av_discovery,
+    "authenticate": av_authenticate,
     "retrieve-notification": av_retrieve_notification,
     "apdu-aid": av_apdu_aid, "select-aid": av_select_aid,
     # card backend: framework IEuiccCardController (2nd command path via the OEM card)
@@ -623,6 +630,8 @@ def main():
                     help="required: euiccMemoryReset erases ALL profiles")
     disc = sub.add_parser("discovery")  # ES11 SM-DS discovery
     disc.add_argument("--smds", default="lpa.ds.gsma.com", help="SM-DS domain (default root)")
+    au = sub.add_parser("authenticate")  # standalone AuthenticateServer CI-trust probe
+    au.add_argument("server", help="SM-DP+/SM-DS FQDN to run AuthenticateServer against")
     sub.add_parser("info1")       # ES10b GetEUICCInfo1 (BF20)
     sub.add_parser("challenge")   # ES10b GetEUICCChallenge (BF2E)
     rnf = sub.add_parser("retrieve-notification"); rnf.add_argument("seq", help="notification seq")

@@ -1,49 +1,58 @@
 diff --git a/app-common/src/main/java/im/angry/openeuicc/core/LocalProfileAssistantWrapper.kt b/app-common/src/main/java/im/angry/openeuicc/core/LocalProfileAssistantWrapper.kt
-index 469a2bd..19a5506 100644
+index 469a2bd..75c5b4b 100644
 --- a/app-common/src/main/java/im/angry/openeuicc/core/LocalProfileAssistantWrapper.kt
 +++ b/app-common/src/main/java/im/angry/openeuicc/core/LocalProfileAssistantWrapper.kt
-@@ -48,6 +48,8 @@ class LocalProfileAssistantWrapper(orig: LocalProfileAssistant) :
+@@ -48,6 +48,10 @@ class LocalProfileAssistantWrapper(orig: LocalProfileAssistant) :
  
      override fun handleNotification(seqNumber: Long): Boolean = lpa.handleNotification(seqNumber)
  
 +    override fun discovery(smdsAddress: String): List<String> = lpa.discovery(smdsAddress)
 +
++    override fun authenticateServer(serverAddress: String): Int = lpa.authenticateServer(serverAddress)
++
      override fun euiccMemoryReset() = lpa.euiccMemoryReset()
  
      override fun setNickname(iccid: String, nickname: String) {
 diff --git a/libs/lpac-jni/src/main/java/net/typeblog/lpac_jni/LocalProfileAssistant.kt b/libs/lpac-jni/src/main/java/net/typeblog/lpac_jni/LocalProfileAssistant.kt
-index dd83ded..3ce2b75 100644
+index dd83ded..af70687 100644
 --- a/libs/lpac-jni/src/main/java/net/typeblog/lpac_jni/LocalProfileAssistant.kt
 +++ b/libs/lpac-jni/src/main/java/net/typeblog/lpac_jni/LocalProfileAssistant.kt
-@@ -42,6 +42,9 @@ interface LocalProfileAssistant {
+@@ -42,6 +42,12 @@ interface LocalProfileAssistant {
      fun deleteNotification(seqNumber: Long): Boolean
      fun handleNotification(seqNumber: Long): Boolean
  
 +    /** ES11 SM-DS discovery against [smdsAddress] (default the root SM-DS). */
 +    fun discovery(smdsAddress: String): List<String>
 +
++    /** Standalone AuthenticateServer CI-trust probe against [serverAddress]. 0 = CI accepted. */
++    fun authenticateServer(serverAddress: String): Int
++
      fun euiccMemoryReset()
  
      /**
 diff --git a/libs/lpac-jni/src/main/java/net/typeblog/lpac_jni/LpacJni.kt b/libs/lpac-jni/src/main/java/net/typeblog/lpac_jni/LpacJni.kt
-index dd9282d..ce5bf9c 100644
+index dd9282d..a9da4d3 100644
 --- a/libs/lpac-jni/src/main/java/net/typeblog/lpac_jni/LpacJni.kt
 +++ b/libs/lpac-jni/src/main/java/net/typeblog/lpac_jni/LpacJni.kt
-@@ -40,6 +40,9 @@ internal object LpacJni {
+@@ -40,6 +40,13 @@ internal object LpacJni {
      external fun downloadErrCodeToString(code: Int): String
      external fun handleNotification(handle: Long, seqNumber: Long): Int
  
 +    // es11 SM-DS discovery (challenge → initiateAuth → authServer → es11); null = error
 +    external fun es11Discovery(handle: Long, smdsAddress: String): Array<String>?
 +
++    // standalone AuthenticateServer CI-trust probe (challenge → initiateAuth → authServer,
++    // no download): 0 = server CI accepted, -1/-2/-3 = which step failed
++    external fun es10bAuthenticate(handle: Long, serverAddress: String): Int
++
      // Cancel any ongoing es9p and/or es10b sessions
      external fun cancelSessions(handle: Long)
  
 diff --git a/libs/lpac-jni/src/main/java/net/typeblog/lpac_jni/impl/LocalProfileAssistantImpl.kt b/libs/lpac-jni/src/main/java/net/typeblog/lpac_jni/impl/LocalProfileAssistantImpl.kt
-index 91c572e..adcb5c3 100644
+index 91c572e..34eb0c1 100644
 --- a/libs/lpac-jni/src/main/java/net/typeblog/lpac_jni/impl/LocalProfileAssistantImpl.kt
 +++ b/libs/lpac-jni/src/main/java/net/typeblog/lpac_jni/impl/LocalProfileAssistantImpl.kt
-@@ -253,6 +253,11 @@ class LocalProfileAssistantImpl(
+@@ -253,6 +253,15 @@ class LocalProfileAssistantImpl(
          } == 0
      }
  
@@ -52,11 +61,15 @@ index 91c572e..adcb5c3 100644
 +            ?: throw RuntimeException("ES11 discovery failed against $smdsAddress")).toList()
 +    }
 +
++    override fun authenticateServer(serverAddress: String): Int = lock.withLock {
++        LpacJni.es10bAuthenticate(contextHandle, serverAddress)
++    }
++
      override fun setNickname(iccid: String, nickname: String) = lock.withLock {
          val encoded = try {
              Charsets.UTF_8.encode(nickname).array()
 diff --git a/libs/lpac-jni/src/main/jni/lpac-jni/lpac-jni.c b/libs/lpac-jni/src/main/jni/lpac-jni/lpac-jni.c
-index ca319db..0f7bf56 100644
+index ca319db..799812d 100644
 --- a/libs/lpac-jni/src/main/jni/lpac-jni/lpac-jni.c
 +++ b/libs/lpac-jni/src/main/jni/lpac-jni/lpac-jni.c
 @@ -1,6 +1,8 @@
@@ -68,7 +81,7 @@ index ca319db..0f7bf56 100644
  #include <euicc/interface.h>
  #include <malloc.h>
  #include <string.h>
-@@ -129,6 +131,47 @@ Java_net_typeblog_lpac_1jni_LpacJni_es10cGetEid(JNIEnv *env, jobject thiz, jlong
+@@ -129,6 +131,76 @@ Java_net_typeblog_lpac_1jni_LpacJni_es10cGetEid(JNIEnv *env, jobject thiz, jlong
      return ret;
  }
  
@@ -111,6 +124,35 @@ index ca319db..0f7bf56 100644
 +    ctx->http.server_address = NULL;  // do not keep a pointer into the released chars
 +    (*env)->ReleaseStringUTFChars(env, smds_address, smds);
 +    return ret;
++}
++
++// Standalone AuthenticateServer against an arbitrary SM-DP+/SM-DS: challenge →
++// initiateAuthentication → authenticateServer, WITHOUT proceeding to a download. This
++// isolates the CI-trust check the eUICC runs inside the SE: 0 = the server's CI was
++// accepted (production CI); negative = which step failed (a test/foreign-CI server is
++// rejected at authenticateServer, SGP.22 8.8.4/3.7 — visible in the verbose log).
++// The RSP session is cancelled afterward so the eUICC is left clean.
++JNIEXPORT jint JNICALL
++Java_net_typeblog_lpac_1jni_LpacJni_es10bAuthenticate(JNIEnv *env, jobject thiz, jlong handle,
++                                                      jstring server_address) {
++    struct euicc_ctx *ctx = (struct euicc_ctx *) handle;
++    const char *server = (*env)->GetStringUTFChars(env, server_address, NULL);
++    jint rc = 0;
++
++    ctx->http.server_address = (char *) server;
++
++    if (es10b_get_euicc_challenge_and_info(ctx)) { rc = -1; goto out; }
++    if (es9p_initiate_authentication(ctx)) { rc = -2; goto out; }
++    if (es10b_authenticate_server(ctx, NULL, NULL)) { rc = -3; goto out; }
++
++out:
++    // reset any eUICC RSP session opened by a successful authenticateServer (ignore
++    // the return — if no session is open the cancel APDU just errors harmlessly)
++    es10b_cancel_session(ctx, ES10B_CANCEL_SESSION_REASON_UNDEFINED);
++    euicc_http_cleanup(ctx);
++    ctx->http.server_address = NULL;
++    (*env)->ReleaseStringUTFChars(env, server_address, server);
++    return rc;
 +}
 +
  JNIEXPORT jlong JNICALL
