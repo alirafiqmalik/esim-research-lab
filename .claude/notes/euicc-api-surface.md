@@ -39,8 +39,10 @@ raw APDU/OMAPI → lpac C core → lpac-jni (LpacJni.kt) → LocalProfileAssista
   lpac holds its one logical channel open, so a 2nd `openLogicalChannel` fails with
   **SW 6999**. `isdrExchange()` reflects `OmapiApduInterface.channels`, reuses the
   open handle, and `transmit`s on it. No NDK/lpac rebuild needed.
-- **ES9+/ES8+/ES11**: run only as internal phases of `downloadProfile`; full
-  plaintext is logged (verbose) — the lpac path's research advantage over the fw path.
+- **ES9+/ES8+/ES11**: run as internal phases of `downloadProfile` AND (since
+  2026-07-16) two are exposed standalone via a JNI bridge — `discovery` (ES11) and
+  `authenticate` (AuthenticateServer CI-trust probe); see the Frontier section below.
+  Full plaintext is logged (verbose) — the lpac path's research advantage over the fw path.
 
 ## Trust boundary (don't waste cycles trying to cross it)
 Root grants full **local** lifecycle + EID + raw ES10x + address get/set (now scriptable).
