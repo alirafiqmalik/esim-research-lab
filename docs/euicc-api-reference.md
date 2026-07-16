@@ -144,6 +144,12 @@ Adversary operates at the authorization/discovery layer; the crypto core holds.
 - Raw ES10x / previously-unbridged: `esimctl.py <get-addresses | set-dp-address FQDN |
   get-rat | apdu HEX | nickname N NAME | remove-notification SEQ | handle-notification SEQ |
   reset --confirm-wipe>`.
+- Frontier (see `docs/euicc-api-frontier.md`): `esimctl.py <info1 | challenge |
+  retrieve-notification SEQ | apdu-aid AID HEX | select-aid AID | discovery [--smds D] |
+  authenticate SERVER>`. ECASD AID = `A0000005591010FFFFFFFF8900000200`.
+- Second command path (framework IEuiccCardController, authz-gated to the active LPA):
+  `esimctl.py <card-challenge | card-info2 | card-smds | card-default-smdp | card-rat |
+  card-profiles>`.
 - Framework path: `esimctl.py --backend fw <eid|info|download|delete|switch>`.
 - Raw APDU evidence: any `esimctl` op's `sessions/esimctl/<ts>-<op>/logcat.txt`
   shows the `OmapiApduInterface: OMAPI APDU:` request/response hex.

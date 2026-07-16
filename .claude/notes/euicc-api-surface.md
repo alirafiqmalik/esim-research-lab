@@ -55,8 +55,20 @@ on hardware. Related: [[rsp-tls-pins-to-gsma-ci]].
 as binder calls through the stock card; OpenEUICC holds its guard perm
 (`WRITE_EMBEDDED_SUBSCRIPTIONS`). See `docs/euicc-api-frontier.md`.
 
-## Frontier — new surface beyond esimctl
-`docs/euicc-api-frontier.md`: ranked new commands/paths. Verified live: GetEUICCInfo1
-(BF20 `81E2910003BF2000`), RetrieveNotificationsList by seq (BF2B, pulls the signed
-notification). Highest-value untapped: the IEuiccCardController binder (2nd command
-path via the OEM card) and standalone AuthenticateServer (BF38, the CI-trust step).
+## Frontier — ALL wired into esimctl (2026-07-16)
+`docs/euicc-api-frontier.md` has the full table. Ops now shipping:
+- `info1` (BF20), `challenge` (BF2E), `retrieve-notification SEQ` (BF2B) — raw ES10x.
+- `apdu-aid AID HEX` / `select-aid AID` — open a channel to ANY applet. **ECASD is
+  selectable at `A0000005591010FFFFFFFF8900000200`** (Card Recognition Data 66 + Key
+  Info Template E0 readable; certs 7F21 need auth). ARA-M absent on this eUICC.
+- `discovery [--smds]` — ES11 SM-DS discovery (JNI bridge); verified round trip to
+  `lpa.ds.gsma.com`, 0 events.
+- `authenticate SERVER` — standalone AuthenticateServer CI-trust probe (JNI). Prod CI
+  → `ciTrusted:true`; foreign/test CI → rejected. The one-shot CI-trust experiment.
+- `card-*` (challenge/info2/smds/default-smdp/rat/profiles) — 2nd command path via the
+  framework IEuiccCardController. **Reachable but authz-gated**: returns `-3
+  RESULT_CALLER_NOT_ALLOWED` (caller must be the active LPA; needs `hidden_api_policy 1`
+  set by setup_testbed for the reflection to reach the framework at all).
+
+The lpac-side changes (ES11 + AuthenticateServer JNI, card wrapper) live in
+`tools/esimctl/openeuicc/es11-discovery.patch`, applied by setup_testbed.sh.

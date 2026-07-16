@@ -46,6 +46,13 @@ fi
 echo "== step 2: apply EsimCtlActivity patch =="
 cp "$REPO/tools/esimctl/openeuicc/EsimCtlActivity.kt" \
    "$OPENEUICC_DIR/app/src/main/java/im/angry/openeuicc/ui/EsimCtlActivity.kt" || die "patch copy failed"
+# frontier patch: ES11 discovery + AuthenticateServer JNI + card wrapper override
+if ! grep -q es11Discovery "$OPENEUICC_DIR/libs/lpac-jni/src/main/jni/lpac-jni/lpac-jni.c" 2>/dev/null; then
+  git -C "$OPENEUICC_DIR" apply "$REPO/tools/esimctl/openeuicc/es11-discovery.patch" \
+    || die "es11-discovery.patch failed to apply"
+else
+  echo "es11-discovery.patch already applied, skipping"
+fi
 MANIFEST="$OPENEUICC_DIR/app/src/main/AndroidManifest.xml"
 if ! grep -q EsimCtlActivity "$MANIFEST"; then
   awk '
@@ -176,7 +183,14 @@ $ADB shell su -c "chown $APP_UID:$APP_UID /data/data/im.angry.openeuicc/files/da
 $ADB shell su -c 'restorecon -R /data/data/im.angry.openeuicc/files/datastore' 2>/dev/null
 $ADB shell su -c 'am force-stop im.angry.openeuicc' || die "force-stop failed"
 
-echo "== step 8: keep awake + verify =="
+echo "== step 8: relax hidden-API policy (card backend reflects EuiccCardManager) =="
+# lets OpenEUICC's priv-app reflect @hide android.telephony.euicc.EuiccCardManager;
+# the per-command card path is still authz-gated to the active LPA (returns
+# RESULT_CALLER_NOT_ALLOWED), but this makes the reflection reach the framework.
+$ADB shell "su -c 'settings put global hidden_api_policy 1'" || die "hidden_api_policy set failed"
+$ADB shell am force-stop im.angry.openeuicc
+
+echo "== step 9: keep awake + verify =="
 bash "$REPO/tools/keep_phone_awake.sh" || die "keep_phone_awake failed"
 bash "$REPO/tools/esimctl/selftest.sh" || die "selftest failed"
 

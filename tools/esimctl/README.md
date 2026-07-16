@@ -52,8 +52,22 @@ after the phone comes back up.
 | `esimctl remove-notification SEQ` | ES10b: delete a pending notification locally | ✓ | — |
 | `esimctl handle-notification SEQ` | ES9+: send a pending notification to its SM-DP+ | ✓ | — |
 | `esimctl reset --confirm-wipe` | ES10c: eUICCMemoryReset — **erases ALL profiles** | ✓ | — |
+| `esimctl info1` | ES10b GetEUICCInfo1 (BF20) — version + CI PKID lists | ✓ | — |
+| `esimctl challenge` | ES10b GetEUICCChallenge (BF2E) — 16-byte SE nonce | ✓ | — |
+| `esimctl retrieve-notification SEQ` | ES10b RetrieveNotificationsList (BF2B) — signed blob | ✓ | — |
+| `esimctl apdu-aid AID HEX` | open a channel to ANY applet AID and transmit | ✓ | — |
+| `esimctl select-aid AID` | SELECT an applet, return its FCI (ECASD reachable) | ✓ | — |
+| `esimctl discovery [--smds D]` | ES11 SM-DS discovery — pending events for this EID | ✓ | — |
+| `esimctl authenticate SERVER` | standalone AuthenticateServer CI-trust probe | ✓ | — |
+| `esimctl card-<challenge\|info2\|smds\|default-smdp\|rat\|profiles>` | 2nd command path via framework IEuiccCardController (authz-gated) | ✓ | — |
 
 `N` is the 1-based row from `list`; the tool resolves it to the full ICCID.
+
+See `docs/euicc-api-frontier.md` for the frontier ops (rows/verification). The
+`discovery`/`authenticate` ops use a lpac JNI bridge (`openeuicc/es11-discovery.patch`).
+ECASD AID = `A0000005591010FFFFFFFF8900000200`. The `card-*` ops reach the stock card
+controller but return `RESULT_CALLER_NOT_ALLOWED` (gated on being the active LPA);
+they need `hidden_api_policy 1` (set by `setup_testbed.sh`).
 
 The last eight reach commands lpac-jni does not bridge to Kotlin. `get-addresses`,
 `set-dp-address`, `get-rat`, and `apdu` build the ES10x store-data C-APDU

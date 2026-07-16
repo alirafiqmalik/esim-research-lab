@@ -3,10 +3,26 @@
 Additional eUICC commands and indirect paths found by static analysis of the lpac
 C core, the AOSP telephony binders, and the device, plus a few safe live probes.
 Ranked by value. Companion to `docs/euicc-api-reference.md` (what we already ship)
-and `.claude/notes/euicc-api-surface.md`. Everything here is NOT yet in esimctl.
+and `.claude/notes/euicc-api-surface.md`.
 
 Device: Pixel 7a (lynx), Android 17, Magisk root, OMAPI transport, production CI
 `81370F5125D0B1D408D4C3B232E6D25E795BEBFB`.
+
+## Implementation status (2026-07-16) — all rows now wired into esimctl
+
+| Row | Capability | esimctl op | Verified result |
+|---|---|---|---|
+| 1 | IEuiccCardController | `card-challenge/info1/info2/smds/default-smdp/rat/profiles` | **Reachable, authz-gated.** Binder txn succeeds (hidden-API unblocked via root `hidden_api_policy 1`); stock card controller returns `-3 RESULT_CALLER_NOT_ALLOWED` — gated on caller being the active LPA. cardId = EID string. |
+| 2 | GetEUICCInfo1 (BF20) | `info1` | ✅ version + CI PKID signing/verification lists |
+| 3 | RetrieveNotificationsList (BF2B) | `retrieve-notification SEQ` | ✅ returns the signed PendingNotification for a seq (empty when queue empty) |
+| 4 | AuthenticateServer (BF38) | `authenticate SERVER` | ✅ CI-trust probe. Prod CI (`lpa.ds.gsma.com`, `rsp.truphone.com`) → `ciTrusted:true stage:accepted`; foreign/test-CI → rejected at its stage |
+| 5 | ES11 SM-DS discovery | `discovery [--smds]` | ✅ full round trip to `lpa.ds.gsma.com`, 0 pending events (correct), authServer passes (prod CI) |
+| 6 | GetEUICCChallenge (BF2E) | `challenge` | ✅ 16-byte SE nonce |
+| 7 | ECASD | `select-aid`/`apdu-aid <ECASD>` | ✅ selectable at `A0000005591010FFFFFFFF8900000200`; Card Recognition Data (66) + Key Info Template (E0) readable; certs (7F21) auth-protected (6A88) |
+| 8 | ARA-M | `select-aid A00000015141434C00` | ✗ not present on this eUICC's OMAPI reader (NoSuchElement) |
+
+Rows 4/5 use a lpac JNI bridge (`es11-discovery.patch`); the rest use the raw ISD-R
+path or reflection. Detail below.
 
 ## Ranked new capabilities
 
