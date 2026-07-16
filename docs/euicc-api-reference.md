@@ -96,12 +96,15 @@ defaultDpAddress empty; `set-dp-address testdp.example.com` → `BF3F03800100900
 (result 0), read back, restored to empty. Values from the raw ES10a response
 `BF3C11 810F 6C70612E64732E67736D612E636F6D 9000`.
 
-### ES9+/ES8+/ES11 — RSP transport (network, driven internally by `downloadProfile`)
+### ES9+/ES8+/ES11 — RSP transport (network)
 `es9p_initiate_authentication`, `es9p_authenticate_client`,
 `es9p_get_bound_profile_package`, `es9p_handle_notification`, `es9p_cancel_session`;
-`es11_authenticate_client` (SM-DS discovery); `es8p_metadata_parse`. Not exposed as
-standalone calls — they run as the phases of a download. Full plaintext is logged
-via `HttpInterfaceImpl` (verbose) — this is the lpac path's key research advantage.
+`es11_authenticate_client` (SM-DS discovery); `es8p_metadata_parse`. Most run as the
+phases of a download, but two are now exposed **standalone** via a lpac JNI bridge
+(2026-07-16, see `docs/euicc-api-frontier.md`): `esimctl discovery` (ES11 SM-DS
+discovery) and `esimctl authenticate SERVER` (challenge → initiateAuthentication →
+authenticateServer CI-trust probe). Full plaintext is logged via `HttpInterfaceImpl`
+(verbose) — this is the lpac path's key research advantage.
 
 ## Reaching the unexposed commands — DONE (all surfaced in esimctl)
 As of 2026-07-15 every previously-unexposed command is wired into `esimctl` and
