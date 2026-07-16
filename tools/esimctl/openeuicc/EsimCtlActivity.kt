@@ -17,6 +17,7 @@ import im.angry.openeuicc.util.encodeHex
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 import net.typeblog.lpac_jni.ProfileDownloadInput
 import org.json.JSONArray
 import org.json.JSONObject
@@ -54,11 +55,15 @@ class EsimCtlActivity : BaseEuiccAccessActivity() {
         lifecycleScope.launch {
             val out = JSONObject().put("op", op).put("backend", backend)
             try {
-                if (backend == "fw") runFramework(op, out) else runLpac(op, out)
-                // fw action ops carry a framework resultCode (0 = OK); treat non-zero as failure
-                // so `ok` and esimctl exit codes match the lpac backend's semantics.
+                when (backend) {
+                    "fw" -> runFramework(op, out)
+                    "card" -> runCard(op, out)
+                    else -> runLpac(op, out)
+                }
+                // fw/card action ops carry a framework resultCode (0 = OK); treat non-zero as
+                // failure so `ok` and esimctl exit codes match the lpac backend's semantics.
                 val rc = if (out.has("resultCode")) out.getInt("resultCode") else 0
-                out.put("ok", rc == 0)
+                if (!out.has("ok")) out.put("ok", rc == 0)
             } catch (e: Throwable) {
                 // keep the line under logcat's ~4KB limit (download exceptions dump byte arrays)
                 val msg = e.toString().let { if (it.length > 400) it.substring(0, 400) + "…" else it }
@@ -303,4 +308,74 @@ class EsimCtlActivity : BaseEuiccAccessActivity() {
 
     private fun requireExtra(k: String): String =
         intent.getStringExtra(k) ?: error("missing --es $k")
+
+    // ---- card backend: the framework's per-command IEuiccCardController path ----
+    // Reached through the in-process android.telephony.euicc.EuiccCardManager wrapper
+    // (hidden @SystemApi) via reflection — its ResultCallback is a plain interface, so a
+    // dynamic Proxy works (the raw AIDL .Stub callbacks would have to cross binder and
+    // cannot be proxied). This is a SECOND, independent ES10 command path through the
+    // stock Google card stack, parallel to lpac. OpenEUICC holds WRITE_EMBEDDED_SUBSCRIPTIONS.
+    private suspend fun runCard(op: String, out: JSONObject) {
+        val method = when (op) {
+            "challenge" -> "requestEuiccChallenge"
+            "info1" -> "requestEuiccInfo1"
+            "info2", "info" -> "requestEuiccInfo2"
+            "default-smdp" -> "requestDefaultSmdpAddress"
+            "smds" -> "requestSmdsAddress"
+            "rat" -> "requestRulesAuthTable"
+            "profiles", "list" -> "requestAllProfiles"
+            "eid" -> return runCardEid(out)
+            else -> error("card backend does not support op: $op")
+        }
+        cardCall(method, out)
+    }
+
+    private fun runCardEid(out: JSONObject) {
+        // EID is a plain EuiccManager read; expose it under the card backend for parity.
+        out.put("eid", getSystemService(EuiccManager::class.java)?.eid)
+    }
+
+    // On this build EuiccCardController keys cards by a STRING cardId; the eUICC's is
+    // its EID. (Accessors are @hide — reflect them.)
+    private fun cardIdString(): String =
+        intent.getStringExtra("cardId")
+            ?: getSystemService(EuiccManager::class.java)?.eid ?: error("no eUICC EID for cardId")
+
+    private suspend fun cardCall(method: String, out: JSONObject) {
+        val cardId = cardIdString()
+        val ecmCls = Class.forName("android.telephony.euicc.EuiccCardManager")
+        val ecm = ecmCls.getDeclaredConstructor(Context::class.java)
+            .apply { isAccessible = true }.newInstance(this)
+        val rcCls = Class.forName("android.telephony.euicc.EuiccCardManager\$ResultCallback")
+        val resultOk = runCatching { ecmCls.getField("RESULT_OK").getInt(null) }.getOrDefault(0)
+
+        val done = CompletableDeferred<Pair<Int, Any?>>()
+        val cb = java.lang.reflect.Proxy.newProxyInstance(rcCls.classLoader, arrayOf(rcCls)) { _, m, args ->
+            if (m.name == "onComplete" && !done.isCompleted)
+                done.complete(Pair(args[0] as Int, args.getOrNull(1)))
+            null
+        }
+        val executor = java.util.concurrent.Executor { it.run() }
+
+        // read methods here are all (String cardId, Executor, ResultCallback)
+        val fn = ecmCls.methods.first { it.name == method && it.parameterTypes.lastOrNull() == rcCls }
+        fn.invoke(ecm, cardId, executor, cb)
+
+        val (rc, res) = withTimeoutOrNull(30_000) { done.await() }
+            ?: error("card call '$method' timed out")
+        val rcName = ecmCls.fields.firstOrNull {
+            java.lang.reflect.Modifier.isStatic(it.modifiers) &&
+                it.type == Int::class.javaPrimitiveType &&
+                it.name.startsWith("RESULT_") && it.getInt(null) == rc
+        }?.name
+        out.put("cardId", cardId).put("method", method)
+            .put("resultCode", rc).put("resultName", rcName ?: JSONObject.NULL)
+        when (res) {
+            null -> out.put("result", JSONObject.NULL)
+            is ByteArray -> out.put("result", res.encodeHex())
+            is Array<*> -> out.put("result", JSONArray().apply { res.forEach { put(it?.toString()) } })
+            else -> out.put("result", res.toString())
+        }
+        out.put("ok", rc == resultOk)
+    }
 }

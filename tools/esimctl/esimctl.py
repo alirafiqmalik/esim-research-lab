@@ -518,6 +518,15 @@ def av_select_aid(serial, sess, args):
     return _activity(serial, sess, "select-aid", args.backend, aid=args.aid.replace(" ", ""))
 
 
+def av_card(method_op):
+    # second command path: framework IEuiccCardController via EuiccCardManager reflection.
+    # raise_on_fail=False: a non-OK resultCode (e.g. -3 RESULT_CALLER_NOT_ALLOWED) is an
+    # informative outcome about the authz gate, not a harness error.
+    def fn(serial, sess, args):
+        return _activity(serial, sess, method_op, backend="card", raise_on_fail=False)
+    return fn
+
+
 ACT_OPS = {
     "list": av_read("list"), "eid": av_read("eid"), "info": av_read("info"),
     "notifications": av_read("notifications"), "download": av_download,
@@ -530,6 +539,11 @@ ACT_OPS = {
     "info1": av_info1, "challenge": av_challenge,
     "retrieve-notification": av_retrieve_notification,
     "apdu-aid": av_apdu_aid, "select-aid": av_select_aid,
+    # card backend: framework IEuiccCardController (2nd command path via the OEM card)
+    "card-challenge": av_card("challenge"), "card-info1": av_card("info1"),
+    "card-info2": av_card("info2"), "card-smds": av_card("smds"),
+    "card-default-smdp": av_card("default-smdp"), "card-rat": av_card("rat"),
+    "card-profiles": av_card("profiles"),
 }
 
 
@@ -608,6 +622,9 @@ def main():
     aa.add_argument("aid", help="applet AID (e.g. A00000015141434C00 for ARA-M)")
     aa.add_argument("hex", help="APDU hex to send on that channel")
     sa = sub.add_parser("select-aid"); sa.add_argument("aid", help="applet AID to SELECT (returns FCI)")
+    for cop in ("card-challenge", "card-info1", "card-info2", "card-smds",
+                "card-default-smdp", "card-rat", "card-profiles"):
+        sub.add_parser(cop)  # framework IEuiccCardController path (independent of --backend)
     args = ap.parse_args()
 
     serial = args.serial or os.environ.get("ESIMCTL_SERIAL") or detect_serial()
