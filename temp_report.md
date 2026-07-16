@@ -1,3 +1,10 @@
+> **SUPERSEDED (2026-07-16).** This document describes the pre-testbed **no-root /
+> physical-SIM** scenario and is **obsolete**. The current work uses a **rooted
+> (Magisk) Pixel 7a** with two disabled eSIM profiles and **no physical SIM**. Every
+> "❌ Not possible" here (raw APDU capture, `EuiccCardManager` access, profile
+> install) is now **done** on the rooted testbed. For the current state see
+> `status-update.md` and `docs/euicc-api-frontier.md`. Kept for historical context only.
+
 # eSIM RSP Interaction on a No-Root, ADB-Enabled Android Phone with Physical SIM and 5G
 
 ## Executive Summary
