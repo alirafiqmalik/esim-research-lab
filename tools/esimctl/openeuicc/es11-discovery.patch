@@ -1,0 +1,118 @@
+diff --git a/app-common/src/main/java/im/angry/openeuicc/core/LocalProfileAssistantWrapper.kt b/app-common/src/main/java/im/angry/openeuicc/core/LocalProfileAssistantWrapper.kt
+index 469a2bd..19a5506 100644
+--- a/app-common/src/main/java/im/angry/openeuicc/core/LocalProfileAssistantWrapper.kt
++++ b/app-common/src/main/java/im/angry/openeuicc/core/LocalProfileAssistantWrapper.kt
+@@ -48,6 +48,8 @@ class LocalProfileAssistantWrapper(orig: LocalProfileAssistant) :
+ 
+     override fun handleNotification(seqNumber: Long): Boolean = lpa.handleNotification(seqNumber)
+ 
++    override fun discovery(smdsAddress: String): List<String> = lpa.discovery(smdsAddress)
++
+     override fun euiccMemoryReset() = lpa.euiccMemoryReset()
+ 
+     override fun setNickname(iccid: String, nickname: String) {
+diff --git a/libs/lpac-jni/src/main/java/net/typeblog/lpac_jni/LocalProfileAssistant.kt b/libs/lpac-jni/src/main/java/net/typeblog/lpac_jni/LocalProfileAssistant.kt
+index dd83ded..3ce2b75 100644
+--- a/libs/lpac-jni/src/main/java/net/typeblog/lpac_jni/LocalProfileAssistant.kt
++++ b/libs/lpac-jni/src/main/java/net/typeblog/lpac_jni/LocalProfileAssistant.kt
+@@ -42,6 +42,9 @@ interface LocalProfileAssistant {
+     fun deleteNotification(seqNumber: Long): Boolean
+     fun handleNotification(seqNumber: Long): Boolean
+ 
++    /** ES11 SM-DS discovery against [smdsAddress] (default the root SM-DS). */
++    fun discovery(smdsAddress: String): List<String>
++
+     fun euiccMemoryReset()
+ 
+     /**
+diff --git a/libs/lpac-jni/src/main/java/net/typeblog/lpac_jni/LpacJni.kt b/libs/lpac-jni/src/main/java/net/typeblog/lpac_jni/LpacJni.kt
+index dd9282d..ce5bf9c 100644
+--- a/libs/lpac-jni/src/main/java/net/typeblog/lpac_jni/LpacJni.kt
++++ b/libs/lpac-jni/src/main/java/net/typeblog/lpac_jni/LpacJni.kt
+@@ -40,6 +40,9 @@ internal object LpacJni {
+     external fun downloadErrCodeToString(code: Int): String
+     external fun handleNotification(handle: Long, seqNumber: Long): Int
+ 
++    // es11 SM-DS discovery (challenge → initiateAuth → authServer → es11); null = error
++    external fun es11Discovery(handle: Long, smdsAddress: String): Array<String>?
++
+     // Cancel any ongoing es9p and/or es10b sessions
+     external fun cancelSessions(handle: Long)
+ 
+diff --git a/libs/lpac-jni/src/main/java/net/typeblog/lpac_jni/impl/LocalProfileAssistantImpl.kt b/libs/lpac-jni/src/main/java/net/typeblog/lpac_jni/impl/LocalProfileAssistantImpl.kt
+index 91c572e..adcb5c3 100644
+--- a/libs/lpac-jni/src/main/java/net/typeblog/lpac_jni/impl/LocalProfileAssistantImpl.kt
++++ b/libs/lpac-jni/src/main/java/net/typeblog/lpac_jni/impl/LocalProfileAssistantImpl.kt
+@@ -253,6 +253,11 @@ class LocalProfileAssistantImpl(
+         } == 0
+     }
+ 
++    override fun discovery(smdsAddress: String): List<String> = lock.withLock {
++        (LpacJni.es11Discovery(contextHandle, smdsAddress)
++            ?: throw RuntimeException("ES11 discovery failed against $smdsAddress")).toList()
++    }
++
+     override fun setNickname(iccid: String, nickname: String) = lock.withLock {
+         val encoded = try {
+             Charsets.UTF_8.encode(nickname).array()
+diff --git a/libs/lpac-jni/src/main/jni/lpac-jni/lpac-jni.c b/libs/lpac-jni/src/main/jni/lpac-jni/lpac-jni.c
+index ca319db..0f7bf56 100644
+--- a/libs/lpac-jni/src/main/jni/lpac-jni/lpac-jni.c
++++ b/libs/lpac-jni/src/main/jni/lpac-jni/lpac-jni.c
+@@ -1,6 +1,8 @@
+ #include <euicc/euicc.h>
+ #include <euicc/es10c.h>
+ #include <euicc/es10c_ex.h>
++#include <euicc/es10b.h>
++#include <euicc/es9p.h>
+ #include <euicc/interface.h>
+ #include <malloc.h>
+ #include <string.h>
+@@ -129,6 +131,47 @@ Java_net_typeblog_lpac_1jni_LpacJni_es10cGetEid(JNIEnv *env, jobject thiz, jlong
+     return ret;
+ }
+ 
++// ES11 SM-DS discovery: the full round trip against a root SM-DS (default
++// lpa.ds.gsma.com) — challenge → initiateAuthentication → authenticateServer →
++// es11_authenticate_client — returning the SM-DP+ addresses with pending events for
++// this EID. Mirrors lpac's `discovery` applet. Returns a String[] (may be empty) or
++// null on error.
++JNIEXPORT jobjectArray JNICALL
++Java_net_typeblog_lpac_1jni_LpacJni_es11Discovery(JNIEnv *env, jobject thiz, jlong handle,
++                                                  jstring smds_address) {
++    struct euicc_ctx *ctx = (struct euicc_ctx *) handle;
++    const char *smds = (*env)->GetStringUTFChars(env, smds_address, NULL);
++    char **smdp_list = NULL;
++    jobjectArray ret = NULL;
++
++    ctx->http.server_address = (char *) smds;  // borrowed for the calls below
++
++    if (es10b_get_euicc_challenge_and_info(ctx))
++        goto out;
++    if (es9p_initiate_authentication(ctx))
++        goto out;
++    if (es10b_authenticate_server(ctx, NULL, NULL))
++        goto out;
++    if (es11_authenticate_client(ctx, &smdp_list))
++        goto out;
++
++    int n = 0;
++    while (smdp_list && smdp_list[n] != NULL) n++;
++    ret = (*env)->NewObjectArray(env, n, string_class, NULL);
++    for (int i = 0; i < n; i++) {
++        jstring s = toJString(env, smdp_list[i]);
++        (*env)->SetObjectArrayElement(env, ret, i, s);
++        (*env)->DeleteLocalRef(env, s);
++    }
++
++out:
++    es11_smdp_list_free_all(smdp_list);
++    euicc_http_cleanup(ctx);
++    ctx->http.server_address = NULL;  // do not keep a pointer into the released chars
++    (*env)->ReleaseStringUTFChars(env, smds_address, smds);
++    return ret;
++}
++
+ JNIEXPORT jlong JNICALL
+ Java_net_typeblog_lpac_1jni_LpacJni_es10cGetProfilesInfo(JNIEnv *env, jobject thiz, jlong handle) {
+     struct euicc_ctx *ctx = (struct euicc_ctx *) handle;

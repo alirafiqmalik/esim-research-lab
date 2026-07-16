@@ -169,6 +169,13 @@ class EsimCtlActivity : BaseEuiccAccessActivity() {
                 euiccChannelManager.withEuiccChannel(slot, port, seId) { it.lpa.euiccMemoryReset() }
                 out.put("reset", true)
             }
+            "discovery" -> { // ES11 SM-DS discovery (challenge → initiateAuth → authServer → es11)
+                val smds = intent.getStringExtra("smds") ?: "lpa.ds.gsma.com"
+                val events = euiccChannelManager.withEuiccChannel(slot, port, seId) { it.lpa.discovery(smds) }
+                out.put("smds", smds)
+                    .put("events", JSONArray().apply { events.forEach { put(it) } })
+                    .put("count", events.size)
+            }
             // ---- raw ES10x over the ISD-R (store-data), for commands lpac-jni does not bridge ----
             "apdu" -> {
                 val apdu = requireExtra("hex").replace(" ", "")

@@ -497,6 +497,12 @@ def av_reset(serial, sess, args):
     return _activity(serial, sess, "reset", args.backend, confirm="RESET")
 
 
+def av_discovery(serial, sess, args):
+    # ES11 SM-DS discovery: real network round trip to the root SM-DS (production CI)
+    return _activity(serial, sess, "discovery", args.backend, timeout=120,
+                     raise_on_fail=False, smds=args.smds)
+
+
 def av_info1(serial, sess, args):
     return _activity(serial, sess, "info1", args.backend)
 
@@ -536,7 +542,7 @@ ACT_OPS = {
     "set-dp-address": av_set_dp_address, "nickname": av_nickname,
     "remove-notification": av_remove_notification,
     "handle-notification": av_handle_notification, "reset": av_reset,
-    "info1": av_info1, "challenge": av_challenge,
+    "info1": av_info1, "challenge": av_challenge, "discovery": av_discovery,
     "retrieve-notification": av_retrieve_notification,
     "apdu-aid": av_apdu_aid, "select-aid": av_select_aid,
     # card backend: framework IEuiccCardController (2nd command path via the OEM card)
@@ -615,6 +621,8 @@ def main():
     rs = sub.add_parser("reset")
     rs.add_argument("--confirm-wipe", dest="confirm", action="store_true",
                     help="required: euiccMemoryReset erases ALL profiles")
+    disc = sub.add_parser("discovery")  # ES11 SM-DS discovery
+    disc.add_argument("--smds", default="lpa.ds.gsma.com", help="SM-DS domain (default root)")
     sub.add_parser("info1")       # ES10b GetEUICCInfo1 (BF20)
     sub.add_parser("challenge")   # ES10b GetEUICCChallenge (BF2E)
     rnf = sub.add_parser("retrieve-notification"); rnf.add_argument("seq", help="notification seq")
