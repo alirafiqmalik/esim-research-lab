@@ -51,4 +51,12 @@ on hardware. Related: [[rsp-tls-pins-to-gsma-ci]].
 
 ## Binders (unwrapped, reflection/`service call` reachable)
 `econtroller` = `IEuiccController` (svc 166), `euicc_card_controller` =
-`IEuiccCardController` (svc 169).
+`IEuiccCardController` (svc 169). The latter exposes the **entire ES10 command set**
+as binder calls through the stock card; OpenEUICC holds its guard perm
+(`WRITE_EMBEDDED_SUBSCRIPTIONS`). See `docs/euicc-api-frontier.md`.
+
+## Frontier — new surface beyond esimctl
+`docs/euicc-api-frontier.md`: ranked new commands/paths. Verified live: GetEUICCInfo1
+(BF20 `81E2910003BF2000`), RetrieveNotificationsList by seq (BF2B, pulls the signed
+notification). Highest-value untapped: the IEuiccCardController binder (2nd command
+path via the OEM card) and standalone AuthenticateServer (BF38, the CI-trust step).
