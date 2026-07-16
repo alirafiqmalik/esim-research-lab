@@ -422,11 +422,90 @@ def av_cycle(serial, sess, args):
     return {"op": "cycle", "times": args.times, "ok": True, "iterations": iterations}
 
 
+# ------------------------------ raw ES10x / unbridged-command ops ------------------------------
+
+def _tlv_walk(b: bytes) -> list[tuple[int, bytes]]:
+    """Minimal BER-TLV walker (single level). Handles 2-byte tags and long-form length."""
+    out, i = [], 0
+    while i < len(b):
+        tag = b[i]; i += 1
+        if tag & 0x1F == 0x1F:  # multi-byte tag
+            tag = (tag << 8) | b[i]; i += 1
+        length = b[i]; i += 1
+        if length & 0x80:
+            n = length & 0x7F
+            length = int.from_bytes(b[i:i + n], "big"); i += n
+        out.append((tag, b[i:i + length])); i += length
+    return out
+
+
+def _parse_addresses(resp_hex: str) -> dict:
+    """Decode a GetEuiccConfiguredAddresses (BF3C) response into the two addresses."""
+    try:
+        b = bytes.fromhex(resp_hex)
+    except ValueError:
+        return {}
+    if len(b) >= 2 and b[-2:] == b"\x90\x00":
+        b = b[:-2]
+    res: dict = {}
+    for tag, val in _tlv_walk(b):
+        if tag == 0xBF3C:
+            for t2, v2 in _tlv_walk(val):
+                if t2 == 0x80:
+                    res["defaultDpAddress"] = v2.decode("utf-8", "replace")
+                elif t2 == 0x81:
+                    res["rootDsAddress"] = v2.decode("utf-8", "replace")
+    return res
+
+
+def av_apdu(serial, sess, args):
+    return _activity(serial, sess, "apdu", args.backend, hex=args.hex.replace(" ", ""))
+
+
+def av_get_addresses(serial, sess, args):
+    r = _activity(serial, sess, "get-addresses", args.backend)
+    r.update(_parse_addresses(r.get("resp", "")))
+    return r
+
+
+def av_get_rat(serial, sess, args):
+    return _activity(serial, sess, "get-rat", args.backend)
+
+
+def av_set_dp_address(serial, sess, args):
+    return _activity(serial, sess, "set-dp-address", args.backend, address=args.address)
+
+
+def av_nickname(serial, sess, args):
+    iccid = _resolve_iccid(serial, sess, args.target, args.backend)
+    return _activity(serial, sess, "nickname", args.backend, iccid=iccid, name=args.name)
+
+
+def av_remove_notification(serial, sess, args):
+    return _activity(serial, sess, "remove-notification", args.backend, seq=args.seq)
+
+
+def av_handle_notification(serial, sess, args):
+    return _activity(serial, sess, "handle-notification", args.backend, seq=args.seq)
+
+
+def av_reset(serial, sess, args):
+    # euiccMemoryReset erases every profile; require the explicit opt-in flag.
+    if not args.confirm:
+        return {"op": "reset", "ok": False,
+                "error": "euiccMemoryReset wipes ALL profiles; pass --confirm-wipe to run"}
+    return _activity(serial, sess, "reset", args.backend, confirm="RESET")
+
+
 ACT_OPS = {
     "list": av_read("list"), "eid": av_read("eid"), "info": av_read("info"),
     "notifications": av_read("notifications"), "download": av_download,
     "enable": av_switch(True), "disable": av_switch(False), "delete": av_delete,
     "cycle": av_cycle,
+    "apdu": av_apdu, "get-addresses": av_get_addresses, "get-rat": av_get_rat,
+    "set-dp-address": av_set_dp_address, "nickname": av_nickname,
+    "remove-notification": av_remove_notification,
+    "handle-notification": av_handle_notification, "reset": av_reset,
 }
 
 
@@ -486,6 +565,18 @@ def main():
     c = sub.add_parser("cycle")
     c.add_argument("--code", required=True); c.add_argument("--times", type=int, default=3)
     c.add_argument("--capture-rsp", action="store_true", default=True)
+    # unbridged commands: raw ES10x over ISD-R + LPA methods not on the basic path
+    ap_apdu = sub.add_parser("apdu"); ap_apdu.add_argument("hex", help="raw APDU hex → ISD-R")
+    sub.add_parser("get-addresses")   # ES10a GetEuiccConfiguredAddresses
+    sub.add_parser("get-rat")         # ES10b GetRAT
+    sdp = sub.add_parser("set-dp-address"); sdp.add_argument("address", help="default SM-DP+ FQDN")
+    nk = sub.add_parser("nickname")
+    nk.add_argument("target", help="profile index (#N) or iccid"); nk.add_argument("name")
+    rn = sub.add_parser("remove-notification"); rn.add_argument("seq", help="notification seq number")
+    hn = sub.add_parser("handle-notification"); hn.add_argument("seq", help="notification seq number")
+    rs = sub.add_parser("reset")
+    rs.add_argument("--confirm-wipe", dest="confirm", action="store_true",
+                    help="required: euiccMemoryReset erases ALL profiles")
     args = ap.parse_args()
 
     serial = args.serial or os.environ.get("ESIMCTL_SERIAL") or detect_serial()

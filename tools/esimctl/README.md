@@ -44,8 +44,23 @@ after the phone comes back up.
 | `esimctl disable N` | disable profile #N | ✓ | — |
 | `esimctl delete N` | delete profile #N (destructive) | ✓ | — |
 | `esimctl cycle --code '…' --times 5` | download→delete loop, each fully logged | ✓ | — |
+| `esimctl get-addresses` | ES10a: default SM-DP+ / root SM-DS addresses | ✓ | — |
+| `esimctl set-dp-address FQDN` | ES10a: write the default SM-DP+ address (`""` clears) | ✓ | — |
+| `esimctl get-rat` | ES10b: Rules Authorisation Table (raw BER-TLV) | ✓ | — |
+| `esimctl apdu HEX` | raw ES10x C-APDU to the ISD-R; returns response hex | ✓ | — |
+| `esimctl nickname N NAME` | ES10c: set a profile nickname (`""` clears) | ✓ | — |
+| `esimctl remove-notification SEQ` | ES10b: delete a pending notification locally | ✓ | — |
+| `esimctl handle-notification SEQ` | ES9+: send a pending notification to its SM-DP+ | ✓ | — |
+| `esimctl reset --confirm-wipe` | ES10c: eUICCMemoryReset — **erases ALL profiles** | ✓ | — |
 
 `N` is the 1-based row from `list`; the tool resolves it to the full ICCID.
+
+The last eight reach commands lpac-jni does not bridge to Kotlin. `get-addresses`,
+`set-dp-address`, `get-rat`, and `apdu` build the ES10x store-data C-APDU
+(`81 E2 91 00 …`) and transmit it on lpac's **already-open** ISD-R logical channel
+(the ISD-R is non-multiselectable — a second channel is refused with SW 6999).
+`reset` is hard-guarded: it refuses without `--confirm-wipe` and, in the activity,
+without `--es confirm RESET`.
 
 ## Examples
 

@@ -66,8 +66,8 @@ Raw APDU can reach **every** row regardless of the higher columns.
 | EnableProfile | BF31 | ✓ | `es10cEnableProfile` | `enableProfile` | `enable` | `switchToSubscription` |
 | DisableProfile | BF32 | ✓ | `es10cDisableProfile` | `disableProfile` | `disable` | — |
 | DeleteProfile | BF33 | ✓ | `es10cDeleteProfile` | `deleteProfile` | `delete` | `deleteSubscription` |
-| eUICCMemoryReset | BF34 | ✓ | `es10cEuiccMemoryReset` | `euiccMemoryReset` | **—** | — |
-| SetNickname | BF29 | ✓ | `es10cSetNickname` | `setNickname` | **—** | — |
+| eUICCMemoryReset | BF34 | ✓ | `es10cEuiccMemoryReset` | `euiccMemoryReset` | `reset` (guarded) | — |
+| SetNickname | BF29 | ✓ | `es10cSetNickname` | `setNickname` | `nickname` | — |
 
 ### ES10b — download engine + notifications + info
 | Command | Tag | C | J | K | E | F |
@@ -80,16 +80,21 @@ Raw APDU can reach **every** row regardless of the higher columns.
 | LoadBoundProfilePackage | BF37 | ✓ | (inside download) | via `downloadProfile` | `download` | `downloadSubscription` |
 | ListNotification | BF28 | ✓ | `es10bListNotification` | `notifications` | `notifications` | — |
 | RetrieveNotificationsList | BF2B | ✓ | (via list) | — | — | — |
-| RemoveNotificationFromList | BF30 | ✓ | `es10bDeleteNotification` | `deleteNotification` | **—** | — |
-| HandleNotification (ES9+) | — | ✓ | `handleNotification` | `handleNotification` | **—** | (auto) |
-| GetRAT (Rules Auth Table) | BF43 | ✓ | **—** | **—** | **—** | — |
+| RemoveNotificationFromList | BF30 | ✓ | `es10bDeleteNotification` | `deleteNotification` | `remove-notification` | — |
+| HandleNotification (ES9+) | — | ✓ | `handleNotification` | `handleNotification` | `handle-notification` | (auto) |
+| GetRAT (Rules Auth Table) | BF43 | ✓ | **—** | **—** | `get-rat` (raw APDU) | — |
 | CancelSession | BF41 | ✓ | `cancelSessions` | `close` | — | — |
 
-### ES10a — address configuration  (NOT bridged above the C core)
+### ES10a — address configuration  (surfaced via raw APDU, not lpac-jni)
 | Command | Tag | C | J | K | E | F |
 |---|---|:-:|:-:|:-:|:-:|:-:|
-| GetEuiccConfiguredAddresses (default SM-DP+, root SM-DS) | BF3C | ✓ | **—** | **—** | **—** | — |
-| SetDefaultDpAddress | BF3F | ✓ | **—** | **—** | **—** | — |
+| GetEuiccConfiguredAddresses (default SM-DP+, root SM-DS) | BF3C | ✓ | **—** | **—** | `get-addresses` | — |
+| SetDefaultDpAddress | BF3F | ✓ | **—** | **—** | `set-dp-address` | — |
+
+Live-verified 2026-07-15: `get-addresses` → rootDsAddress `lpa.ds.gsma.com`,
+defaultDpAddress empty; `set-dp-address testdp.example.com` → `BF3F038001009000`
+(result 0), read back, restored to empty. Values from the raw ES10a response
+`BF3C11 810F 6C70612E64732E67736D612E636F6D 9000`.
 
 ### ES9+/ES8+/ES11 — RSP transport (network, driven internally by `downloadProfile`)
 `es9p_initiate_authentication`, `es9p_authenticate_client`,
@@ -98,20 +103,28 @@ Raw APDU can reach **every** row regardless of the higher columns.
 standalone calls — they run as the phases of a download. Full plaintext is logged
 via `HttpInterfaceImpl` (verbose) — this is the lpac path's key research advantage.
 
-## Reaching the unexposed commands (ES10a, GetRAT, memoryReset/nickname via esimctl)
-Three options, cheapest first:
-1. **Raw APDU through `ApduInterface`** — open the ISD-R channel and transmit the
-   C-APDU (`81 E2 91 00 Lc <BER-TLV>`, store-data). Observed form for GetEID is
-   `81E2910006 BF3E03 5C015A`. e.g. GetEuiccConfiguredAddresses = `81E2910003 BF3C00`;
-   SetDefaultDpAddress(BF3F) with the address as a BER-TLV payload; GetRAT =
-   `81E2910003 BF4300`. Needs a tiny helper op on `EsimCtlActivity`
-   (`withEuiccChannel{ it.apduInterface... }`) — no rebuild of lpac.
-2. **JNI extension** — add `es10aGetConfiguredAddresses` / `es10aSetDefaultDpAddress`
-   to `LpacJni.kt` + the C bridge (the C functions already exist:
-   `es10a_get_euicc_configured_addresses`, `es10a_set_default_dp_address`), surface
-   in `LocalProfileAssistant`, wire an `esimctl` op. Full rebuild.
-3. **`esimctl` op for memoryReset/nickname** — those are already in the Kotlin LPA
-   (`euiccMemoryReset`, `setNickname`); just add cases to `EsimCtlActivity.runLpac`.
+## Reaching the unexposed commands — DONE (all surfaced in esimctl)
+As of 2026-07-15 every previously-unexposed command is wired into `esimctl` and
+the `EsimCtlActivity` `lpac` backend. Two mechanisms:
+
+- **Raw ES10x over the ISD-R** (ES10a addresses, GetRAT, arbitrary `apdu`): build
+  the store-data C-APDU `81 E2 91 00 Lc <BER-TLV>` and transmit it. Forms:
+  GetEID `81E2910006 BF3E03 5C015A`; GetEuiccConfiguredAddresses `81E2910003 BF3C00`;
+  GetRAT `81E2910003 BF4300`; SetDefaultDpAddress `81E29100 Lc BF3F Lc 80 Lc <fqdn>`
+  (empty `80 00` clears it).
+- **Existing Kotlin LPA methods** (nickname, reset, remove/handle notification):
+  call `it.lpa.setNickname / euiccMemoryReset / deleteNotification / handleNotification`
+  inside `withEuiccChannel`.
+
+**Non-obvious gotcha (this cost a debug cycle):** the ISD-R is a **non-multiselectable
+applet**, and lpac keeps its one permitted logical channel open for the whole context
+lifetime. Opening a *second* channel to the ISD-R AID fails with **SW 6999**
+(`openLogicalChannel → NO_SUCH_ELEMENT_ERROR`). So the raw path does **not** call
+`withLogicalChannel`; it reflects `OmapiApduInterface.channels`, takes the already-open
+handle, and calls `transmit(handle, apdu)` on it. See `isdrExchange()` in
+`EsimCtlActivity.kt`. OMAPI's `Channel.transmit` handles 61xx GET RESPONSE, so a single
+transmit returns full data+SW; no manual chaining. No NDK/lpac rebuild was needed —
+JNI extension (option 2) was unnecessary.
 
 The ES10a address get/set is the one most relevant to the adversary model
 (manipulating the default SM-DP+ / root SM-DS the eUICC hands to the LPA).
@@ -128,6 +141,9 @@ Adversary operates at the authorization/discovery layer; the crypto core holds.
 ## Invocation quick reference
 - Local mgmt / read / download (full plaintext): `tools/esimctl/esimctl.py <op>`
   (`list eid info notifications download enable disable delete cycle`).
+- Raw ES10x / previously-unbridged: `esimctl.py <get-addresses | set-dp-address FQDN |
+  get-rat | apdu HEX | nickname N NAME | remove-notification SEQ | handle-notification SEQ |
+  reset --confirm-wipe>`.
 - Framework path: `esimctl.py --backend fw <eid|info|download|delete|switch>`.
 - Raw APDU evidence: any `esimctl` op's `sessions/esimctl/<ts>-<op>/logcat.txt`
   shows the `OmapiApduInterface: OMAPI APDU:` request/response hex.

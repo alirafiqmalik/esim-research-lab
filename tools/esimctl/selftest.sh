@@ -22,5 +22,15 @@ out=$($E --backend fw eid); rc=$?
 check "fw-eid" 0 "len(d.get('eid') or '')==32 and d.get('ok') is True"
 out=$($E --backend fw download 'LPA:1$rsp-eu.redteamobile.com$5901981126831169'); rc=$?
 check "fw-download" 2 "d.get('ok') is False and 'resultCode' in d"
+# unbridged commands surfaced via raw ES10x over the ISD-R (channel reuse)
+out=$($E apdu 81E2910006BF3E035C015A); rc=$?
+check "apdu-geteid" 0 "d.get('ok') is True and 'BF3E125A10' in (d.get('resp') or '')"
+out=$($E get-addresses); rc=$?
+check "get-addresses" 0 "d.get('ok') is True and 'rootDsAddress' in d"
+out=$($E get-rat); rc=$?
+check "get-rat" 0 "d.get('ok') is True and (d.get('resp') or '').startswith('BF43')"
+# reset must refuse to wipe without the explicit opt-in flag
+out=$($E reset); rc=$?
+check "reset-guarded" 2 "d.get('ok') is False and 'confirm-wipe' in (d.get('error') or '')"
 [ $fail -eq 0 ] && echo "ALL PASS" || echo "SOME FAILED"
 exit $fail

@@ -26,19 +26,24 @@ raw APDU/OMAPI → lpac C core → lpac-jni (LpacJni.kt) → LocalProfileAssista
 - **Scriptable now (`tools/esimctl/esimctl.py`)**: `list eid info notifications
   download enable disable delete cycle`. `--backend fw` for
   `eid info download delete switch` (stock LPA, opaque RSP).
-- **In Kotlin LPA but not esimctl**: `euiccMemoryReset`, `setNickname`,
-  `deleteNotification`, `handleNotification`. (add a case to `EsimCtlActivity.runLpac`.)
-- **In lpac C core, NOT bridged to Kotlin** (need raw APDU or a JNI add):
-  - ES10a `GetEuiccConfiguredAddresses` (BF3C) / `SetDefaultDpAddress` (BF3F) —
-    the default SM-DP+ / root SM-DS the eUICC hands the LPA. **Most relevant to the
-    adversary model.** C funcs exist: `es10a_get_euicc_configured_addresses`,
-    `es10a_set_default_dp_address`.
-  - ES10b `GetRAT` (BF43) — Rules Authorisation Table.
+- **Newly surfaced 2026-07-15** (previously unbridged — all live-verified):
+  - `get-addresses` / `set-dp-address FQDN` — ES10a BF3C / BF3F, the default
+    SM-DP+ + root SM-DS. **Most relevant to the adversary model.** rootDs =
+    `lpa.ds.gsma.com`; set/read/restore proven.
+  - `get-rat` — ES10b BF43 Rules Authorisation Table.
+  - `apdu HEX` — raw ES10x C-APDU to the ISD-R (universal escape hatch).
+  - `nickname N NAME`, `remove-notification SEQ`, `handle-notification SEQ` — Kotlin
+    LPA methods.
+  - `reset --confirm-wipe` — eUICCMemoryReset; **hard-guarded, wipes ALL profiles**.
+- **How the raw path works (non-obvious)**: the ISD-R is **non-multiselectable** and
+  lpac holds its one logical channel open, so a 2nd `openLogicalChannel` fails with
+  **SW 6999**. `isdrExchange()` reflects `OmapiApduInterface.channels`, reuses the
+  open handle, and `transmit`s on it. No NDK/lpac rebuild needed.
 - **ES9+/ES8+/ES11**: run only as internal phases of `downloadProfile`; full
   plaintext is logged (verbose) — the lpac path's research advantage over the fw path.
 
 ## Trust boundary (don't waste cycles trying to cross it)
-Root grants full **local** lifecycle + EID + raw ES10x + (C-level) address get/set.
+Root grants full **local** lifecycle + EID + raw ES10x + address get/set (now scriptable).
 It does **not** grant eUICC keys, ES8+/ES9+ crypto, or ISD-P provisioning. The
 **CI trust check lives in the secure element** (ES10b AuthenticateServer): test-CI
 SM-DP+ → rejected `8.8.4/3.7`; only production-CI (`81370F…`) installs. Confirmed

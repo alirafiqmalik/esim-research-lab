@@ -12,6 +12,8 @@ import android.util.Log
 import androidx.lifecycle.lifecycleScope
 import im.angry.openeuicc.core.EuiccChannel
 import im.angry.openeuicc.service.EuiccChannelManagerService.Companion.waitDone
+import im.angry.openeuicc.util.decodeHex
+import im.angry.openeuicc.util.encodeHex
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -27,7 +29,9 @@ import org.json.JSONObject
  *   adb shell am start -n im.angry.openeuicc/.ui.EsimCtlActivity \
  *       --es id <reqid> --es op <op> [--es backend lpac|fw] [--es code ...] [--es iccid ...]
  *
- * ops: eid info list notifications download enable disable delete reset
+ * ops: eid info list notifications download enable disable delete
+ *      nickname remove-notification handle-notification reset
+ *      apdu get-addresses set-dp-address get-rat   (raw ES10x, ISD-R store-data)
  * Result line: `ESIMCTL: <id> RESULT <json>`  (json has ok/op/... )
  */
 class EsimCtlActivity : BaseEuiccAccessActivity() {
@@ -137,9 +141,66 @@ class EsimCtlActivity : BaseEuiccAccessActivity() {
                 out.put("iccid", iccid)
                 if (err != null) throw err
             }
+            "nickname" -> {
+                val iccid = requireExtra("iccid")
+                val name = requireExtra("name")
+                euiccChannelManager.withEuiccChannel(slot, port, seId) { it.lpa.setNickname(iccid, name) }
+                out.put("iccid", iccid).put("nickname", name)
+            }
+            "remove-notification" -> {
+                val seq = requireExtra("seq").toLong()
+                val ok = euiccChannelManager.withEuiccChannel(slot, port, seId) { it.lpa.deleteNotification(seq) }
+                out.put("seq", seq).put("removed", ok)
+            }
+            "handle-notification" -> {
+                val seq = requireExtra("seq").toLong()
+                val ok = euiccChannelManager.withEuiccChannel(slot, port, seId) { it.lpa.handleNotification(seq) }
+                out.put("seq", seq).put("handled", ok)
+            }
+            "reset" -> {
+                // euiccMemoryReset() erases ALL profiles — require an explicit confirm token.
+                if (intent.getStringExtra("confirm") != "RESET")
+                    error("euiccMemoryReset wipes ALL profiles; refusing without --es confirm RESET")
+                euiccChannelManager.withEuiccChannel(slot, port, seId) { it.lpa.euiccMemoryReset() }
+                out.put("reset", true)
+            }
+            // ---- raw ES10x over the ISD-R (store-data), for commands lpac-jni does not bridge ----
+            "apdu" -> {
+                val apdu = requireExtra("hex").replace(" ", "")
+                out.put("apdu", apdu).put("resp", isdrExchange(slot, port, apdu.decodeHex()).encodeHex())
+            }
+            "get-addresses" -> // ES10a GetEuiccConfiguredAddresses (BF3C)
+                out.put("resp", isdrExchange(slot, port, storeData(byteArrayOf(0xBF.toByte(), 0x3C, 0x00))).encodeHex())
+            "get-rat" -> // ES10b GetRAT (BF43)
+                out.put("resp", isdrExchange(slot, port, storeData(byteArrayOf(0xBF.toByte(), 0x43, 0x00))).encodeHex())
+            "set-dp-address" -> { // ES10a SetDefaultDpAddress (BF3F): defaultDpAddress [0] UTF8String
+                val addr = requireExtra("address").toByteArray(Charsets.UTF_8)
+                val inner = byteArrayOf(0x80.toByte(), addr.size.toByte()) + addr
+                val cmd = byteArrayOf(0xBF.toByte(), 0x3F.toByte(), inner.size.toByte()) + inner
+                out.put("address", requireExtra("address"))
+                    .put("resp", isdrExchange(slot, port, storeData(cmd)).encodeHex())
+            }
             else -> error("unknown op: $op")
         }
     }
+
+    // Transmit one raw command APDU to the ISD-R. The ISD-R is non-multiselectable,
+    // so a second logical channel is refused (SW 6999); lpac already holds the one
+    // permitted channel open for the context lifetime — reuse that handle. OMAPI's
+    // Channel.transmit handles 61xx GET RESPONSE, so this returns data+SW.
+    private suspend fun isdrExchange(slot: Int, port: Int, apdu: ByteArray): ByteArray =
+        euiccChannelManager.withEuiccChannel(slot, port, seId) { ch ->
+            val omapi = ch.apduInterface
+            val field = omapi.javaClass.getDeclaredField("channels").apply { isAccessible = true }
+            @Suppress("UNCHECKED_CAST")
+            val handle = (field.get(omapi) as Map<Int, *>).keys.firstOrNull()
+            if (handle != null) omapi.transmit(handle, apdu)
+            else omapi.withLogicalChannel(ch.isdrAid) { it(apdu) }
+        }
+
+    // Wrap a BER-TLV payload in an ES10x STORE DATA command (81 E2 91 00 Lc <tlv>).
+    private fun storeData(tlv: ByteArray): ByteArray =
+        byteArrayOf(0x81.toByte(), 0xE2.toByte(), 0x91.toByte(), 0x00, tlv.size.toByte()) + tlv
 
     // ---- fw backend: Android framework EuiccManager ----
     private suspend fun runFramework(op: String, out: JSONObject) {
