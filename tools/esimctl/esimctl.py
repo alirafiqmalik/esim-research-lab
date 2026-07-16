@@ -497,6 +497,27 @@ def av_reset(serial, sess, args):
     return _activity(serial, sess, "reset", args.backend, confirm="RESET")
 
 
+def av_info1(serial, sess, args):
+    return _activity(serial, sess, "info1", args.backend)
+
+
+def av_challenge(serial, sess, args):
+    return _activity(serial, sess, "challenge", args.backend)
+
+
+def av_retrieve_notification(serial, sess, args):
+    return _activity(serial, sess, "retrieve-notification", args.backend, seq=args.seq)
+
+
+def av_apdu_aid(serial, sess, args):
+    return _activity(serial, sess, "apdu-aid", args.backend,
+                     aid=args.aid.replace(" ", ""), hex=args.hex.replace(" ", ""))
+
+
+def av_select_aid(serial, sess, args):
+    return _activity(serial, sess, "select-aid", args.backend, aid=args.aid.replace(" ", ""))
+
+
 ACT_OPS = {
     "list": av_read("list"), "eid": av_read("eid"), "info": av_read("info"),
     "notifications": av_read("notifications"), "download": av_download,
@@ -506,6 +527,9 @@ ACT_OPS = {
     "set-dp-address": av_set_dp_address, "nickname": av_nickname,
     "remove-notification": av_remove_notification,
     "handle-notification": av_handle_notification, "reset": av_reset,
+    "info1": av_info1, "challenge": av_challenge,
+    "retrieve-notification": av_retrieve_notification,
+    "apdu-aid": av_apdu_aid, "select-aid": av_select_aid,
 }
 
 
@@ -577,6 +601,13 @@ def main():
     rs = sub.add_parser("reset")
     rs.add_argument("--confirm-wipe", dest="confirm", action="store_true",
                     help="required: euiccMemoryReset erases ALL profiles")
+    sub.add_parser("info1")       # ES10b GetEUICCInfo1 (BF20)
+    sub.add_parser("challenge")   # ES10b GetEUICCChallenge (BF2E)
+    rnf = sub.add_parser("retrieve-notification"); rnf.add_argument("seq", help="notification seq")
+    aa = sub.add_parser("apdu-aid")
+    aa.add_argument("aid", help="applet AID (e.g. A00000015141434C00 for ARA-M)")
+    aa.add_argument("hex", help="APDU hex to send on that channel")
+    sa = sub.add_parser("select-aid"); sa.add_argument("aid", help="applet AID to SELECT (returns FCI)")
     args = ap.parse_args()
 
     serial = args.serial or os.environ.get("ESIMCTL_SERIAL") or detect_serial()

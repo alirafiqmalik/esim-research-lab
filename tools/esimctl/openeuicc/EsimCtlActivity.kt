@@ -180,6 +180,29 @@ class EsimCtlActivity : BaseEuiccAccessActivity() {
                 out.put("address", requireExtra("address"))
                     .put("resp", isdrExchange(slot, port, storeData(cmd)).encodeHex())
             }
+            "info1" -> // ES10b GetEUICCInfo1 (BF20): version + CI PKID lists, no download
+                out.put("resp", isdrExchange(slot, port, storeData(byteArrayOf(0xBF.toByte(), 0x20, 0x00))).encodeHex())
+            "challenge" -> // ES10b GetEUICCChallenge (BF2E): a fresh 16-byte SE challenge
+                out.put("resp", isdrExchange(slot, port, storeData(byteArrayOf(0xBF.toByte(), 0x2E, 0x00))).encodeHex())
+            "retrieve-notification" -> { // ES10b RetrieveNotificationsList (BF2B) by seqNumber
+                val seq = requireExtra("seq").toLong()
+                val i80 = byteArrayOf(0x80.toByte()) + der(derInt(seq))          // seqNumber [0]
+                val a0 = byteArrayOf(0xA0.toByte()) + der(i80)                    // searchCriteria [0]
+                val cmd = byteArrayOf(0xBF.toByte(), 0x2B.toByte()) + der(a0)
+                out.put("seq", seq).put("resp", isdrExchange(slot, port, storeData(cmd)).encodeHex())
+            }
+            // ---- a DIFFERENT applet: open a fresh logical channel to the given AID ----
+            // (allowed — the non-multiselectable limit is per-applet, only a 2nd ISD-R channel fails)
+            "apdu-aid" -> {
+                val aid = requireExtra("aid").replace(" ", "")
+                val apdu = requireExtra("hex").replace(" ", "")
+                out.put("aid", aid).put("apdu", apdu)
+                    .put("resp", aidExchange(slot, port, aid.decodeHex()) { it(apdu.decodeHex()) }.encodeHex())
+            }
+            "select-aid" -> { // open a channel to AID; return its SELECT response (FCI)
+                val aid = requireExtra("aid").replace(" ", "")
+                out.put("aid", aid).put("selectResponse", aidSelect(slot, port, aid.decodeHex()).encodeHex())
+            }
             else -> error("unknown op: $op")
         }
     }
@@ -201,6 +224,43 @@ class EsimCtlActivity : BaseEuiccAccessActivity() {
     // Wrap a BER-TLV payload in an ES10x STORE DATA command (81 E2 91 00 Lc <tlv>).
     private fun storeData(tlv: ByteArray): ByteArray =
         byteArrayOf(0x81.toByte(), 0xE2.toByte(), 0x91.toByte(), 0x00, tlv.size.toByte()) + tlv
+
+    // BER short-form length + value (payloads here are always < 128 bytes).
+    private fun der(value: ByteArray): ByteArray = byteArrayOf(value.size.toByte()) + value
+
+    // Minimal positive DER INTEGER content bytes (prepend 0x00 if the top bit is set).
+    private fun derInt(v: Long): ByteArray {
+        if (v == 0L) return byteArrayOf(0)
+        val bytes = ArrayDeque<Byte>()
+        var n = v
+        while (n > 0) { bytes.addFirst((n and 0xFF).toByte()); n = n shr 8 }
+        if (bytes.first().toInt() and 0x80 != 0) bytes.addFirst(0)
+        return bytes.toByteArray()
+    }
+
+    // Open a FRESH logical channel to an arbitrary AID (ECASD, ARA-M, ISD-P …) and
+    // run a callback on it. Selecting a different applet is allowed even while the
+    // ISD-R channel is held — the non-multiselectable limit is per-applet.
+    private suspend fun <T> aidExchange(slot: Int, port: Int, aid: ByteArray,
+                                        cb: ((ByteArray) -> ByteArray) -> T): T =
+        euiccChannelManager.withEuiccChannel(slot, port, seId) { ch ->
+            ch.apduInterface.withLogicalChannel(aid, cb)
+        }
+
+    // Open a channel to an AID and return its SELECT response (FCI) via the OMAPI Channel.
+    private suspend fun aidSelect(slot: Int, port: Int, aid: ByteArray): ByteArray =
+        euiccChannelManager.withEuiccChannel(slot, port, seId) { ch ->
+            val omapi = ch.apduInterface
+            val handle = omapi.logicalChannelOpen(aid)
+            try {
+                val field = omapi.javaClass.getDeclaredField("channels").apply { isAccessible = true }
+                @Suppress("UNCHECKED_CAST")
+                val channel = (field.get(omapi) as Map<Int, *>).getValue(handle)!!
+                channel.javaClass.getMethod("getSelectResponse").invoke(channel) as ByteArray
+            } finally {
+                omapi.logicalChannelClose(handle)
+            }
+        }
 
     // ---- fw backend: Android framework EuiccManager ----
     private suspend fun runFramework(op: String, out: JSONObject) {
