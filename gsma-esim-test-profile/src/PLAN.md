@@ -46,6 +46,32 @@ bind it to the eUICC over a session the eUICC's ISD-R authenticates.
   already reproduced against test-CI servers. The profile content never matters,
   because the handshake dies first.
 
+## Update — Google's production SM-DP+ path (tried live, 2026-07-19)
+
+Google hosts the TS.48 profiles OTA on a **production** SM-DP+
+(`prod.smdp-plus.rsp.goog`, per the AOSP eSIM-test-profiles page), with real
+activation codes e.g. `1$prod.smdp-plus.rsp.goog$3TD6-8L82-HUE1-LVN6`
+(SAIP2.1_NoBERTLV). We tried it on our production eUICC and got **further than any
+test-CI path, but it still fails** — the wall just moves to the other end:
+
+1. **TLS wall first.** lpac doesn't bundle Google's SM-DP+ TLS CA →
+   `SSLHandshakeException: Trust anchor … not found`. Bypassable with OpenEUICC's
+   **`ignore_tls_certificate`** datastore pref (dev option). Reverted afterward.
+2. **After the bypass we reach the real RSP layer** (HTTP 200). The server then
+   **refuses our eUICC at `initiateAuthentication`** with SGP.22
+   **`8.8.2 / 3.1` "Execution Failed"** — *before* the matchingId/profile is ever
+   evaluated (so all four codes fail identically).
+3. **Why:** at that step the server sees `euiccInfo1`, whose CI-PKID list contains
+   **only the production CI** (`81370F…`), no test CI. Google's TS.48 SM-DP+ only
+   serves eUICCs that trust the **GSMA test CI (SGP.26)** — the precondition the AOSP
+   docs state ("a device with a test certificate issued by a GSMA CI").
+
+**Net:** the CI-trust wall is **bidirectional**. A test-CI SM-DP+ is rejected by our
+eUICC (`8.8.4/3.7`, eUICC-side); a production-CI SM-DP+ that requires a test eUICC
+rejects us (`8.8.2/3.1`, server-side). A retail production eUICC gets the GTP by
+**neither** path. The AOSP claim that these "work on a Pixel 7a" holds only for
+**test/engineering eUICCs**, not the retail production eUICC in this device.
+
 ## The one path that would actually work
 
 You need an eUICC that **trusts the test CI** — i.e. a **test eUICC** (SGP.26
