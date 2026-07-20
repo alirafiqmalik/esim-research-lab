@@ -468,10 +468,6 @@ def av_get_addresses(serial, sess, args):
     return r
 
 
-def av_get_rat(serial, sess, args):
-    return _activity(serial, sess, "get-rat", args.backend)
-
-
 def av_set_dp_address(serial, sess, args):
     return _activity(serial, sess, "set-dp-address", args.backend, address=args.address)
 
@@ -509,14 +505,6 @@ def av_authenticate(serial, sess, args):
                      raise_on_fail=False, server=args.server)
 
 
-def av_info1(serial, sess, args):
-    return _activity(serial, sess, "info1", args.backend)
-
-
-def av_challenge(serial, sess, args):
-    return _activity(serial, sess, "challenge", args.backend)
-
-
 def av_retrieve_notification(serial, sess, args):
     return _activity(serial, sess, "retrieve-notification", args.backend, seq=args.seq)
 
@@ -544,11 +532,11 @@ ACT_OPS = {
     "notifications": av_read("notifications"), "download": av_download,
     "enable": av_switch(True), "disable": av_switch(False), "delete": av_delete,
     "cycle": av_cycle,
-    "apdu": av_apdu, "get-addresses": av_get_addresses, "get-rat": av_get_rat,
+    "apdu": av_apdu, "get-addresses": av_get_addresses, "get-rat": av_read("get-rat"),
     "set-dp-address": av_set_dp_address, "nickname": av_nickname,
     "remove-notification": av_remove_notification,
     "handle-notification": av_handle_notification, "reset": av_reset,
-    "info1": av_info1, "challenge": av_challenge, "discovery": av_discovery,
+    "info1": av_read("info1"), "challenge": av_read("challenge"), "discovery": av_discovery,
     "authenticate": av_authenticate,
     "retrieve-notification": av_retrieve_notification,
     "apdu-aid": av_apdu_aid, "select-aid": av_select_aid,
