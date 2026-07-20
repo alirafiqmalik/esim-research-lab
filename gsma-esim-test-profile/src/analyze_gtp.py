@@ -10,6 +10,7 @@ Run: python3 analyze_gtp.py
 """
 from __future__ import annotations
 import re
+from collections import Counter
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -55,9 +56,8 @@ def analyze_variant(variant: str) -> GtpSummary:
     ver = re.search(r"major-version\s+(\d+),\s+minor-version\s+(\d+)", txt)
     s.saip_version = f"{ver.group(1)}.{ver.group(2)}" if ver else None
 
-    s.pe_counts = {}
-    for m in re.finditer(r"^value\d+ ProfileElement ::= ([A-Za-z-]+)", txt, re.M):
-        s.pe_counts[m.group(1)] = s.pe_counts.get(m.group(1), 0) + 1
+    s.pe_counts = dict(Counter(
+        m.group(1) for m in re.finditer(r"^value\d+ ProfileElement ::= ([A-Za-z-]+)", txt, re.M)))
     s.has_rfm = s.pe_counts.get("rfm", 0) > 0
 
     ef_imsi = re.search(r"ef-imsi\s*\{.*?fillFileContent\s*:\s*'([0-9A-Fa-f]+)'H", txt, re.S)
