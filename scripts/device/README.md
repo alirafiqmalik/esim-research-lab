@@ -22,7 +22,7 @@ tools/keep_phone_awake.sh off
 
 Sets `svc power stayon false` and `screen_off_timeout` back to 30000 ms.
 
-## Automatic start
+## Usage
 
-`.claude/settings.json` runs this script on `SessionStart`. After editing the
-hook, open `/hooks` once or restart the session so the watcher picks it up.
+Run this script manually before a capture or testbed session, or wire it into
+your own startup hook, to keep the device awake and the keyguard clear.

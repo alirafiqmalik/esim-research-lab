@@ -18,7 +18,7 @@ op is broken on the default backend.
 
 | # | Capability | Result | Evidence |
 |---|-----------|--------|----------|
-| 1 | keep-awake + SessionStart hook | **PASS** | `keep_phone_awake` → `Awake`, keyguard clear; hook present in `.claude/settings.json` |
+| 1 | keep-awake | **PASS** | `keep_phone_awake` → `Awake`, keyguard clear |
 | 2 | esimctl lpac: list/eid/info/notifications | **PASS** | exit 0, `ok:true`, each wrote `.sessions/esimctl/<ts>-<op>/logcat.txt` |
 | 2 | esimctl lpac: download (RedteaGO) | **PASS** | exit 0, `ok:false`, 6 RSP msgs, final `Failed 9.4/10.1` captured |
 | 2 | esimctl lpac: enable 1 / disable 1 | **PASS** | operator→`BetterRoaming` then `ABSENT,NOT_READY`; reversible |

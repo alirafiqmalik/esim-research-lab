@@ -6,9 +6,8 @@ against the lpac C source, the lpac-jni bridge, OpenEUICC's Kotlin API,
 `esimctl`, and the live device. The frontier ops (rows once marked exploratory)
 now ship in the tool; they are folded in below as **implemented**.
 
-Companion: `docs/reference/euicc-api-capability-map.md` (higher-level narrative)
-and the fast index `.claude/notes/euicc-api-surface.md`. This file is the detailed
-lookup table.
+Companion: `docs/reference/euicc-api-capability-map.md` (higher-level narrative).
+This file is the detailed lookup table.
 
 ## Device / stack ground truth
 - Pixel 7a (lynx), Android 17 `user` build, arm64, Samsung S.LSI RIL, Magisk root.

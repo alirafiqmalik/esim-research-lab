@@ -32,7 +32,5 @@ source-verified eUICC API layer map (command → APDU tag → exposure).
 
 - `diagrams/` — RSP flow diagrams (`.dot` sources + rendered `.png`/`.svg`).
 - `msd/` — message-sequence diagram for RSP download.
-- `superpowers/` — specs and plans (`specs/`, `plans/`).
 - `archive/` — frozen historical notes.
-- `.claude/notes/euicc-api-surface.md` — fast index into the eUICC API surface.
 </content>

@@ -20,5 +20,5 @@ cat <<EOF
 
 Note: Android 7+ does not trust user CA certs for apps targeting API 24+.
 If ES9+/ES11 flows do not appear in mitmproxy after triggering eSIM activity,
-the LPA is enforcing TLS pinning. Update .claude/notes/tls-pinning-status.md.
+the LPA is enforcing TLS pinning.
 EOF

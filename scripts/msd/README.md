@@ -37,9 +37,8 @@ Failure paths render dashed/red and stop at the aborting message (e.g. test-CI
 - `docs/diagrams/rsp-truphone-success.{dot,svg,png}` — production-CI full download
 - `docs/diagrams/rsp-sysmocom-testci-fail.{dot,svg,png}` — test-CI rejection
 
-## Wiring into the MSD skill / a hook
+## Auto-rendering
 
-`rsp_to_msd.py` is the parser/renderer the MSD skill can call to turn a capture
-into a diagram. To auto-render on new captures, a `PostToolUse`/manual hook can run
-`render_msd.sh` against new `sessions/*/capture.txt`; not installed here to avoid
-colliding with the existing `SessionStart` hook in `.claude/settings.json`.
+`rsp_to_msd.py` is the parser/renderer that turns a capture into a diagram. To
+auto-render on new captures, run `render_msd.sh` against new
+`.sessions/*/capture.txt` from your own hook or cron; not installed here.

@@ -1,8 +1,7 @@
 // SGP.22 RSP profile download — message sequence diagram.
-// Source notes: sessions/betterroaming-live-rsp-20260629/decoded_handshake.txt
-//               .claude/notes/openeuicc-experiments.md
-// Render:  tools/msd/render.sh docs/msd/rsp-download.dot
-// Verify:  tools/msd/analyze.sh docs/msd/rsp-download.dot
+// Source notes: .sessions/betterroaming-live-rsp-20260629/decoded_handshake.txt
+// Render:  scripts/msd/render.sh docs/msd/rsp-download.dot
+// Verify:  scripts/msd/analyze.sh docs/msd/rsp-download.dot
 digraph RSP {
   rankdir=TB; labelloc=t; fontname="Helvetica";
   label="SGP.22 Consumer RSP — Common Mutual Authentication + Profile Download";

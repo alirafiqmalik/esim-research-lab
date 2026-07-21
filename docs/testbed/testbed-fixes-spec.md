@@ -1,7 +1,7 @@
 # Testbed fixes — implementation spec
 
 Implement exactly this. No design decisions left open. Targets the issues in
-`docs/testbed/testbed-evaluation.md`. Keep changes minimal; match `.claude/rules/code-style.md`
+`docs/testbed/testbed-evaluation.md`. Keep changes minimal; match the project code style
 (Python 3.12+, type hints on public sigs, raise on error, `subprocess.run(...,
 capture_output=True, text=True, timeout=30)` for adb, no `print()` in library code —
 `esimctl.py`'s CLI `main`/ops may print JSON, that is the CLI boundary).
