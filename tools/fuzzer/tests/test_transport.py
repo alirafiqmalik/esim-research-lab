@@ -25,16 +25,19 @@ def _transport() -> EuiccTransport:
     return EuiccTransport(repo_root=Path("/repo"), python_executable="python3")
 
 
-def test_parses_ok_json_into_apdu_result() -> None:
-    payload = {"resp": "BF3E035C015A9000", "sw": "9000", "ok": True, "extra": 1}
+def test_parses_real_cli_shape_deriving_sw_from_resp() -> None:
+    # The real `esim euicc apdu` output: full ISD-R response in "resp" (SW = its
+    # trailing 2 bytes), an "ok" flag, and no separate "sw" key.
+    payload = {"op": "apdu", "backend": "lpac", "slot": 0, "port": 0,
+               "resp": "BF3E125A10890330234271000000000271438668169000", "ok": True}
     with patch("euicc_transport.subprocess.run", return_value=_proc(stdout=json.dumps(payload))) as run:
         result = _transport().send("81E2910006BF3E035C015A")
 
     assert isinstance(result, ApduResult)
-    assert result.resp_hex == "BF3E035C015A9000"
-    assert result.sw == "9000"
+    assert result.resp_hex == payload["resp"]
+    assert result.sw == "9000"  # derived from resp[-4:]
     assert result.ok is True
-    assert result.raw["extra"] == 1
+    assert result.raw["backend"] == "lpac"
 
     cmd = run.call_args.args[0]
     assert cmd == ["python3", "-m", "esim.cli", "euicc", "apdu", "81E2910006BF3E035C015A"]
@@ -45,11 +48,19 @@ def test_parses_ok_json_into_apdu_result() -> None:
 
 
 def test_ok_false_is_still_parsed() -> None:
-    payload = {"resp": "6A80", "sw": "6A80", "ok": False}
+    payload = {"resp": "6A80", "ok": False}
     with patch("euicc_transport.subprocess.run", return_value=_proc(stdout=json.dumps(payload))):
         result = _transport().send("81E2910003BF2000")
     assert result.ok is False
     assert result.sw == "6A80"
+
+
+def test_explicit_sw_key_is_honoured() -> None:
+    # If a future CLI shape provides an explicit "sw", it wins over the resp tail.
+    payload = {"resp": "AAAA1234", "sw": "9000", "ok": True}
+    with patch("euicc_transport.subprocess.run", return_value=_proc(stdout=json.dumps(payload))):
+        result = _transport().send("81E2910003BF2000")
+    assert result.sw == "9000"
 
 
 def test_nonzero_exit_raises() -> None:
@@ -70,9 +81,10 @@ def test_empty_output_raises() -> None:
             _transport().send("81E2910003BF2000")
 
 
-def test_missing_key_raises() -> None:
+def test_missing_required_key_raises() -> None:
+    # "ok" is required; "sw" is not (it is derived). Missing "ok" must raise.
     with patch("euicc_transport.subprocess.run", return_value=_proc(stdout=json.dumps({"resp": "9000"}))):
-        with pytest.raises(TransportError, match="missing"):
+        with pytest.raises(TransportError, match="missing 'ok'"):
             _transport().send("81E2910003BF2000")
 
 

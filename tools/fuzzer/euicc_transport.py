@@ -87,13 +87,19 @@ class EuiccTransport:
         if not isinstance(data, dict):
             raise TransportError(f"CLI JSON is not an object: {text!r}")
 
-        for key in ("resp", "sw", "ok"):
+        for key in ("resp", "ok"):
             if key not in data:
                 raise TransportError(f"CLI JSON missing {key!r}: {text!r}")
 
+        # `esim euicc apdu` returns the full ISD-R response with the status word
+        # as its trailing 2 bytes and no separate "sw" key; honour an explicit
+        # "sw" if a future CLI shape provides one.
+        resp_hex = str(data["resp"])
+        sw = str(data["sw"]) if "sw" in data else resp_hex[-4:]
+
         return ApduResult(
-            resp_hex=str(data["resp"]),
-            sw=str(data["sw"]),
+            resp_hex=resp_hex,
+            sw=sw,
             ok=bool(data["ok"]),
             raw=data,
         )
