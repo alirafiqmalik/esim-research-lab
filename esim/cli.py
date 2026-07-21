@@ -125,7 +125,7 @@ def analyze(session_path: str) -> None:
 
 
 @main.command()
-@click.option("--out", "out_dir", default="sessions", show_default=True, type=click.Path())
+@click.option("--out", "out_dir", default=".sessions", show_default=True, type=click.Path())
 @click.pass_context
 def bugreport(ctx, out_dir: str) -> None:
     """Capture a telephony bugreport."""

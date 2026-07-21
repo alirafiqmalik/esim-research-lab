@@ -2,7 +2,7 @@
 # Extract the ordered message list from an MSD .dot for correctness-checking
 # against the source notes. Prints: seq  sender -> receiver  : label
 # Message edges MUST carry kind="msg" and seq="<n>"; lifelines use kind="life".
-# Usage: tools/msd/analyze.sh path/to/diagram.dot
+# Usage: scripts/msd/analyze.sh path/to/diagram.dot
 set -euo pipefail
 
 DOT="${1:?usage: analyze.sh <file.dot>}"

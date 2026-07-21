@@ -14,8 +14,8 @@ from collections import Counter
 from dataclasses import dataclass, field
 from pathlib import Path
 
-PKG = Path(__file__).resolve().parents[1] / \
-    "TS.48-v7.1-Generic-eUICC-Test-Profile-for-DevicTesting" / "TS48 V7.0 eSIM_GTP_SAIP2.3"
+PKG = Path(__file__).resolve().parents[2] / \
+    "assets" / "ts48-test-profile" / "TS48 V7.0 eSIM_GTP_SAIP2.3"
 VARIANTS = ("BERTLV_SUCI", "BERTLV_SUCI_NoRAMRFM", "NoBERTLV", "NoBERTLV_NoRAMRFM")
 
 

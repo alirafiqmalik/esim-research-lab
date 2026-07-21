@@ -20,7 +20,7 @@ from pathlib import Path
 
 SRC = Path(__file__).resolve()
 ESIMCTL = SRC.parents[2] / "tools" / "esimctl" / "esimctl.py"
-DER = SRC.parents[1] / "TS.48-v7.1-Generic-eUICC-Test-Profile-for-DevicTesting" / \
+DER = SRC.parents[2] / "assets" / "ts48-test-profile" / \
     "TS48 V7.0 eSIM_GTP_SAIP2.3" / "TS48 V7.0 eSIM_GTP_SAIP2.3_NoBERTLV.rename2der"
 
 SW = {  # common ISO-7816 / SGP.22 status words we might see

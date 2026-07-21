@@ -9,7 +9,7 @@ PC_IP=$(ip -4 addr show "$IFACE" 2>/dev/null | grep -oP '(?<=inet )\d+\.\d+\.\d+
 cat <<EOF
 === mitmproxy CA Certificate — Installation Steps ===
 
-1. Run the hotspot:        ./tools/setup_hotspot.sh
+1. Run the hotspot:        ./scripts/setup/setup_hotspot.sh
 2. Start mitmproxy:        mitmdump --listen-port $PORT
 3. Connect phone to the 'esim-research' Wi-Fi network.
 4. On phone: Settings → Wi-Fi → long-press network → Modify

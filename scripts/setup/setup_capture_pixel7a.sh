@@ -10,17 +10,17 @@ set -euo pipefail
 SERIAL="${1:-${ESIMCTL_SERIAL:-$(adb devices | awk '$2=="device"{print $1;exit}')}}"
 PORT="${2:-8083}"
 CONFDIR="${HOME}/.mitmproxy"
-SESS="sessions/pixel7a-$(date +%Y%m%d)"
+SESS=".sessions/pixel7a-$(date +%Y%m%d)"
 ADB="adb -s ${SERIAL}"
 
 mkdir -p "${SESS}"
 
 # 1. CA cert into the system trust store (Android 14+ conscrypt APEX).
 HASH=$(openssl x509 -inform PEM -subject_hash_old -noout -in "${CONFDIR}/mitmproxy-ca-cert.pem")
-cp "${CONFDIR}/mitmproxy-ca-cert.pem" "/tmp/${HASH}.0" 2>/dev/null || cp "${CONFDIR}/mitmproxy-ca-cert.pem" "./tmp/${HASH}.0"
-SRC="/tmp/${HASH}.0"; [ -f "$SRC" ] || SRC="./tmp/${HASH}.0"
+cp "${CONFDIR}/mitmproxy-ca-cert.pem" "/tmp/${HASH}.0" 2>/dev/null || cp "${CONFDIR}/mitmproxy-ca-cert.pem" "./.temp/${HASH}.0"
+SRC="/tmp/${HASH}.0"; [ -f "$SRC" ] || SRC="./.temp/${HASH}.0"
 ${ADB} push "${SRC}" "/data/local/tmp/${HASH}.0"
-${ADB} push tools/install_system_cert.sh /data/local/tmp/install_system_cert.sh
+${ADB} push scripts/device/install_system_cert.sh /data/local/tmp/install_system_cert.sh
 ${ADB} shell "su -c 'sh /data/local/tmp/install_system_cert.sh ${HASH}.0'"
 
 # 2. USB reverse tunnel: device 127.0.0.1:PORT -> laptop mitmproxy.

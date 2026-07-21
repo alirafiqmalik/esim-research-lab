@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Keep the connected Android phone awake and unlocked while we work.
 # Usage:
-#   tools/keep_phone_awake.sh        # keep awake (idempotent)
-#   tools/keep_phone_awake.sh off    # restore sane defaults
+#   scripts/device/keep_phone_awake.sh        # keep awake (idempotent)
+#   scripts/device/keep_phone_awake.sh off    # restore sane defaults
 #
 # We never touch the lock credential. We only keep the screen on so the
 # keyguard does not re-engage after the user unlocks once.

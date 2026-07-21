@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Validate + render a Graphviz message-sequence-diagram (.dot) to SVG and PNG.
-# Usage: tools/msd/render.sh path/to/diagram.dot
+# Usage: scripts/msd/render.sh path/to/diagram.dot
 set -euo pipefail
 
 DOT="${1:?usage: render.sh <file.dot>}"

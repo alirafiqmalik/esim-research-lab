@@ -1,6 +1,6 @@
 // Message Sequence Diagram — Graphviz DOT template.
-// Time flows top->bottom; actors are columns. Render: tools/msd/render.sh this.dot
-// Verify:                                              tools/msd/analyze.sh this.dot
+// Time flows top->bottom; actors are columns. Render: scripts/msd/render.sh this.dot
+// Verify:                                              scripts/msd/analyze.sh this.dot
 //
 // CONVENTIONS (enforced by the notes-to-msd skill):
 //   * actor header node:  role="actor"

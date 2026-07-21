@@ -12,7 +12,7 @@ No LLM required. Compose ops in shell/python to run sequences:
 
 Every op starts full logcat capture BEFORE it runs and, for RSP ops, attaches
 the OpenEUICC verbose ES9+/APDU plaintext hook — writing per-op logs under
-sessions/esimctl/<ts>-<op>/. Output is JSON on stdout; exit code 0 = ok.
+.sessions/esimctl/<ts>-<op>/. Output is JSON on stdout; exit code 0 = ok.
 
 Backends:
   lpac  (default) — drives our privileged OpenEUICC (full plaintext logging)
@@ -37,7 +37,7 @@ from uidriver import Ui, UiError
 REPO = Path(__file__).resolve().parents[2]
 PKG = "im.angry.openeuicc"
 MAIN = f"{PKG}/.ui.PrivilegedMainActivity"
-SESS_BASE = REPO / "sessions" / "esimctl"
+SESS_BASE = REPO / ".sessions" / "esimctl"
 VERBOSE_TAGS = ("HttpInterfaceImpl", "OmapiApduInterface", "TelephonyManagerApduInterface",
                 "EuiccChannelManager", "app_process64", "EuiccGoogle")
 
@@ -268,13 +268,13 @@ def op_delete(serial, sess, args):
 # ------------------------------ frida RSP hook ------------------------------
 
 def _attach_frida(serial: str, sess: Session):
-    r = subprocess.run(["bash", str(REPO / "tools/frida/ensure_frida.sh")],
+    r = subprocess.run(["bash", str(REPO / "scripts/frida/ensure_frida.sh")],
                        capture_output=True, text=True, env={**os.environ, "ESIMCTL_SERIAL": serial})
     if r.returncode != 0:
         raise RuntimeError(f"frida-server not ready: {r.stderr.strip()}")
     out = open(sess.dir / "frida.txt", "w")
     p = subprocess.Popen(
-        f"tail -f /dev/null | frida -U -n {PKG} -l {REPO}/tools/frida/google_lpa_rsp.js "
+        f"tail -f /dev/null | frida -U -n {PKG} -l {REPO}/scripts/frida/google_lpa_rsp.js "
         f"--runtime=v8 -q", shell=True, stdout=out, stderr=subprocess.STDOUT)
     time.sleep(4)
     return p
@@ -363,7 +363,7 @@ def av_switch(enable):
 
 def protected_iccids() -> set[str]:
     vals = set(filter(None, os.environ.get("ESIMCTL_PROTECTED_ICCIDS", "").split(",")))
-    f = REPO / "tools/esimctl/protected_iccids.txt"
+    f = REPO / "testbed/protected_iccids.txt"
     if f.exists():
         vals |= {ln.strip() for ln in f.read_text().splitlines()
                  if ln.strip() and not ln.startswith("#")}
@@ -633,7 +633,7 @@ def main():
     args = ap.parse_args()
 
     serial = args.serial or os.environ.get("ESIMCTL_SERIAL") or detect_serial()
-    subprocess.run(["bash", str(REPO / "tools/keep_phone_awake.sh")],
+    subprocess.run(["bash", str(REPO / "scripts/device/keep_phone_awake.sh")],
                    capture_output=True)  # ensure awake/unlocked
     # ui backend = OpenEUICC UI automation; lpac/fw = headless EsimCtlActivity
     table = OPS if args.backend == "ui" else ACT_OPS

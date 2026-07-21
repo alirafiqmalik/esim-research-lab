@@ -7,7 +7,7 @@
 # failures print the exact command to fix and exit non-zero.
 set -u
 
-REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 SERIAL="${ESIMCTL_SERIAL:-$(adb devices | awk '$2=="device"{print $1;exit}')}"
 OPENEUICC_DIR="${OPENEUICC_DIR:-$REPO/../OpenEUICC}"
 ANDROID_SDK="${ANDROID_SDK:-${ANDROID_HOME:-/opt/android-sdk}}"
@@ -44,11 +44,11 @@ else
 fi
 
 echo "== step 2: apply EsimCtlActivity patch =="
-cp "$REPO/tools/esimctl/openeuicc/EsimCtlActivity.kt" \
+cp "$REPO/testbed/openeuicc/EsimCtlActivity.kt" \
    "$OPENEUICC_DIR/app/src/main/java/im/angry/openeuicc/ui/EsimCtlActivity.kt" || die "patch copy failed"
 # frontier patch: ES11 discovery + AuthenticateServer JNI + card wrapper override
 if ! grep -q es11Discovery "$OPENEUICC_DIR/libs/lpac-jni/src/main/jni/lpac-jni/lpac-jni.c" 2>/dev/null; then
-  git -C "$OPENEUICC_DIR" apply "$REPO/tools/esimctl/openeuicc/es11-discovery.patch" \
+  git -C "$OPENEUICC_DIR" apply "$REPO/testbed/openeuicc/es11-discovery.patch" \
     || die "es11-discovery.patch failed to apply"
 else
   echo "es11-discovery.patch already applied, skipping"
@@ -124,16 +124,16 @@ fi
 echo "== step 6: frida-server =="
 FRIDA_VERSION="${FRIDA_VERSION:-$(frida --version)}"
 if ! $ADB shell "su -c 'ls /data/local/tmp/frida-server'" >/dev/null 2>&1; then
-  mkdir -p "$REPO/tmp"
+  mkdir -p "$REPO/.temp"
   URL="https://github.com/frida/frida/releases/download/${FRIDA_VERSION}/frida-server-${FRIDA_VERSION}-android-arm64.xz"
-  curl -fL "$URL" -o "$REPO/tmp/frida-server.xz" || die "download failed: $URL"
-  unxz -f "$REPO/tmp/frida-server.xz" || die "unxz failed"
-  $ADB push "$REPO/tmp/frida-server" /data/local/tmp/frida-server || die "push frida-server failed"
+  curl -fL "$URL" -o "$REPO/.temp/frida-server.xz" || die "download failed: $URL"
+  unxz -f "$REPO/.temp/frida-server.xz" || die "unxz failed"
+  $ADB push "$REPO/.temp/frida-server" /data/local/tmp/frida-server || die "push frida-server failed"
   $ADB shell su -c 'chmod 755 /data/local/tmp/frida-server' || die "chmod frida-server failed"
 else
   echo "frida-server already present on device, skipping download"
 fi
-bash "$REPO/tools/frida/ensure_frida.sh" || die "frida-server not healthy"
+bash "$REPO/scripts/frida/ensure_frida.sh" || die "frida-server not healthy"
 
 echo "== step 7: datastore prefs =="
 python3 - "$REPO" <<'PYEOF'
@@ -169,12 +169,12 @@ out += map_entry("developer_options_enabled", bool_value_message(True))
 out += map_entry("verbose_logging", bool_value_message(True))
 
 repo = pathlib.Path(sys.argv[1])
-dest = repo / "tmp" / "prefs.preferences_pb"
+dest = repo / ".temp" / "prefs.preferences_pb"
 dest.parent.mkdir(parents=True, exist_ok=True)
 dest.write_bytes(out)
 print(f"wrote {dest} ({len(out)} bytes)")
 PYEOF
-$ADB push "$REPO/tmp/prefs.preferences_pb" /data/local/tmp/prefs.preferences_pb || die "push prefs failed"
+$ADB push "$REPO/.temp/prefs.preferences_pb" /data/local/tmp/prefs.preferences_pb || die "push prefs failed"
 $ADB shell su -c 'mkdir -p /data/data/im.angry.openeuicc/files/datastore' || die "mkdir datastore failed"
 $ADB shell su -c 'cp /data/local/tmp/prefs.preferences_pb /data/data/im.angry.openeuicc/files/datastore/prefs.preferences_pb' || die "cp prefs failed"
 APP_UID=$($ADB shell su -c 'stat -c %u /data/data/im.angry.openeuicc' | tr -d '\r\n')
@@ -191,7 +191,7 @@ $ADB shell "su -c 'settings put global hidden_api_policy 1'" || die "hidden_api_
 $ADB shell am force-stop im.angry.openeuicc
 
 echo "== step 9: keep awake + verify =="
-bash "$REPO/tools/keep_phone_awake.sh" || die "keep_phone_awake failed"
-bash "$REPO/tools/esimctl/selftest.sh" || die "selftest failed"
+bash "$REPO/scripts/device/keep_phone_awake.sh" || die "keep_phone_awake failed"
+bash "$REPO/testbed/selftest.sh" || die "selftest failed"
 
 echo "TESTBED READY"

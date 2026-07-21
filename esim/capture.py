@@ -27,7 +27,7 @@ class CaptureSession:
 class Capture:
     def __init__(self, device: Device, port: int = 8080,
                  filters: list[str] | None = None,
-                 sessions_root: Path | str = "sessions"):
+                 sessions_root: Path | str = ".sessions"):
         self.device = device
         self.port = port
         self.filters = filters or ["ES9+", "ES11"]

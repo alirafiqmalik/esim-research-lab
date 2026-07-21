@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -u
-cd "$(dirname "$0")"
+cd "$(dirname "$0")/../tools/esimctl"
 E="python3 esimctl.py"
 fail=0
 check() { # name  expected_exit  jq_filter  (reads stdin json)
