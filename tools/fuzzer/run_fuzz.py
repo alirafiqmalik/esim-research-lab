@@ -51,7 +51,13 @@ def _parse_args(argv: list[str]) -> tuple[argparse.Namespace, list[str]]:
 
 
 def _build_engine(args: argparse.Namespace) -> FuzzEngine:
-    transport = EuiccTransport(repo_root=args.repo_root) if args.live else None
+    # The eUICC CLI (`esim.cli`) runs under the system python that has its deps
+    # (click); the fuzzer's own venv does not, so pin the transport interpreter.
+    transport = (
+        EuiccTransport(repo_root=args.repo_root, python_executable="python3")
+        if args.live
+        else None
+    )
     return FuzzEngine(
         live=args.live,
         allow_destructive=args.allow_destructive,

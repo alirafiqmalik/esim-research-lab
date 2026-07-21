@@ -226,9 +226,12 @@ class NoveltyEngine:
         if is_new_signature:
             novelty.append(NOVELTY_NEW_SIGNATURE)
 
-        interesting = is_new_signature or bool(
-            set(novelty) - {NOVELTY_NEW_SIGNATURE}
-        )
+        # A behaviour is worth logging only when its signature (command, SW,
+        # response shape) is new. The unexpected reasons above annotate WHY it is
+        # interesting, but they are properties of the signature — logging them on
+        # every repeat would flood the JSONL with duplicate behaviours. Dedup by
+        # signature so each distinct behaviour is written exactly once.
+        interesting = is_new_signature
 
         # Commit state after deciding novelty.
         self.seen_signatures.add(signature)
