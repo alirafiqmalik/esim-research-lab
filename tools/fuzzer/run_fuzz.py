@@ -20,19 +20,26 @@ from euicc_transport import EuiccTransport
 
 _DEFAULT_SEEDS = Path(__file__).resolve().parent / "seeds"
 _REPO_ROOT = Path(__file__).resolve().parents[2]
+_DEFAULT_OUT = Path(__file__).resolve().parent / "out" / "deep_unique.jsonl"
+_DEFAULT_SUMMARY = Path(__file__).resolve().parent / "out" / "summary.json"
 
 log = logging.getLogger("fuzzer.run")
 
 
 def _parse_args(argv: list[str]) -> tuple[argparse.Namespace, list[str]]:
     parser = argparse.ArgumentParser(description="eUICC APDU fuzzer (gated).")
-    parser.add_argument("--mode", choices=("prefix", "afl", "grammar"), required=True)
+    parser.add_argument("--mode", choices=("prefix", "afl", "grammar", "deep"), required=True)
     posture = parser.add_mutually_exclusive_group()
     posture.add_argument("--dry-run", dest="live", action="store_false", default=False)
     posture.add_argument("--live", dest="live", action="store_true")
     parser.add_argument("--seeds", type=Path, default=_DEFAULT_SEEDS)
     parser.add_argument("--repo-root", type=Path, default=_REPO_ROOT)
     parser.add_argument("--max-candidates", type=int, default=512)
+    # Deep-campaign options (used only by --mode deep).
+    parser.add_argument("--out", type=Path, default=_DEFAULT_OUT)
+    parser.add_argument("--summary", type=Path, default=_DEFAULT_SUMMARY)
+    parser.add_argument("--wall", type=int, default=300)
+    parser.add_argument("--send-cap", dest="send_cap", type=int, default=None)
     parser.add_argument(
         "--i-understand-destructive",
         dest="allow_destructive",
@@ -62,6 +69,21 @@ def main(argv: list[str]) -> int:
         log.info("DRY-RUN: enumerating and classifying only, nothing is sent.")
 
     engine = _build_engine(args)
+
+    if args.mode == "deep":
+        import deep_campaign
+
+        phase = "live" if args.live else "dry"
+        summary = deep_campaign.build_and_run(
+            out_path=args.out,
+            summary_path=args.summary,
+            phase=phase,
+            engine=engine,
+            wall=args.wall,
+            send_cap=args.send_cap,
+        )
+        log.info("deep campaign summary: %s", summary)
+        return 0
 
     if args.mode == "prefix":
         import fuzz_prefix

@@ -169,15 +169,43 @@ def _run_afl(engine: StreamingEngine, budget: int, wall: int) -> None:
         pass
 
 
+def _run_deep(args) -> int:
+    """Deep evolutionary campaign: writes ONLY unique/unexpected rows + summary."""
+    import deep_campaign
+
+    live = args.phase == "live"
+    transport = _CliTransport(repo_root=_REPO_ROOT, python_executable="python3") if live else None
+    engine = FuzzEngine(live=live, allow_destructive=False, transport=transport)
+    summary_path = args.summary or args.out.with_name("summary.json")
+    summary = deep_campaign.build_and_run(
+        out_path=args.out,
+        summary_path=summary_path,
+        phase=args.phase,
+        engine=engine,
+        wall=args.wall,
+        send_cap=args.send_cap,
+    )
+    sys.stderr.write(
+        f"[deep/{args.phase}] considered={summary['considered']} sent={summary['sent']} "
+        f"unique_or_unexpected={summary['unique_or_unexpected_written']} "
+        f"distinct_signatures={summary['distinct_signatures']}\n"
+    )
+    return 0
+
+
 def main() -> int:
     p = argparse.ArgumentParser()
-    p.add_argument("--mode", required=True, choices=("prefix", "grammar", "afl"))
+    p.add_argument("--mode", required=True, choices=("prefix", "grammar", "afl", "deep"))
     p.add_argument("--phase", required=True, choices=("dry", "live"))
     p.add_argument("--out", required=True, type=Path)
+    p.add_argument("--summary", type=Path, default=None)
     p.add_argument("--budget", type=int, default=4000)
     p.add_argument("--wall", type=int, default=150)
     p.add_argument("--send-cap", type=int, default=None)
     args = p.parse_args()
+
+    if args.mode == "deep":
+        return _run_deep(args)
 
     deadline = time.monotonic() + args.wall
     with args.out.open("a") as fh:

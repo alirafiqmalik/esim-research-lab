@@ -10,12 +10,43 @@ The target is a live eUICC holding two real profiles. Profile #1 (BetterRoaming)
 must never be harmed. The card must never be wiped or bricked.
 
 - `safety.py` gates every candidate APDU.
-- Read-only ES10x store-data tags are allowlisted. Only these can go live.
-- Destructive tags and write instructions are blocklisted. They are never sent.
+- Read-only ES10x store-data tags and read-only ISO-7816 instructions are
+  allowlisted. Only these can go live.
+- The blocklist is authoritative and takes precedence over the allowlist.
+  Destructive tags and write instructions are never sent.
 - Memory reset (`BF34`), delete profile (`BF33`), and GP DELETE (INS `E4`) are
   hard-blocked. No flag overrides them.
+- Unknown tags/instructions are default-deny for live sends.
 - `--i-understand-destructive` exists but is forbidden without maintainer
-  sign-off. The code does not honor it for live sends.
+  sign-off. The code does not honor it for live sends and can never release a
+  blocked or unknown APDU.
+
+### Read-only allowlist
+
+Store-data BER-TLV tags (`INS E2`): `BF3E BF20 BF22 BF2E BF2D BF2B BF3C BF43`
+(the original vetted eight) plus `BF28` ListNotification (read; the write
+`BF30` RemoveNotification stays blocked).
+
+ISO-7816 read instructions, classified by INS: `A4` SELECT (FCI navigation),
+`B0` READ BINARY, `B2` READ RECORD, `C0` GET RESPONSE, `CA`/`CB` GET DATA. Each
+write counterpart (`D0 D6 D2 DC DA`) stays blocked. Justifications are inline in
+`safety.py`. Session/crypto commands (`BF21` PrepareDownload, `BF38`
+AuthenticateServer, `BF41` CancelSession) are left UNKNOWN — not verifiably
+read-only, so default-deny.
+
+## Trail of Bits testing-handbook skills
+
+The deep campaign follows these skills:
+
+- `harness-writing` — the evolutionary loop, corpus of interesting inputs, and
+  structured input extraction (`deep_campaign.py`, `novelty.py`).
+- `fuzzing-dictionary` — the eUICC/SGP.22 + ISO-7816 domain dictionary
+  (`dictionary.py`).
+- `coverage-analysis` — response-diversity interestingness proxy; a black-box SE
+  gives no real coverage (`novelty.py`).
+- `fuzzing-obstacles` — Lc/BER length framing barriers and malformed framing
+  (`dictionary.py`: `encode_lc`, `ber_length_edge_cases`, `malformed_framing`).
+- `atheris` — the Python mutation engine used by `--mode afl`.
 
 ## Install
 
@@ -106,18 +137,55 @@ Each candidate keeps a valid `Lc` and inner TLV length.
 tools/fuzzer/.venv/bin/python tools/fuzzer/run_fuzz.py --mode grammar
 ```
 
+### deep
+
+Deep read-only evolutionary campaign across every allowlisted command. Builds
+candidates from the domain dictionary, dedups by behaviour signature, and writes
+ONLY unique or unexpected behaviours to JSONL plus a `summary.json`. Dry-run
+default; live requires `--live`. Bounded by `--wall` (seconds) and `--send-cap`.
+
+```bash
+# Dry-run: enumerate, classify, dedup. Sends nothing.
+tools/fuzzer/.venv/bin/python tools/fuzzer/run_fuzz.py --mode deep --dry-run \
+  --out tools/fuzzer/out/deep_unique.jsonl --summary tools/fuzzer/out/summary.json
+
+# Live: only allowlisted read-only APDUs are sent, capped and wall-bounded.
+tools/fuzzer/.venv/bin/python tools/fuzzer/run_fuzz.py --mode deep --live \
+  --wall 300 --send-cap 2000
+```
+
+A **behaviour signature** is `(command tag / INS-class, SW, response-structure
+fingerprint)`. The fingerprint buckets the response by TLV shape and length, not
+raw bytes, so a different EID or ICCID value does not read as new behaviour. A
+candidate is *interesting* when its signature is new; interesting inputs are
+mutated further.
+
+**Unexpected rules** (each flagged and always logged): `new_signature`,
+`novel_sw` (a SW not seen for that command), `success_on_malformed` (`9000` on a
+malformed/oversized body), `rare_sw` (`6Fxx 6581 93xx 6A88 6884 6D00`),
+`structural_anomaly` (response shape/leading-tag differs from what the command
+should yield), `nondeterministic` (a re-sent input gives differing SW/response),
+`transport_error`, and `safety_violation` (a blocklisted tag reaching the
+transport — impossible by design; if ever detected it is logged `severity:
+critical` and the run aborts).
+
 ## Files
 
-- `safety.py` — allowlist, blocklist, hard blocks, BER-TLV tag parser.
+- `safety.py` — allowlist (tags + INS), blocklist, hard blocks, BER-TLV parser.
 - `euicc_transport.py` — CLI subprocess adapter, returns `ApduResult`.
 - `engine.py` — shared driver. Gates every candidate, records SW/class diversity.
 - `corpus.py` — seed loader.
+- `dictionary.py` — eUICC/SGP.22 + ISO-7816 domain fuzzing dictionary.
+- `novelty.py` — behaviour signature, dedup, unexpected-behaviour rules.
+- `reporting.py` — unique/unexpected JSONL writer and `summary.json`.
+- `deep_campaign.py` — evolutionary read-only loop wiring the above together.
 - `fuzz_prefix.py` — prefix scanner.
 - `fuzz_afl.py` — atheris harness.
 - `fuzz_grammar.py` — grammar synthesis.
-- `run_fuzz.py` — single entrypoint.
+- `run_fuzz.py` — single entrypoint (`--mode deep` for the campaign).
 - `seeds/` — known-good read-only APDUs, one per file.
-- `tests/` — `test_transport.py`, `test_safety.py`. Never touch a device.
+- `tests/` — `test_transport.py`, `test_safety.py`, `test_novelty.py`,
+  `test_reporting.py`. Never touch a device.
 
 ## Seeds
 

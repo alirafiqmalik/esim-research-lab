@@ -14,6 +14,9 @@ import enum
 from dataclasses import dataclass
 
 # ES10x store-data BER-TLV tags that only read state. Safe to send live.
+# Derived from the read/write column of docs/reference/euicc-api.md. Each ADDED
+# tag carries a one-line read-only justification; the original eight are the
+# pre-existing vetted set.
 ALLOWLIST_TAGS: dict[int, str] = {
     0xBF3E: "GetEID",
     0xBF20: "GetEUICCInfo1",
@@ -23,6 +26,34 @@ ALLOWLIST_TAGS: dict[int, str] = {
     0xBF2B: "RetrieveNotificationsList",
     0xBF3C: "GetConfiguredAddresses",
     0xBF43: "GetRAT",
+    # read-only: ES10b ListNotification returns the pending-notification metadata
+    # list; it removes nothing. The write is RemoveNotification (BF30), which
+    # stays blocked below.
+    0xBF28: "ListNotification",
+}
+
+# ISO-7816 / GlobalPlatform instruction bytes that only read state. These are not
+# STORE DATA (0xE2); they are classified by INS, not by a BER-TLV tag. Each is a
+# read command whose write counterpart is in WRITE_INS and stays blocked.
+ALLOWLIST_INS: dict[int, str] = {
+    # read-only: applet/file navigation; returns the FCI template. Mutates only
+    # the transient current-selection pointer, never persistent card state. This
+    # is the op esimctl uses to reach ECASD (docs/reference/euicc-api.md).
+    0xA4: "SELECT",
+    # read-only: retrieves EF (transparent file) contents. The writes are
+    # WRITE/UPDATE BINARY (0xD0/0xD6), both blocked.
+    0xB0: "READ BINARY",
+    # read-only: retrieves record(s) from a linear/cyclic EF. The writes are
+    # WRITE/UPDATE RECORD (0xD2/0xDC), both blocked.
+    0xB2: "READ RECORD",
+    # read-only: fetches buffered response bytes from the prior command. Pure
+    # transport continuation, changes nothing.
+    0xC0: "GET RESPONSE",
+    # read-only: retrieves a data object. The write is PUT DATA (0xDA), blocked.
+    0xCA: "GET DATA",
+    # read-only: retrieves a data object (odd-INS variant). PUT DATA (0xDA) stays
+    # blocked.
+    0xCB: "GET DATA",
 }
 
 # Destructive ES10x store-data tags. Never sent, in any mode.
@@ -188,10 +219,19 @@ def classify(apdu_hex: str) -> SafetyVerdict:
             tag=tag,
         )
 
+    # Blocklist precedence: writes are refused before the read-only INS allowlist
+    # is ever consulted, so an INS that somehow appears in both is always blocked.
     if ins in WRITE_INS:
         return SafetyVerdict(
             classification=Classification.BLOCKED,
             reason=f"write instruction {WRITE_INS[ins]} (INS 0x{ins:02X})",
+            apdu_hex=apdu_hex,
+        )
+
+    if ins in ALLOWLIST_INS:
+        return SafetyVerdict(
+            classification=Classification.ALLOWED,
+            reason=f"read-only instruction {ALLOWLIST_INS[ins]} (INS 0x{ins:02X})",
             apdu_hex=apdu_hex,
         )
 
