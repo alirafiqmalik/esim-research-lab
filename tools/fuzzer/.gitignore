@@ -1,0 +1,6 @@
+# Local, machine-specific, and cloned upstream — never commit.
+.venv/
+vendor/
+__pycache__/
+*.pyc
+.pytest_cache/
