@@ -157,8 +157,8 @@ Conclusions (cross-validated across 4 independent operators):
   explicit `8.8.4/3.7` — both are the production-vs-test CI mismatch.
 - The GSMA TS.48 generic test profile and the AOSP/Google test server are both
   **test-CI only** → not installable on the production Pixel eUICC (need an SGP.26
-  test eUICC). Research: `docs/research-gsma-ts48-test-profile.md`,
-  `docs/research-aosp-esim-testing.md`, `docs/research-other-free-esim-codes.md`.
+  test eUICC). Research: `docs/research/research-gsma-ts48-test-profile.md`,
+  `docs/research/research-aosp-esim-testing.md`, `docs/research/research-other-free-esim-codes.md`.
 
 eUICC now holds 2 disabled profiles: #1 BetterRoaming, #2 Speedtest Travel.
 

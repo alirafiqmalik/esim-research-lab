@@ -63,7 +63,7 @@ after the phone comes back up.
 
 `N` is the 1-based row from `list`; the tool resolves it to the full ICCID.
 
-See `docs/euicc-api-frontier.md` for the frontier ops (rows/verification). The
+See `docs/reference/euicc-api.md` for the frontier ops (rows/verification). The
 `discovery`/`authenticate` ops use a lpac JNI bridge (`openeuicc/es11-discovery.patch`).
 ECASD AID = `A0000005591010FFFFFFFF8900000200`. The `card-*` ops reach the stock card
 controller but return `RESULT_CALLER_NOT_ALLOWED` (gated on being the active LPA);

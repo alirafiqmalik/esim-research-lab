@@ -1,7 +1,7 @@
 # Testbed fixes — implementation spec
 
 Implement exactly this. No design decisions left open. Targets the issues in
-`docs/testbed-evaluation.md`. Keep changes minimal; match `.claude/rules/code-style.md`
+`docs/testbed/testbed-evaluation.md`. Keep changes minimal; match `.claude/rules/code-style.md`
 (Python 3.12+, type hints on public sigs, raise on error, `subprocess.run(...,
 capture_output=True, text=True, timeout=30)` for adb, no `print()` in library code —
 `esimctl.py`'s CLI `main`/ops may print JSON, that is the CLI boundary).
@@ -35,7 +35,7 @@ prints the RSP JSON then `2`. `esimctl list; echo $?` → `0`.
 ## Fix 7 (minor) — serial resolution
 
 `main()`: `serial = args.serial or os.environ.get("ESIMCTL_SERIAL") or detect_serial()`.
-`import os` already present. In `tools/setup_capture_pixel7a.sh` and any other `.sh` that
+`import os` already present. In `scripts/setup/setup_capture_pixel7a.sh` and any other `.sh` that
 hardcodes `SERIAL="${1:-35181JEHN08662}"`, replace the default with
 `SERIAL="${1:-${ESIMCTL_SERIAL:-$(adb devices | awk '$2=="device"{print $1;exit}')}}"`.
 `keep_phone_awake.sh` already auto-detects — leave it.
@@ -164,7 +164,7 @@ ones) and/or the client connecting before the daemon is ready. The proven-good r
 this session: kill ALL, start exactly ONE with an explicit listen addr, then health-check
 `frida-ps -U` with retries.
 
-Create `tools/frida/ensure_frida.sh` (executable):
+Create `scripts/frida/ensure_frida.sh` (executable):
 
 ```bash
 #!/usr/bin/env bash
@@ -190,19 +190,19 @@ Change `esimctl.py` `_attach_frida` to call it instead of the inline pgrep-or-no
 
 ```python
 def _attach_frida(serial: str, sess: Session):
-    r = subprocess.run(["bash", str(REPO / "tools/frida/ensure_frida.sh")],
+    r = subprocess.run(["bash", str(REPO / "scripts/frida/ensure_frida.sh")],
                        capture_output=True, text=True, env={**os.environ, "ESIMCTL_SERIAL": serial})
     if r.returncode != 0:
         raise RuntimeError(f"frida-server not ready: {r.stderr.strip()}")
     out = open(sess.dir / "frida.txt", "w")
     p = subprocess.Popen(
-        f"tail -f /dev/null | frida -U -n {PKG} -l {REPO}/tools/frida/google_lpa_rsp.js "
+        f"tail -f /dev/null | frida -U -n {PKG} -l {REPO}/scripts/frida/google_lpa_rsp.js "
         f"--runtime=v8 -q", shell=True, stdout=out, stderr=subprocess.STDOUT)
     time.sleep(4)
     return p
 ```
 
-Acceptance: `bash tools/frida/ensure_frida.sh` twice in a row both print "ready" and
+Acceptance: `bash scripts/frida/ensure_frida.sh` twice in a row both print "ready" and
 `frida-ps -U | grep -c frida-server` shows exactly 1 server process implied (one healthy
 connection). Note: the activity `lpac` backend does NOT need frida (it logs via OpenEUICC
 verbose); frida is only for the stock-LPA capture path.
@@ -242,7 +242,7 @@ without changing the profile count (RedteaGO never installs).
 
 ---
 
-## Fix 1 — reproducibility: `tools/setup_testbed.sh` (executable)
+## Fix 1 — reproducibility: `scripts/setup/setup_testbed.sh` (executable)
 
 Strategy: **build from source** (do NOT vendor a 16 MB debug APK into git). One command,
 idempotent, clear preconditions. It clones/patches/builds/installs OpenEUICC, provisions
@@ -266,7 +266,7 @@ Ordered steps, each fails with a one-line reason:
    `git clone https://gitea.angry.im/PeterCxy/OpenEUICC.git "$OPENEUICC_DIR"` then
    `git -C "$OPENEUICC_DIR" submodule update --init --recursive`. If present, skip (idempotent).
 2. **Apply the EsimCtlActivity patch.**
-   `cp "$REPO/tools/esimctl/openeuicc/EsimCtlActivity.kt" "$OPENEUICC_DIR/app/src/main/java/im/angry/openeuicc/ui/EsimCtlActivity.kt"`.
+   `cp "$REPO/testbed/openeuicc/EsimCtlActivity.kt" "$OPENEUICC_DIR/app/src/main/java/im/angry/openeuicc/ui/EsimCtlActivity.kt"`.
    Manifest: if `grep -q EsimCtlActivity "$OPENEUICC_DIR/app/src/main/AndroidManifest.xml"` is
    false, insert before the line containing `AppLocalesMetadataHolderService`:
    ```xml
@@ -298,7 +298,7 @@ Ordered steps, each fails with a one-line reason:
 6. **frida-server.** Determine `$FRIDA_VERSION`. If device `/data/local/tmp/frida-server`
    absent: download `https://github.com/frida/frida/releases/download/$FRIDA_VERSION/frida-server-$FRIDA_VERSION-android-arm64.xz`
    to `$REPO/tmp/`, `unxz`, `adb push` to `/data/local/tmp/frida-server`, `adb shell su -c 'chmod
-   755 /data/local/tmp/frida-server'`. Then `bash "$REPO/tools/frida/ensure_frida.sh"`.
+   755 /data/local/tmp/frida-server'`. Then `bash "$REPO/scripts/frida/ensure_frida.sh"`.
 7. **Datastore prefs.** Generate the Preferences-DataStore protobuf enabling
    `developer_options_enabled` and `verbose_logging` (both bool true). Embed the generator inline
    (the same encoding used earlier — repeated field 1 map entries: key string field 1, value
@@ -313,10 +313,10 @@ Idempotency: safe to re-run; each step guards on "already done". Precondition fa
 the exact command to fix and exit non-zero.
 
 Acceptance: on a machine with the toolchain + an unlocked rooted Pixel, `bash
-tools/setup_testbed.sh` ends in `ALL PASS` / `TESTBED READY` (allowing one reboot cycle on a
+scripts/setup/setup_testbed.sh` ends in `ALL PASS` / `TESTBED READY` (allowing one reboot cycle on a
 first-time privileged install). Re-running is a no-op that still ends green.
 
-Also: add a short "Reproduce from scratch: `bash tools/setup_testbed.sh`" section to
+Also: add a short "Reproduce from scratch: `bash scripts/setup/setup_testbed.sh`" section to
 `tools/esimctl/README.md` and create `tools/esimctl/protected_iccids.txt` with a header
 comment and one example commented line (so the file exists and is documented, protecting
 nothing by default).
@@ -327,10 +327,10 @@ nothing by default).
 
 1. `esimctl.py`: Fix 5 (exit codes), Fix 7 (serial env), Fix 3 (`_do_delete`/`av_delete` +
    `protected_iccids` + argparse), Fix 4 (`av_cycle` + `ACT_OPS["cycle"]`).
-2. `tools/frida/ensure_frida.sh` + wire `_attach_frida` (Fix 2).
+2. `scripts/frida/ensure_frida.sh` + wire `_attach_frida` (Fix 2).
 3. `tools/esimctl/protected_iccids.txt`, `tools/esimctl/selftest.sh` (Fix 6).
-4. `tools/setup_testbed.sh` (Fix 1) + README note + serial default in `setup_capture_pixel7a.sh` (Fix 7).
+4. `scripts/setup/setup_testbed.sh` (Fix 1) + README note + serial default in `setup_capture_pixel7a.sh` (Fix 7).
 5. Verify: `bash tools/esimctl/selftest.sh` green; `esimctl delete 2` refused; `esimctl delete 2
    --dry-run` ok; `esimctl cycle --code 'LPA:1$rsp-eu.redteamobile.com$5901981126831169' --times 1`
-   ok with count unchanged; `bash tools/frida/ensure_frida.sh` green twice. Leave the eUICC at its
+   ok with count unchanged; `bash scripts/frida/ensure_frida.sh` green twice. Leave the eUICC at its
    original 2 disabled profiles.

@@ -10,7 +10,7 @@ OpenEUICC build). Every op driven live against the embedded eUICC on slot 0/port
 
 | Check | Command | Result | Evidence |
 |---|---|:--:|---|
-| Idempotent setup | `bash tools/setup_testbed.sh` | PASS | reached `TESTBED READY`, update-in-place, no reboot |
+| Idempotent setup | `bash scripts/setup/setup_testbed.sh` | PASS | reached `TESTBED READY`, update-in-place, no reboot |
 | Regression suite | `bash tools/esimctl/selftest.sh` | PASS | 11/11 `ALL PASS` |
 
 selftest checks: list, eid, info, download-capture, cycle-default-backend,

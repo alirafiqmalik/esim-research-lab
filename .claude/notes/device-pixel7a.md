@@ -65,7 +65,7 @@ A reboot clears any residual per-process cert mounts.
 The hotspot/UFW/per-Wi-Fi-proxy struggle is gone. The setup uses an
 **adb-reverse USB tunnel** plus a **system-trusted CA cert**. No firewall
 changes, no hotspot, no LAN reachability needed. One command:
-`tools/setup_capture_pixel7a.sh`. Re-run it when MITM testing resumes.
+`scripts/setup/setup_capture_pixel7a.sh`. Re-run it when MITM testing resumes.
 
 Chain (all three verified end to end):
 1. `adb reverse tcp:8083 tcp:8083` — device `127.0.0.1:8083` → laptop mitmproxy.
@@ -126,7 +126,7 @@ Proof the cert install itself works: `GET https://www.gstatic.com/esim/icons/ver
 
 Pivoted from MITM to **passive observation**: read the LPA's plaintext RSP at
 the application layer (we own the device, TLS is software). Tools in
-`tools/frida/` (`conscrypt_dump.js` robust TLS-layer capture, `rsp_observe.js`
+`scripts/frida/` (`conscrypt_dump.js` robust TLS-layer capture, `rsp_observe.js`
 named-method hook, `README.md`). frida-server 17.8.3 (arm64) pushed to
 `/data/local/tmp/frida-server`, runs as root.
 

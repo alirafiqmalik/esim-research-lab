@@ -40,10 +40,10 @@ not in this repo (`git ls-files | grep OpenEUICC/app` → 0). Rebuilding it need
 separate clone, a generated keystore, the `EsimCtlActivity` patch, a Magisk
 privileged install, `frida-server` provisioning, and the `verbose_logging`
 DataStore pref — all scattered across `device-pixel7a.md`,
-`tools/esimctl/openeuicc/README.md`, and `openeuicc-experiments.md`, and several
+`testbed/openeuicc/README.md`, and `openeuicc-experiments.md`, and several
 are documented as "already set." A new researcher with a fresh device + this repo
 **cannot** stand it up.
-*Fix:* a single `tools/setup_testbed.sh` that pins the OpenEUICC commit, applies
+*Fix:* a single `scripts/setup/setup_testbed.sh` that pins the OpenEUICC commit, applies
 the patch, generates the keystore, builds, installs the module, pushes a
 version-matched `frida-server`, and writes the `verbose_logging` pref.
 
@@ -106,7 +106,7 @@ drift). Fine as a fallback; not CI-grade.
 
 ## Recommendations (priority order)
 
-1. **`tools/setup_testbed.sh`** — reproducible bootstrap of the patched OpenEUICC + frida-server + verbose_logging from a fresh device. (Unblocks everyone else.)
+1. **`scripts/setup/setup_testbed.sh`** — reproducible bootstrap of the patched OpenEUICC + frida-server + verbose_logging from a fresh device. (Unblocks everyone else.)
 2. **Wire `cycle` (and audit all ops) into `ACT_OPS`; add a smoke-test** script that runs list/eid/info/download/enable/disable/delete across backends and asserts JSON + exit codes.
 3. **Add delete/erase safety rails** (`--yes`, last-profile floor, protected ICCIDs, `--dry-run`).
 4. **Fix exit-code semantics** (non-zero on `ok:false` or `--strict`).
@@ -122,7 +122,7 @@ verified on-device; `selftest.sh` is green; the eUICC stays at its original 2
 disabled profiles.
 
 **Verified fixed:**
-- Reproducibility — `tools/setup_testbed.sh` runs end-to-end → `TESTBED READY`.
+- Reproducibility — `scripts/setup/setup_testbed.sh` runs end-to-end → `TESTBED READY`.
   (Verification also caught + fixed a malformed-XML bug in the fresh-clone
   manifest awk-patch: it anchored on the `AppLocalesMetadataHolderService`
   attribute line, injecting `<activity>` inside `<service>`. Now anchors on

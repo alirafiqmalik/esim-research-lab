@@ -1,6 +1,6 @@
 # eUICC API surface — read before touching eSIM APIs
 
-Full source-verified detail: `docs/euicc-api-reference.md` (command → APDU tag →
+Full source-verified detail: `docs/reference/euicc-api.md` (command → APDU tag →
 exposure matrix). This note is the fast index. Don't re-derive; verify against
 the running device only when a fact here looks stale.
 
@@ -55,10 +55,10 @@ on hardware. Related: [[rsp-tls-pins-to-gsma-ci]].
 `econtroller` = `IEuiccController` (svc 166), `euicc_card_controller` =
 `IEuiccCardController` (svc 169). The latter exposes the **entire ES10 command set**
 as binder calls through the stock card; OpenEUICC holds its guard perm
-(`WRITE_EMBEDDED_SUBSCRIPTIONS`). See `docs/euicc-api-frontier.md`.
+(`WRITE_EMBEDDED_SUBSCRIPTIONS`). See `docs/reference/euicc-api.md`.
 
 ## Frontier — ALL wired into esimctl (2026-07-16)
-`docs/euicc-api-frontier.md` has the full table. Ops now shipping:
+`docs/reference/euicc-api.md` has the full table. Ops now shipping:
 - `info1` (BF20), `challenge` (BF2E), `retrieve-notification SEQ` (BF2B) — raw ES10x.
 - `apdu-aid AID HEX` / `select-aid AID` — open a channel to ANY applet. **ECASD is
   selectable at `A0000005591010FFFFFFFF8900000200`** (Card Recognition Data 66 + Key
@@ -73,4 +73,4 @@ as binder calls through the stock card; OpenEUICC holds its guard perm
   set by setup_testbed for the reflection to reach the framework at all).
 
 The lpac-side changes (ES11 + AuthenticateServer JNI, card wrapper) live in
-`tools/esimctl/openeuicc/es11-discovery.patch`, applied by setup_testbed.sh.
+`testbed/openeuicc/es11-discovery.patch`, applied by setup_testbed.sh.
