@@ -19,7 +19,7 @@ op is broken on the default backend.
 | # | Capability | Result | Evidence |
 |---|-----------|--------|----------|
 | 1 | keep-awake + SessionStart hook | **PASS** | `keep_phone_awake` → `Awake`, keyguard clear; hook present in `.claude/settings.json` |
-| 2 | esimctl lpac: list/eid/info/notifications | **PASS** | exit 0, `ok:true`, each wrote `sessions/esimctl/<ts>-<op>/logcat.txt` |
+| 2 | esimctl lpac: list/eid/info/notifications | **PASS** | exit 0, `ok:true`, each wrote `.sessions/esimctl/<ts>-<op>/logcat.txt` |
 | 2 | esimctl lpac: download (RedteaGO) | **PASS** | exit 0, `ok:false`, 6 RSP msgs, final `Failed 9.4/10.1` captured |
 | 2 | esimctl lpac: enable 1 / disable 1 | **PASS** | operator→`BetterRoaming` then `ABSENT,NOT_READY`; reversible |
 | 3 | destructive delete + restore cycle (#2) | **PASS** | delete #2 → count 1 → download `QRF-SPEEDTEST` (11-msg full flow incl. `getBoundProfilePackage`) → count 2; #1 untouched; delete notification `seq 14 … Delete` captured |
@@ -48,8 +48,8 @@ the patch, generates the keystore, builds, installs the module, pushes a
 version-matched `frida-server`, and writes the `verbose_logging` pref.
 
 ### MAJOR-2 — `cycle` is broken on the default backend
-`esimctl cycle` advertises ✓ for lpac in the README, but `cycle` is only in
-`OPS` (ui), not `ACT_OPS`. `esimctl cycle --code … --times 1` →
+`esim euicc cycle` advertises ✓ for lpac in the README, but `cycle` is only in
+`OPS` (ui), not `ACT_OPS`. `esim euicc cycle --code … --times 1` →
 `op 'cycle' not available on backend 'lpac'`. The one compound op most useful for
 repeat testing only runs on the fragile uiautomator backend.
 *Fix:* add `av_cycle` (compose `av_download` + `av_delete`) to `ACT_OPS`.
@@ -71,7 +71,7 @@ advertised as a capability.
 or mark Frida as best-effort and lean on the lpac verbose path.
 
 ### MINOR-1 — `download` exit code hides failure
-A server-side failure returns exit 0 with `ok:false`. `esimctl download … && next`
+A server-side failure returns exit 0 with `ok:false`. `esim euicc download … && next`
 proceeds after a failed download. Scripts must parse JSON.
 *Fix:* non-zero exit on `ok:false`, or a `--strict` flag.
 
@@ -91,7 +91,7 @@ drift). Fine as a fallback; not CI-grade.
 ## Industry-readiness assessment
 
 **Meets the bar:**
-- Structured per-op logging + retained artifacts (`sessions/esimctl/<ts>-<op>/`) — good auditability.
+- Structured per-op logging + retained artifacts (`.sessions/esimctl/<ts>-<op>/`) — good auditability.
 - Deterministic core: the lpac backend drives eSIM ops via a headless activity, not screen-scraping.
 - Composable: JSON out, so sequences are scriptable without an LLM.
 - Full ES9+ plaintext capture, and an MSD pipeline that regenerates a diagram straight from a capture — real traceability.

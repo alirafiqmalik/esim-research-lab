@@ -23,7 +23,7 @@ raw APDU/OMAPI → lpac C core → lpac-jni (LpacJni.kt) → LocalProfileAssista
   SGP.22 v2.3, production CI `81370F5125D0B1D408D4C3B232E6D25E795BEBFB`.
 
 ## What's exposed where (short form)
-- **Scriptable now (`tools/esimctl/esimctl.py`)**: `list eid info notifications
+- **Scriptable now (`esim euicc`)**: `list eid info notifications
   download enable disable delete cycle`. `--backend fw` for
   `eid info download delete switch` (stock LPA, opaque RSP).
 - **Newly surfaced 2026-07-15** (previously unbridged — all live-verified):

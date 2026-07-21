@@ -41,7 +41,7 @@ bind it to the eUICC over a session the eUICC's ISD-R authenticates.
   ES10b `LoadBoundProfilePackage` and sent it to the ISD-R with **no session**.
   → **SW `6985` "Conditions of use not satisfied."** eUICC **unchanged** (still 2
   profiles), nothing installed. This is Wall 2, made concrete.
-- **RSP attempt**: pointing `esimctl download`/`authenticate` at any test SM-DP+ that
+- **RSP attempt**: pointing `esim euicc download`/`authenticate` at any test SM-DP+ that
   hosts the GTP hits Wall 1 — the same **`8.8.4/3.7`** rejection this testbed has
   already reproduced against test-CI servers. The profile content never matters,
   because the handshake dies first.
@@ -80,7 +80,7 @@ configured), which we cannot make from a production Pixel eUICC. Given one:
 1. Run a **test SM-DP+** that serves the GTP — the reference tool is Osmocom
    **`osmo-smdpp`** (pysim), which ships the SGP.26 test certs and serves a SAIP UPP.
 2. Feed it one of these UPP `.rename2der` files.
-3. Point `esimctl download 'LPA:1$<smdpp-host>$<matchingId>'` at it over an
+3. Point `esim euicc download 'LPA:1$<smdpp-host>$<matchingId>'` at it over an
    `adb reverse` tunnel; `AuthenticateServer` now passes, the BPP installs.
 
 Alternatively, obtain a GTP **pre-loaded test eUICC** (chip vendor) and skip RSP.

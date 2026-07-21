@@ -27,8 +27,8 @@ Convention: **0** = ok, **2** = op ran but failed at the eSIM/RSP layer (`ok:fal
 **1** = harness/tool error (exception). `cycle` returns `ok:true` for the run itself, so
 it stays exit 0 even when individual iterations fail — do NOT change that.
 
-Acceptance: `esimctl download 'LPA:1$rsp-eu.redteamobile.com$5901981126831169'; echo $?`
-prints the RSP JSON then `2`. `esimctl list; echo $?` → `0`.
+Acceptance: `esim euicc download 'LPA:1$rsp-eu.redteamobile.com$5901981126831169'; echo $?`
+prints the RSP JSON then `2`. `esim euicc list; echo $?` → `0`.
 
 ---
 
@@ -55,13 +55,13 @@ New argparse for `delete` (and `enable`/`disable` keep just `target`):
 ```
 
 Protected ICCIDs come from: env `ESIMCTL_PROTECTED_ICCIDS` (comma-separated) UNION the
-lines of `$REPO/tools/esimctl/protected_iccids.txt` if it exists (ignore blank/`#` lines).
+lines of `$REPO/testbed/protected_iccids.txt` if it exists (ignore blank/`#` lines).
 Add a helper:
 
 ```python
 def protected_iccids() -> set[str]:
     vals = set(filter(None, os.environ.get("ESIMCTL_PROTECTED_ICCIDS", "").split(",")))
-    f = REPO / "tools/esimctl/protected_iccids.txt"
+    f = REPO / "testbed/protected_iccids.txt"
     if f.exists():
         vals |= {ln.strip() for ln in f.read_text().splitlines()
                  if ln.strip() and not ln.startswith("#")}
@@ -101,10 +101,10 @@ Note `_activity(..., "delete")` already returns `ok`. A refusal returns `ok:fals
 the same guards is out of scope — the `ui` backend is fallback; only guard the activity path.
 
 Acceptance:
-- `esimctl delete 2` (no flags) → `ok:false`, "refusing … without --yes", exit 2, profile intact.
-- `esimctl delete 2 --dry-run` → `ok:true, dry_run:true`, exit 0, profile intact.
-- With `ESIMCTL_PROTECTED_ICCIDS=<iccid1>`, `esimctl delete 1 --yes` → refused unless `--force`.
-- `esimctl delete <last> --yes` when only 1 profile → refused unless `--force`.
+- `esim euicc delete 2` (no flags) → `ok:false`, "refusing … without --yes", exit 2, profile intact.
+- `esim euicc delete 2 --dry-run` → `ok:true, dry_run:true`, exit 0, profile intact.
+- With `ESIMCTL_PROTECTED_ICCIDS=<iccid1>`, `esim euicc delete 1 --yes` → refused unless `--force`.
+- `esim euicc delete <last> --yes` when only 1 profile → refused unless `--force`.
 
 ---
 
@@ -148,11 +148,11 @@ only if `op_cycle` is not otherwise referenced; simplest: leave `op_cycle` for `
 but ensure `ACT_OPS["cycle"]` exists so the default backend works.
 
 Acceptance:
-- `esimctl cycle --code 'LPA:1$rsp.truphone.com$QRF-SPEEDTEST' --times 1` installs then deletes
+- `esim euicc cycle --code 'LPA:1$rsp.truphone.com$QRF-SPEEDTEST' --times 1` installs then deletes
   that profile, `list` count returns to the starting value, exit 0.
-- `esimctl cycle --code 'LPA:1$rsp-eu.redteamobile.com$5901981126831169' --times 1` records rsp,
+- `esim euicc cycle --code 'LPA:1$rsp-eu.redteamobile.com$5901981126831169' --times 1` records rsp,
   no delete, count unchanged, exit 0.
-- `esimctl --backend lpac cycle ...` no longer errors "not available".
+- `esim euicc --backend lpac cycle ...` no longer errors "not available".
 
 ---
 
@@ -209,7 +209,7 @@ verbose); frida is only for the stock-LPA capture path.
 
 ---
 
-## Fix 6 — regression smoke test `tools/esimctl/selftest.sh` (executable)
+## Fix 6 — regression smoke test `testbed/selftest.sh` (executable)
 
 Non-destructive. Fails loudly. Catches the `cycle`-broke-silently class.
 
@@ -217,7 +217,7 @@ Non-destructive. Fails loudly. Catches the `cycle`-broke-silently class.
 #!/usr/bin/env bash
 set -u
 cd "$(dirname "$0")"
-E="python3 esimctl.py"
+E="python3 -m esim.cli euicc"
 fail=0
 check() { # name  expected_exit  jq_filter  (reads stdin json)
   local name="$1" exp="$2" filt="$3"; shift 3
@@ -237,7 +237,7 @@ check "cycle-default-backend" 0 "d.get('op')=='cycle' and len(d['iterations'])==
 exit $fail
 ```
 
-Acceptance: `bash tools/esimctl/selftest.sh` prints per-test PASS and `ALL PASS`, exit 0,
+Acceptance: `bash testbed/selftest.sh` prints per-test PASS and `ALL PASS`, exit 0,
 without changing the profile count (RedteaGO never installs).
 
 ---
@@ -307,7 +307,7 @@ Ordered steps, each fails with a one-line reason:
    (`adb shell su -c 'stat -c %u /data/data/im.angry.openeuicc'`), `restorecon`, then
    `adb shell su -c 'am force-stop im.angry.openeuicc'`. Idempotent (overwrite).
 8. **Keep awake + verify.** `bash "$REPO/tools/keep_phone_awake.sh"`; then
-   `bash "$REPO/tools/esimctl/selftest.sh"`. Print "TESTBED READY" on success.
+   `bash "$REPO/testbed/selftest.sh"`. Print "TESTBED READY" on success.
 
 Idempotency: safe to re-run; each step guards on "already done". Precondition failures print
 the exact command to fix and exit non-zero.
@@ -317,7 +317,7 @@ scripts/setup/setup_testbed.sh` ends in `ALL PASS` / `TESTBED READY` (allowing o
 first-time privileged install). Re-running is a no-op that still ends green.
 
 Also: add a short "Reproduce from scratch: `bash scripts/setup/setup_testbed.sh`" section to
-`tools/esimctl/README.md` and create `tools/esimctl/protected_iccids.txt` with a header
+`esim/euicc/README.md` and create `testbed/protected_iccids.txt` with a header
 comment and one example commented line (so the file exists and is documented, protecting
 nothing by default).
 
@@ -328,9 +328,9 @@ nothing by default).
 1. `esimctl.py`: Fix 5 (exit codes), Fix 7 (serial env), Fix 3 (`_do_delete`/`av_delete` +
    `protected_iccids` + argparse), Fix 4 (`av_cycle` + `ACT_OPS["cycle"]`).
 2. `scripts/frida/ensure_frida.sh` + wire `_attach_frida` (Fix 2).
-3. `tools/esimctl/protected_iccids.txt`, `tools/esimctl/selftest.sh` (Fix 6).
+3. `testbed/protected_iccids.txt`, `testbed/selftest.sh` (Fix 6).
 4. `scripts/setup/setup_testbed.sh` (Fix 1) + README note + serial default in `setup_capture_pixel7a.sh` (Fix 7).
-5. Verify: `bash tools/esimctl/selftest.sh` green; `esimctl delete 2` refused; `esimctl delete 2
-   --dry-run` ok; `esimctl cycle --code 'LPA:1$rsp-eu.redteamobile.com$5901981126831169' --times 1`
+5. Verify: `bash testbed/selftest.sh` green; `esim euicc delete 2` refused; `esim euicc delete 2
+   --dry-run` ok; `esim euicc cycle --code 'LPA:1$rsp-eu.redteamobile.com$5901981126831169' --times 1`
    ok with count unchanged; `bash scripts/frida/ensure_frida.sh` green twice. Leave the eUICC at its
    original 2 disabled profiles.

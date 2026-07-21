@@ -23,12 +23,12 @@ differently here), or ✗ (not available on this setup).
 - **ES10b** — ✓ GetEUICCChallenge (`BF2E`), GetEUICCInfo1/2 (`BF20`/`BF22`), PrepareDownload + LoadBoundProfilePackage + AuthenticateServer (exercised end-to-end by a real download/install).
 - **ES10c** — ✓ EnableProfile, DisableProfile, DeleteProfile (all driven live via `esimctl`), GetProfilesInfo, GetEID (`BF3E`). `eUICCMemoryReset()` — **API present** (`LocalProfileAssistant.euiccMemoryReset`), not exercised (destructive).
 - **ES10a** (GetEuiccConfiguredAddresses, SetDefaultDpAddress `BF3F`) — ✓ **now surfaced** in `esimctl` (2026-07-16) as `get-addresses` / `set-dp-address`, via the raw ISD-R path. Live: rootDs `lpa.ds.gsma.com`, defaultDp read/write/restore. (Was C-core-only when this map was first written.)
-- GetEID — ✓ (live: `esimctl eid`).
+- GetEID — ✓ (live: `esim euicc eid`).
 
 ## 2. High-level EuiccManager — ✓
 
 `android.telephony.euicc.EuiccManager` (`getEid`, `downloadSubscription`,
-`switchToSubscription`, `deleteSubscription`) reachable via `esimctl --backend fw`
+`switchToSubscription`, `deleteSubscription`) reachable via `esim euicc --backend fw`
 (`fw eid` returns the EID live). Requires `WRITE_EMBEDDED_SUBSCRIPTIONS` +
 `SECURE_ELEMENT_PRIVILEGED_OPERATION` — **granted** (confirmed live). Correction:
 a **privileged priv-app + privapp-permissions whitelist** is sufficient; **full
@@ -39,7 +39,7 @@ message bodies are opaque — full plaintext only via the lpac path.
 ## 3. Internal framework APIs + open-source LPA — ✓ (OpenEUICC), ✗ (standalone lpac)
 
 - **Binder services present:** `econtroller` (`IEuiccController`), `euicc_card_controller`
-  (`IEuiccCardController`) — reflection-reachable. ◐ Wired as `esimctl card-*` (2026-07-16):
+  (`IEuiccCardController`) — reflection-reachable. ◐ Wired as `esim euicc card-*` (2026-07-16):
   the binder transaction succeeds from OpenEUICC's process (hidden-API unblocked via root),
   but the stock card controller returns `-3 RESULT_CALLER_NOT_ALLOWED` — **authz-gated to
   the device's active LPA**, so reachable but not usable unless OpenEUICC is the default LPA.

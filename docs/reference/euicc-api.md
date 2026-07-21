@@ -49,7 +49,7 @@ framework:  EuiccManager  →  IEuiccController / IEuiccCardController binders
 - **`EuiccChannelManagerService`** tasks: `launchProfileDownloadTask`,
   `launchProfileDeleteTask`, `launchProfileSwitchTask`, `launchProfileRenameTask`;
   reads via `withEuiccChannel(slot, port, seId){ it.lpa … }`.
-- **`esimctl`** (`EsimCtlActivity`, driven by `tools/esimctl/esimctl.py`): the
+- **`esimctl`** (`EsimCtlActivity`, driven by `esim euicc`): the
   scriptable surface.
 - **framework `EuiccManager`** (`--backend fw`): routes through the *stock* LPA,
   so RSP bodies are opaque (result codes only).
@@ -106,8 +106,8 @@ defaultDpAddress empty; `set-dp-address testdp.example.com` → `BF3F03800100900
 `es9p_get_bound_profile_package`, `es9p_handle_notification`, `es9p_cancel_session`;
 `es11_authenticate_client` (SM-DS discovery); `es8p_metadata_parse`. Most run as the
 phases of a download. Two are now exposed **standalone** via a lpac JNI bridge
-(`es11-discovery.patch`, 2026-07-16): `esimctl discovery` (ES11 SM-DS discovery) and
-`esimctl authenticate SERVER` (challenge → initiateAuthentication → authenticateServer
+(`es11-discovery.patch`, 2026-07-16): `esim euicc discovery` (ES11 SM-DS discovery) and
+`esim euicc authenticate SERVER` (challenge → initiateAuthentication → authenticateServer
 CI-trust probe). Full plaintext is logged via `HttpInterfaceImpl` (verbose) — the
 lpac path's key research advantage.
 
@@ -221,7 +221,7 @@ mirrors), `es9p_*` / `es11_*` / `es8p_*` (network side). None add a command our
 raw-APDU op cannot already send; they add typed parsing.
 
 ## Invocation quick reference
-- Local mgmt / read / download (full plaintext): `tools/esimctl/esimctl.py <op>`
+- Local mgmt / read / download (full plaintext): `esim euicc <op>`
   (`list eid info notifications download enable disable delete cycle`).
 - Raw ES10x / previously-unbridged: `esimctl.py <get-addresses | set-dp-address FQDN |
   get-rat | apdu HEX | nickname N NAME | remove-notification SEQ | handle-notification SEQ |
@@ -232,8 +232,8 @@ raw-APDU op cannot already send; they add typed parsing.
 - Second command path (framework IEuiccCardController, authz-gated to the active LPA):
   `esimctl.py <card-challenge | card-info2 | card-smds | card-default-smdp | card-rat |
   card-profiles>`.
-- Framework path: `esimctl.py --backend fw <eid|info|download|delete|switch>`.
-- Raw APDU evidence: any `esimctl` op's `sessions/esimctl/<ts>-<op>/logcat.txt`
+- Framework path: `esim euicc --backend fw <eid|info|download|delete|switch>`.
+- Raw APDU evidence: any `esimctl` op's `.sessions/esimctl/<ts>-<op>/logcat.txt`
   shows the `OmapiApduInterface: OMAPI APDU:` request/response hex.
 - Binders: `service call econtroller <code> …` (IEuiccController) — reflection-level,
   unwrapped.

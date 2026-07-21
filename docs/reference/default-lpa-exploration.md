@@ -1,6 +1,6 @@
 # Default-LPA exploration — unlocking the IEuiccCardController path
 
-Can we unlock the `esimctl card-*` second command path (framework
+Can we unlock the `esim euicc card-*` second command path (framework
 `IEuiccCardController`), which returns `-3 RESULT_CALLER_NOT_ALLOWED`, by making
 OpenEUICC the phone's default LPA? Investigated and tested live on the rooted
 Pixel 7a (2026-07-16). Companion to `docs/reference/euicc-api.md` (row 1).

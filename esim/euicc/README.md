@@ -8,7 +8,7 @@ shell or Python to run sequences.
 ## Reproduce from scratch
 
 ```bash
-bash tools/setup_testbed.sh
+bash scripts/setup/setup_testbed.sh
 ```
 
 Clones/builds/installs the patched OpenEUICC, provisions frida-server, sets
@@ -19,7 +19,7 @@ after the phone comes back up.
 ## Requirements
 - Rooted Pixel with our privileged **OpenEUICC** build (includes `EsimCtlActivity`
   — see `openeuicc/`) and `verbose_logging` enabled (already set).
-- **Device unlocked** — eUICC APDU access is keyguard-gated. `tools/keep_phone_awake.sh`
+- **Device unlocked** — eUICC APDU access is keyguard-gated. `scripts/device/keep_phone_awake.sh`
   keeps it awake; the SessionStart hook runs it automatically.
 - Laptop: `adb`, Python 3.
 
@@ -35,31 +35,31 @@ after the phone comes back up.
 
 | Command | Does | lpac | fw |
 |---|---|:--:|:--:|
-| `esimctl list` | profiles (unmasked iccid, name, provider, state, class) | ✓ | — |
-| `esimctl eid` | eUICC EID | ✓ | ✓ |
-| `esimctl info` | EID + euiccInfo2 | ✓ | ✓ |
-| `esimctl notifications` | pending eUICC notifications | ✓ | — |
-| `esimctl download 'LPA:1$smdp$mid'` | download a profile; captures full ES9+ RSP plaintext | ✓ | ✓ |
-| `esimctl enable N` | enable profile #N | ✓ | — |
-| `esimctl disable N` | disable profile #N | ✓ | — |
-| `esimctl delete N` | delete profile #N (destructive) | ✓ | — |
-| `esimctl cycle --code '…' --times 5` | download→delete loop, each fully logged | ✓ | — |
-| `esimctl get-addresses` | ES10a: default SM-DP+ / root SM-DS addresses | ✓ | — |
-| `esimctl set-dp-address FQDN` | ES10a: write the default SM-DP+ address (`""` clears) | ✓ | — |
-| `esimctl get-rat` | ES10b: Rules Authorisation Table (raw BER-TLV) | ✓ | — |
-| `esimctl apdu HEX` | raw ES10x C-APDU to the ISD-R; returns response hex | ✓ | — |
-| `esimctl nickname N NAME` | ES10c: set a profile nickname (`""` clears) | ✓ | — |
-| `esimctl remove-notification SEQ` | ES10b: delete a pending notification locally | ✓ | — |
-| `esimctl handle-notification SEQ` | ES9+: send a pending notification to its SM-DP+ | ✓ | — |
-| `esimctl reset --confirm-wipe` | ES10c: eUICCMemoryReset — **erases ALL profiles** | ✓ | — |
-| `esimctl info1` | ES10b GetEUICCInfo1 (BF20) — version + CI PKID lists | ✓ | — |
-| `esimctl challenge` | ES10b GetEUICCChallenge (BF2E) — 16-byte SE nonce | ✓ | — |
-| `esimctl retrieve-notification SEQ` | ES10b RetrieveNotificationsList (BF2B) — signed blob | ✓ | — |
-| `esimctl apdu-aid AID HEX` | open a channel to ANY applet AID and transmit | ✓ | — |
-| `esimctl select-aid AID` | SELECT an applet, return its FCI (ECASD reachable) | ✓ | — |
-| `esimctl discovery [--smds D]` | ES11 SM-DS discovery — pending events for this EID | ✓ | — |
-| `esimctl authenticate SERVER` | standalone AuthenticateServer CI-trust probe | ✓ | — |
-| `esimctl card-<challenge\|info2\|smds\|default-smdp\|rat\|profiles>` | 2nd command path via framework IEuiccCardController (authz-gated) | ✓ | — |
+| `esim euicc list` | profiles (unmasked iccid, name, provider, state, class) | ✓ | — |
+| `esim euicc eid` | eUICC EID | ✓ | ✓ |
+| `esim euicc info` | EID + euiccInfo2 | ✓ | ✓ |
+| `esim euicc notifications` | pending eUICC notifications | ✓ | — |
+| `esim euicc download 'LPA:1$smdp$mid'` | download a profile; captures full ES9+ RSP plaintext | ✓ | ✓ |
+| `esim euicc enable N` | enable profile #N | ✓ | — |
+| `esim euicc disable N` | disable profile #N | ✓ | — |
+| `esim euicc delete N` | delete profile #N (destructive) | ✓ | — |
+| `esim euicc cycle --code '…' --times 5` | download→delete loop, each fully logged | ✓ | — |
+| `esim euicc get-addresses` | ES10a: default SM-DP+ / root SM-DS addresses | ✓ | — |
+| `esim euicc set-dp-address FQDN` | ES10a: write the default SM-DP+ address (`""` clears) | ✓ | — |
+| `esim euicc get-rat` | ES10b: Rules Authorisation Table (raw BER-TLV) | ✓ | — |
+| `esim euicc apdu HEX` | raw ES10x C-APDU to the ISD-R; returns response hex | ✓ | — |
+| `esim euicc nickname N NAME` | ES10c: set a profile nickname (`""` clears) | ✓ | — |
+| `esim euicc remove-notification SEQ` | ES10b: delete a pending notification locally | ✓ | — |
+| `esim euicc handle-notification SEQ` | ES9+: send a pending notification to its SM-DP+ | ✓ | — |
+| `esim euicc reset --confirm-wipe` | ES10c: eUICCMemoryReset — **erases ALL profiles** | ✓ | — |
+| `esim euicc info1` | ES10b GetEUICCInfo1 (BF20) — version + CI PKID lists | ✓ | — |
+| `esim euicc challenge` | ES10b GetEUICCChallenge (BF2E) — 16-byte SE nonce | ✓ | — |
+| `esim euicc retrieve-notification SEQ` | ES10b RetrieveNotificationsList (BF2B) — signed blob | ✓ | — |
+| `esim euicc apdu-aid AID HEX` | open a channel to ANY applet AID and transmit | ✓ | — |
+| `esim euicc select-aid AID` | SELECT an applet, return its FCI (ECASD reachable) | ✓ | — |
+| `esim euicc discovery [--smds D]` | ES11 SM-DS discovery — pending events for this EID | ✓ | — |
+| `esim euicc authenticate SERVER` | standalone AuthenticateServer CI-trust probe | ✓ | — |
+| `esim euicc card-<challenge\|info2\|smds\|default-smdp\|rat\|profiles>` | 2nd command path via framework IEuiccCardController (authz-gated) | ✓ | — |
 
 `N` is the 1-based row from `list`; the tool resolves it to the full ICCID.
 
@@ -79,22 +79,21 @@ without `--es confirm RESET`.
 ## Examples
 
 ```bash
-cd tools/esimctl
-python3 esimctl.py list
-python3 esimctl.py eid
-python3 esimctl.py download 'LPA:1$rsp.truphone.com$QRF-SPEEDTEST'
-python3 esimctl.py enable 2 && python3 esimctl.py disable 2
-python3 esimctl.py --backend fw eid
+python3 -m esim.cli euicc list
+python3 -m esim.cli euicc eid
+python3 -m esim.cli euicc download 'LPA:1$rsp.truphone.com$QRF-SPEEDTEST'
+python3 -m esim.cli euicc enable 2 && python3 -m esim.cli euicc disable 2
+python3 -m esim.cli euicc --backend fw eid
 
 # no-LLM automation: cycle a code 10x, capture each RSP exchange
 for i in $(seq 1 10); do
-  python3 esimctl.py download 'LPA:1$rsp-eu.redteamobile.com$5901981126831169' > runs/$i.json
+  python3 -m esim.cli euicc download 'LPA:1$rsp-eu.redteamobile.com$5901981126831169' > runs/$i.json
 done
 ```
 
 ## Logging / output
 
-Each invocation writes `sessions/esimctl/<timestamp>-<op>/`:
+Each invocation writes `.sessions/esimctl/<timestamp>-<op>/`:
 - `logcat.txt` — full logcat across the op
 - `rsp.json` — parsed ES9+ request/response bodies (download)
 - `isub.txt` — raw subscription dump (ui backend reads)
@@ -103,11 +102,11 @@ Stdout JSON includes `log_dir`.
 
 ## Design
 
-- `esimctl.py` — CLI, per-op `Session` (starts logcat before the op), backend
+- `esim/euicc/` — CLI (`cli.py`), per-op `Session` (starts logcat before the op), backend
   dispatch (`ACT_OPS` = activity, `OPS` = ui), JSON out.
 - `uidriver.py` — coordinate-free UI helper for the `ui` fallback backend.
 - `openeuicc/` — the `EsimCtlActivity.kt` source + integration/build steps. The
-  activity logs `ESIMCTL: <id> RESULT {json}`; `esimctl` fires it via
+  activity logs `ESIMCTL: <id> RESULT {json}`; `esim euicc` fires it via
   `am start` and reads the tagged result from logcat.
 
 ## Notes / limits

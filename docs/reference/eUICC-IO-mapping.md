@@ -322,7 +322,7 @@ BF33 03 80 01 00 9000       (00 = OK ; 3F1F if enabled/not-deletable)
 ### Expected Output
 Result `00` on success. Not observed live by design.
 ### Notes
-- `esimctl delete` refuses without `--yes` and guards the last/protected profile.
+- `esim euicc delete` refuses without `--yes` and guards the last/protected profile.
 
 ## `RemoveNotification(seq)` / `HandleNotification(seq)`
 
@@ -350,7 +350,7 @@ BF30 03 80 01 00 9000     (deleteNotificationStatus 00 = OK; earlier this sessio
 
 ## `eUICCMemoryReset()`  (ES10c) — structure only, GUARDED
 
-Erase **all** profiles and reset. **Never executed** — `esimctl reset` refuses
+Erase **all** profiles and reset. **Never executed** — `esim euicc reset` refuses
 without `--confirm-wipe`, and the activity refuses without `--es confirm RESET`.
 
 ### Raw-Input/Input
@@ -562,8 +562,8 @@ caller being the device's active LPA → **`-3`**.
   `89033023427100000000027143866816`, ISD-R `A0000005591010FFFFFFFF8900000100`,
   SGP.22 v2.3, production CI `81370F…BEBFB`.
 - Transport: **OMAPI** (Samsung S.LSI RIL exposes no QMI/AT to the eUICC).
-- Tooling: `tools/esimctl/esimctl.py` (lpac backend) — every raw request/response
+- Tooling: `esim euicc` (lpac backend) — every raw request/response
   pair above is logged verbatim by `OmapiApduInterface` in each op's
-  `sessions/esimctl/<ts>-<op>/logcat.txt`; ES9+ plaintext by `HttpInterfaceImpl`.
+  `.sessions/esimctl/<ts>-<op>/logcat.txt`; ES9+ plaintext by `HttpInterfaceImpl`.
 - eUICC left clean after capture: 2 disabled BetterRoaming profiles, no nicknames,
   empty default SM-DP+ address.

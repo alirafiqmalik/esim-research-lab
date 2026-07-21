@@ -6,6 +6,8 @@ import click
 from esim.analysis import Session
 from esim.capture import Capture
 from esim.device import ADBError, Device
+from esim.euicc.cli import main as _euicc_main
+from esim.gtp import analyze as _gtp_analyze, load_test as _gtp_load
 
 
 @click.group()
@@ -134,6 +136,32 @@ def bugreport(ctx, out_dir: str) -> None:
         click.echo(f"Saved: {path}")
     except ADBError as e:
         raise click.ClickException(str(e))
+
+
+@main.command("euicc", context_settings=dict(ignore_unknown_options=True,
+                                              allow_extra_args=True,
+                                              help_option_names=[]))
+@click.argument("op_args", nargs=-1, type=click.UNPROCESSED)
+def euicc(op_args) -> None:
+    """eUICC control (esimctl). Runs `<op> [args]` — e.g. `esim euicc list`."""
+    _euicc_main(list(op_args))
+
+
+@main.group("gtp")
+def gtp() -> None:
+    """GSMA TS.48 test-profile tools."""
+
+
+@gtp.command("analyze")
+def gtp_analyze() -> None:
+    """Summarize the TS.48 GTP packages."""
+    _gtp_analyze.main()
+
+
+@gtp.command("load-test")
+def gtp_load_test() -> None:
+    """Attempt (and expect to fail) an out-of-session GTP load."""
+    _gtp_load.main()
 
 
 if __name__ == "__main__":

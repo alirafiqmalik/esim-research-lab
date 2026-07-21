@@ -19,7 +19,6 @@ import subprocess
 from pathlib import Path
 
 SRC = Path(__file__).resolve()
-ESIMCTL = SRC.parents[2] / "tools" / "esimctl" / "esimctl.py"
 DER = SRC.parents[2] / "assets" / "ts48-test-profile" / \
     "TS48 V7.0 eSIM_GTP_SAIP2.3" / "TS48 V7.0 eSIM_GTP_SAIP2.3_NoBERTLV.rename2der"
 
@@ -36,8 +35,9 @@ SW = {  # common ISO-7816 / SGP.22 status words we might see
 
 
 def esimctl(*args: str) -> dict:
-    r = subprocess.run(["python3", str(ESIMCTL), *args],
-                       capture_output=True, text=True, timeout=90)
+    r = subprocess.run(["python3", "-m", "esim.cli", "euicc", *args],
+                       capture_output=True, text=True, timeout=90,
+                       cwd=SRC.parents[2])
     try:
         return json.loads(r.stdout)
     except json.JSONDecodeError:
