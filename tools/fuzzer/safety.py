@@ -54,6 +54,13 @@ ALLOWLIST_INS: dict[int, str] = {
     # read-only: retrieves a data object (odd-INS variant). PUT DATA (0xDA) stays
     # blocked.
     0xCB: "GET DATA",
+    # read-only: GlobalPlatform GET STATUS (CLA 80/84, INS F2) retrieves the
+    # life-cycle status of the Issuer Security Domain, applications, Executable
+    # Load Files and their Executable Modules from the GP registry. It reads
+    # registry data only and mutates no persistent card state. The write
+    # counterpart is SET STATUS (INS F0), which stays in WRITE_INS below.
+    # Ref: GlobalPlatform Card Specification v2.3.1, section 11.4 (GET STATUS).
+    0xF2: "GET STATUS",
 }
 
 # Destructive ES10x store-data tags. Never sent, in any mode.
