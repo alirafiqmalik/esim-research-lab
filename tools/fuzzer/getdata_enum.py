@@ -24,6 +24,7 @@ Skills applied:
 
 from __future__ import annotations
 
+import itertools
 from collections.abc import Iterator
 
 from engine import FuzzEngine
@@ -73,8 +74,8 @@ _TWO_BYTE_TAGS: tuple[tuple[str, int], ...] = (
 )
 
 
-def candidates() -> Iterator[Candidate]:
-    """Yield the exhaustive read-only GET DATA sweep (CA and CB, 1- and 2-byte)."""
+def _all_candidates() -> Iterator[Candidate]:
+    """Yield the full read-only GET DATA sweep (CA and CB, 1- and 2-byte)."""
     # Full 1-byte tag sweep on both instructions so no standard single-byte DO is
     # missed on either the even or odd GET DATA variant.
     for odd in (False, True):
@@ -99,6 +100,21 @@ def candidates() -> Iterator[Candidate]:
             )
 
 
+TOTAL_CANDIDATES = 2 * 0x100 + 2 * len(_TWO_BYTE_TAGS)  # 566
+
+
+def candidates(offset: int = 0, count: int | None = None) -> Iterator[Candidate]:
+    """Yield a slice of the sweep so it can be covered over bounded foreground runs.
+
+    ``offset``/``count`` index into the deterministic candidate order, so distinct
+    invocations test disjoint slices and can append to one aggregate JSONL.
+    """
+    if offset < 0 or (count is not None and count < 0):
+        raise ValueError("offset and count must be non-negative")
+    stop = None if count is None else offset + count
+    return itertools.islice(_all_candidates(), offset, stop)
+
+
 def run(
     *,
     engine: FuzzEngine,
@@ -107,8 +123,10 @@ def run(
     phase: str,
     wall: int,
     send_cap: int | None,
+    tag_offset: int = 0,
+    tag_count: int | None = None,
 ) -> dict[str, object]:
-    """Run the exhaustive GET DATA enumeration campaign."""
+    """Run the exhaustive GET DATA enumeration campaign (optionally one slice)."""
     novelty = NoveltyEngine()
     allowlist = [f"INS_{i:02X}" for i in sorted(ALLOWLIST_INS)]
     with UniqueBehaviourReporter(
@@ -123,7 +141,7 @@ def run(
             engine=engine,
             novelty=novelty,
             reporter=reporter,
-            candidates=candidates(),
+            candidates=candidates(tag_offset, tag_count),
             phase=phase,
             wall=wall,
             send_cap=send_cap,

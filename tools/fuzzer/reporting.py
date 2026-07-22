@@ -22,6 +22,7 @@ ROW_KEYS: tuple[str, ...] = (
     "phase",
     "apdu",
     "tag",
+    "requested_tag",
     "command",
     "classification",
     "sent",
@@ -55,6 +56,7 @@ class BehaviourRecord:
     novelty: list[str]
     repeat_consistency: str
     severity: str
+    requested_tag: str | None = None
 
     def to_row(self) -> dict[str, object]:
         return {
@@ -63,6 +65,7 @@ class BehaviourRecord:
             "phase": self.phase,
             "apdu": self.apdu.upper(),
             "tag": self.tag,
+            "requested_tag": self.requested_tag,
             "command": self.command,
             "classification": self.classification,
             "sent": self.sent,

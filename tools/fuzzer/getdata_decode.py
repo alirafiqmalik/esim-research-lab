@@ -210,6 +210,8 @@ class CardDataInfo:
     """Decoded GlobalPlatform card recognition data (tag ``66`` -> ``73``)."""
 
     oids: list[str]
+    oids_hex: list[str]
+    ascii_strings: list[str]
     gp_version: str | None
     scp: str | None
     raw: str
@@ -229,25 +231,60 @@ def _decode_oid(value: bytes) -> str:
     return ".".join(parts)
 
 
+def _walk_oids(body: bytes, oids_hex: list[str]) -> None:
+    """Recurse the TLV tree, collecting the raw value hex of every OID (tag ``06``).
+
+    CardData nests its OIDs inside constructed tags (``60``/``63``/``65``/``66``
+    and the ``73`` template), so a flat parse only sees the first one.
+    """
+    for tag, value in _read_tlvs(body):
+        lead = (tag >> 8) if tag > 0xFF else tag
+        if lead & 0x20:  # constructed: descend
+            _walk_oids(value, oids_hex)
+        elif tag == 0x06 and value:
+            oids_hex.append(value.hex().upper())
+
+
+def _ascii_runs(data: bytes, minlen: int = 4) -> list[str]:
+    """Return printable-ASCII runs of at least ``minlen`` characters."""
+    runs: list[str] = []
+    current: list[str] = []
+    for byte in data:
+        if 0x20 <= byte <= 0x7E:
+            current.append(chr(byte))
+        else:
+            if len(current) >= minlen:
+                runs.append("".join(current))
+            current = []
+    if len(current) >= minlen:
+        runs.append("".join(current))
+    return runs
+
+
 def decode_card_data(value_hex: str) -> CardDataInfo:
-    """Decode CardData (``66``). The GP OID ``2A8648869F0D01`` tail carries version/SCP."""
+    """Decode CardData (``66``): the GP RID ``2A864886FC6B`` OID family + card text."""
     body = _strip_tlv(value_hex, "66")
-    inner = _strip_tlv(body.hex(), "73") if body[:1] == b"\x73" else body
-    oids: list[str] = []
+    oids_hex: list[str] = []
+    _walk_oids(body, oids_hex)
+    oids = [_decode_oid(bytes.fromhex(h)) for h in oids_hex]
     gp_version: str | None = None
     scp: str | None = None
-    for tag, value in _read_tlvs(inner):
-        if tag == 0x06:
-            oid = _decode_oid(value)
-            oids.append(oid)
-            # GP card recognition OIDs: 1.2.840.114283.2.<version> (card mgmt),
-            # ...3 (identifies GP), ...4.<scp> (security domain SCP).
-            head = "1.2.840.114283"
-            if oid.startswith(head + ".2."):
-                gp_version = oid[len(head) + 3 :]
-            if oid.startswith(head + ".4."):
-                scp = oid[len(head) + 3 :]
-    return CardDataInfo(oids=oids, gp_version=gp_version, scp=scp, raw=value_hex.upper())
+    # GP card recognition OIDs: 1.2.840.114283.2.<version> (card mgmt),
+    # ...3 (identifies GP), ...4.<scp> (security domain SCP).
+    head = "1.2.840.114283"
+    for oid in oids:
+        if oid.startswith(head + ".2."):
+            gp_version = oid[len(head) + 3 :]
+        if oid.startswith(head + ".4."):
+            scp = oid[len(head) + 3 :]
+    return CardDataInfo(
+        oids=oids,
+        oids_hex=oids_hex,
+        ascii_strings=_ascii_runs(body),
+        gp_version=gp_version,
+        scp=scp,
+        raw=value_hex.upper(),
+    )
 
 
 # ---- ExtendedCardResources FF21 ---------------------------------------------
@@ -343,24 +380,29 @@ class EuiccProfile:
     raw_objects: dict[str, str] = field(default_factory=dict)
 
 
-def _normalize_tag(tag: str | None, resp: str) -> str:
-    """Pick the DO tag: prefer the leading tag of the response bytes."""
-    resp = (resp or "").replace(" ", "").upper()
-    if len(resp) >= 2:
-        first = int(resp[:2], 16)
-        if (first & 0x1F) == 0x1F and len(resp) >= 4:
-            return resp[:4]
-        return resp[:2]
-    return (tag or "").upper()
+def _requested_tag(row: dict[str, object]) -> str | None:
+    """Return the tag that was ASKED for via GET DATA P1-P2, never the response.
+
+    The enum writes ``requested_tag`` (added for exactly this) and, for older
+    captures, ``tag`` — both hold the candidate's GET DATA tag. The response's
+    leading bytes are a different DO (e.g. CardData ``66`` answers with a ``73``
+    template) and must not be used as the key.
+    """
+    for key in ("requested_tag", "tag"):
+        value = row.get(key)
+        if value:
+            return str(value).replace(" ", "").upper()
+    return None
 
 
 def load_capture(path: Path) -> dict[str, str]:
-    """Load a GET DATA capture into a ``tag -> response-hex`` mapping.
+    """Load a GET DATA capture into a ``requested-tag -> response-hex`` mapping.
 
-    Accepts the JSONL a live enum run writes (rows with ``resp`` / ``tag`` / ``sw``)
-    or a single JSON object mapping tag strings to hex. Only rows that returned
-    data (``sw`` starting ``9000`` / ``61`` / ``62`` / ``63``, or no ``sw`` key)
-    with a non-empty response are kept.
+    Accepts the JSONL a live enum run writes (rows with ``resp`` / ``requested_tag``
+    / ``tag`` / ``sw``) or a single JSON object mapping tag strings to hex. Only
+    rows that returned data (``sw`` starting ``9000`` / ``61`` / ``62`` / ``63``,
+    or no ``sw`` key) with a non-empty response are kept. The map is keyed on the
+    REQUESTED tag so ``66`` finds CardData even though its bytes start with ``73``.
     """
     text = path.read_text().strip()
     if not text:
@@ -368,12 +410,12 @@ def load_capture(path: Path) -> dict[str, str]:
 
     objects: dict[str, str] = {}
     if text[0] == "{" and "\n" not in text.strip().rstrip("}"):
-        # Single JSON object: tag -> hex.
+        # Single JSON object: the key IS the requested tag; keep it verbatim.
         data = json.loads(text)
         if isinstance(data, dict):
             for tag, hexval in data.items():
                 if hexval:
-                    objects[_normalize_tag(str(tag), str(hexval))] = str(hexval).upper()
+                    objects[str(tag).replace(" ", "").upper()] = str(hexval).upper()
             return objects
 
     for line in text.splitlines():
@@ -394,7 +436,9 @@ def load_capture(path: Path) -> dict[str, str]:
             s = str(sw).upper()
             if not (s == "9000" or s[:2] in ("61", "62", "63")):
                 continue
-        tag = _normalize_tag(row.get("tag"), str(resp))
+        tag = _requested_tag(row)
+        if not tag:
+            continue
         objects[tag] = str(resp).upper()
     return objects
 
@@ -410,28 +454,28 @@ def build_profile(objects: dict[str, str]) -> EuiccProfile:
                 return upper[t]
         return None
 
-    cplc_hex = find("9F7F")
+    cplc_hex = find("9F7F", "009F7F")
     if cplc_hex:
         try:
             profile.cplc = decode_cplc(cplc_hex)
         except DecodeError:
             pass
 
-    card_hex = find("66")
+    card_hex = find("66", "0066")
     if card_hex:
         try:
             profile.card_data = decode_card_data(card_hex)
         except (DecodeError, IndexError):
             pass
 
-    res_hex = find("FF21")
+    res_hex = find("FF21", "00FF21")
     if res_hex:
         try:
             profile.card_resources = decode_extended_card_resources(res_hex)
         except (DecodeError, IndexError):
             pass
 
-    e0_hex = find("E0")
+    e0_hex = find("E0", "00E0")
     if e0_hex:
         try:
             profile.key_info = decode_key_info_template(e0_hex)
@@ -492,8 +536,10 @@ def render_markdown(profile: EuiccProfile) -> str:
         d = profile.card_data
         lines.append(f"- GP version: `{d.gp_version or 'unknown'}`")
         lines.append(f"- SCP: `{d.scp or 'unknown'}`")
-        for oid in d.oids:
-            lines.append(f"- OID: `{oid}`")
+        for oid, oid_hex in zip(d.oids, d.oids_hex):
+            lines.append(f"- OID: `{oid}` (`{oid_hex}`)")
+        for text in d.ascii_strings:
+            lines.append(f"- Card text: `{text}`")
     else:
         lines.append("- CardData (`66`) not present in capture.")
     lines.append("")

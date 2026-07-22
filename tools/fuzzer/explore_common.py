@@ -180,6 +180,7 @@ def drive(
                 phase=phase,
                 apdu=candidate.apdu_hex,
                 tag=candidate.tag,
+                requested_tag=candidate.tag,
                 command=candidate.command,
                 classification=outcome.classification.value,
                 sent=outcome.sent,

@@ -73,13 +73,27 @@ def main(argv: list[str]) -> int:
     parser.add_argument("--summary", type=Path, required=True)
     parser.add_argument("--wall", type=int, default=300)
     parser.add_argument("--send-cap", dest="send_cap", type=int, default=None)
+    parser.add_argument(
+        "--tag-offset",
+        dest="tag_offset",
+        type=int,
+        default=0,
+        help="getdata_enum only: index of the first candidate in this slice",
+    )
+    parser.add_argument(
+        "--tag-count",
+        dest="tag_count",
+        type=int,
+        default=None,
+        help="getdata_enum only: number of candidates to test in this slice",
+    )
     args = parser.parse_args(argv)
 
     engine = _build_engine(args.live)
     phase = "live" if args.live else "dry"
 
     module = {"getdata_enum": getdata_enum, "bf2d_disclosure": bf2d_disclosure}[args.angle]
-    summary = module.run(
+    kwargs: dict[str, object] = dict(
         engine=engine,
         out_path=args.out,
         summary_path=args.summary,
@@ -87,6 +101,10 @@ def main(argv: list[str]) -> int:
         wall=args.wall,
         send_cap=args.send_cap,
     )
+    if args.angle == "getdata_enum":
+        kwargs["tag_offset"] = args.tag_offset
+        kwargs["tag_count"] = args.tag_count
+    summary = module.run(**kwargs)
 
     sys.stderr.write(f"[deepdata/{args.angle}/{phase}] {json.dumps(summary)[:400]}\n")
     return 0
