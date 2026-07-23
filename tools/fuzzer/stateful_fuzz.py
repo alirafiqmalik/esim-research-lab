@@ -69,6 +69,11 @@ SEED_APDUS: dict[str, str] = {
     # ISO / GP reads.
     "SELECT_isdr": "00A4040010A0000005591010FFFFFFFF8900000100",
     "SELECT_iccid": "00A404001089033023427100000000027143866816",
+    # SELECTs to a DIFFERENT valid applet — the strong state-changer: after this
+    # the channel points at ECASD/GP-ISD, so a following ISD-R read (e.g. GetEID)
+    # is refused until a RESET reopens the ISD-R channel.
+    "SELECT_ecasd": "00A4040010A0000005591010FFFFFFFF8900000200",
+    "SELECT_gpisd": "00A4040008A000000151000000",
     "GET_RESPONSE": "00C0000000",
     "GET_DATA_00": "00CA000000",
     "GET_DATA_72": "00CA007200",
@@ -81,6 +86,8 @@ SEED_APDUS: dict[str, str] = {
 # nondeterministic GET DATA / RSP reads were card-nondeterministic in the
 # single-command map. These are tried as the priming A in the differential probe.
 STATE_BEARING: tuple[str, ...] = (
+    "SELECT_ecasd",
+    "SELECT_gpisd",
     "SELECT_isdr",
     "SELECT_iccid",
     "GET_RESPONSE",
