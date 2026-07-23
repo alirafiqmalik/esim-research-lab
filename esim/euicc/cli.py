@@ -123,6 +123,14 @@ def av_apdu(serial, sess, args):
     return _activity(serial, sess, "apdu", args.backend, hex=args.hex.replace(" ", ""))
 
 
+def av_seq(serial, sess, args):
+    # Many APDUs on ONE ISD-R channel (state persists); a literal RESET token between
+    # APDUs close+reopens the channel (re-SELECT ISD-R, transient state only). The list
+    # is joined with commas for the activity extra — each APDU hex has no commas itself.
+    tokens = [t.replace(" ", "") if t.upper() != "RESET" else "RESET" for t in args.apdus]
+    return _activity(serial, sess, "seq", args.backend, apdus=",".join(tokens))
+
+
 def av_get_addresses(serial, sess, args):
     r = _activity(serial, sess, "get-addresses", args.backend)
     r.update(_parse_addresses(r.get("resp", "")))
@@ -193,7 +201,8 @@ ACT_OPS = {
     "notifications": av_read("notifications"), "download": av_download,
     "enable": av_switch(True), "disable": av_switch(False), "delete": av_delete,
     "cycle": av_cycle,
-    "apdu": av_apdu, "get-addresses": av_get_addresses, "get-rat": av_read("get-rat"),
+    "apdu": av_apdu, "seq": av_seq,
+    "get-addresses": av_get_addresses, "get-rat": av_read("get-rat"),
     "set-dp-address": av_set_dp_address, "nickname": av_nickname,
     "remove-notification": av_remove_notification,
     "handle-notification": av_handle_notification, "reset": av_reset,
@@ -233,6 +242,9 @@ def build_parser() -> argparse.ArgumentParser:
     c.add_argument("--capture-rsp", action="store_true", default=True)
     # unbridged commands: raw ES10x over ISD-R + LPA methods not on the basic path
     ap_apdu = sub.add_parser("apdu"); ap_apdu.add_argument("hex", help="raw APDU hex → ISD-R")
+    ap_seq = sub.add_parser("seq")    # many APDUs on ONE channel; RESET token close+reopens ISD-R
+    ap_seq.add_argument("apdus", nargs="+",
+                        help="APDU hex list on ONE ISD-R channel; a literal RESET close+reopens it")
     sub.add_parser("get-addresses")   # ES10a GetEuiccConfiguredAddresses
     sub.add_parser("get-rat")         # ES10b GetRAT
     sdp = sub.add_parser("set-dp-address"); sdp.add_argument("address", help="default SM-DP+ FQDN")

@@ -46,6 +46,15 @@ fi
 echo "== step 2: apply EsimCtlActivity patch =="
 cp "$REPO/testbed/openeuicc/EsimCtlActivity.kt" \
    "$OPENEUICC_DIR/app/src/main/java/im/angry/openeuicc/ui/EsimCtlActivity.kt" || die "patch copy failed"
+# The copied snapshot already contains the same-channel `seq` primitive. seq-primitive.patch
+# records that change as a standalone diff; apply it only if the copied file lacks seq
+# (guarded, idempotent — normally a no-op because the snapshot is the source of truth).
+if ! grep -q '"seq"' "$OPENEUICC_DIR/app/src/main/java/im/angry/openeuicc/ui/EsimCtlActivity.kt"; then
+  git -C "$OPENEUICC_DIR" apply "$REPO/testbed/openeuicc/seq-primitive.patch" \
+    || die "seq-primitive.patch failed to apply"
+else
+  echo "seq primitive already present in snapshot, skipping seq-primitive.patch"
+fi
 # frontier patch: ES11 discovery + AuthenticateServer JNI + card wrapper override
 if ! grep -q es11Discovery "$OPENEUICC_DIR/libs/lpac-jni/src/main/jni/lpac-jni/lpac-jni.c" 2>/dev/null; then
   git -C "$OPENEUICC_DIR" apply "$REPO/testbed/openeuicc/es11-discovery.patch" \

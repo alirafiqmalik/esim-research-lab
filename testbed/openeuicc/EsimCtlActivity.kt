@@ -32,7 +32,8 @@ import org.json.JSONObject
  *
  * ops: eid info list notifications download enable disable delete
  *      nickname remove-notification handle-notification reset
- *      apdu get-addresses set-dp-address get-rat   (raw ES10x, ISD-R store-data)
+ *      apdu seq get-addresses set-dp-address get-rat   (raw ES10x, ISD-R store-data;
+ *      seq = many APDUs on ONE channel, `RESET` token close+reopens the ISD-R channel)
  * Result line: `ESIMCTL: <id> RESULT <json>`  (json has ok/op/... )
  */
 class EsimCtlActivity : BaseEuiccAccessActivity() {
@@ -191,6 +192,15 @@ class EsimCtlActivity : BaseEuiccAccessActivity() {
                 val apdu = requireExtra("hex").replace(" ", "")
                 out.put("apdu", apdu).put("resp", isdrExchange(slot, port, apdu.decodeHex()).encodeHex())
             }
+            // ---- SAME-CHANNEL sequence: multiple APDUs on ONE open ISD-R channel ----
+            // Transient state persists across the list (unlike separate `apdu` calls,
+            // which each get a fresh channel). A literal `RESET` token close+reopens
+            // the ISD-R channel — re-SELECT ISD-R, clearing transient state only. It
+            // is NOT a write and NOT eUICCMemoryReset. This op sends only the APDUs it
+            // is given; it selects/resets nothing on its own.
+            "seq" -> out.put("results", seqExchange(slot, port,
+                requireExtra("apdus").split(Regex("[,\\s]+")).map { it.trim() }.filter { it.isNotEmpty() }))
+                .put("count", out.getJSONArray("results").length())
             "get-addresses" -> // ES10a GetEuiccConfiguredAddresses (BF3C)
                 out.put("resp", isdrExchange(slot, port, storeData(byteArrayOf(0xBF.toByte(), 0x3C, 0x00))).encodeHex())
             "get-rat" -> // ES10b GetRAT (BF43)
@@ -241,6 +251,44 @@ class EsimCtlActivity : BaseEuiccAccessActivity() {
             val handle = (field.get(omapi) as Map<Int, *>).keys.firstOrNull()
             if (handle != null) omapi.transmit(handle, apdu)
             else omapi.withLogicalChannel(ch.isdrAid) { it(apdu) }
+        }
+
+    // Send an ordered list of APDU tokens on ONE ISD-R logical channel so transient
+    // state persists across them. Reuses lpac's already-open channel (the same handle
+    // isdrExchange uses); opens one only if lpac holds none. A `RESET` token closes and
+    // reopens the ISD-R channel — the non-multiselectable applet forces close-before-open,
+    // so the reopened channel re-SELECTs ISD-R and clears transient state. The reopened
+    // channel is remapped onto lpac's original handle number so lpac's cached handle stays
+    // valid. Returns a JSON array of {apdu, resp, ok} (RESET entries carry reset=true).
+    private suspend fun seqExchange(slot: Int, port: Int, tokens: List<String>): JSONArray =
+        euiccChannelManager.withEuiccChannel(slot, port, seId) { ch ->
+            val omapi = ch.apduInterface
+            val field = omapi.javaClass.getDeclaredField("channels").apply { isAccessible = true }
+            @Suppress("UNCHECKED_CAST")
+            fun channelMap() = field.get(omapi) as MutableMap<Int, Any?>
+            val reused = channelMap().keys.firstOrNull()
+            var handle = reused ?: omapi.logicalChannelOpen(ch.isdrAid)
+            val results = JSONArray()
+            try {
+                for (tok in tokens) {
+                    if (tok.equals("RESET", ignoreCase = true)) {
+                        omapi.logicalChannelClose(handle)            // close first (ISD-R is non-multiselectable)
+                        val fresh = omapi.logicalChannelOpen(ch.isdrAid)
+                        val map = channelMap()                      // remap fresh channel onto lpac's handle
+                        synchronized(map) { map[handle] = map.remove(fresh) }
+                        results.put(JSONObject().put("apdu", "RESET").put("resp", "")
+                            .put("ok", true).put("reset", true))
+                    } else {
+                        val resp = omapi.transmit(handle, tok.decodeHex()).encodeHex()
+                        val ok = resp.length >= 4 &&
+                            resp.substring(resp.length - 4).equals("9000", ignoreCase = true)
+                        results.put(JSONObject().put("apdu", tok).put("resp", resp).put("ok", ok))
+                    }
+                }
+            } finally {
+                if (reused == null) runCatching { omapi.logicalChannelClose(handle) }
+            }
+            results
         }
 
     // Wrap a BER-TLV payload in an ES10x STORE DATA command (81 E2 91 00 Lc <tlv>).

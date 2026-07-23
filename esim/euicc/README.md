@@ -48,6 +48,7 @@ after the phone comes back up.
 | `esim euicc set-dp-address FQDN` | ES10a: write the default SM-DP+ address (`""` clears) | ✓ | — |
 | `esim euicc get-rat` | ES10b: Rules Authorisation Table (raw BER-TLV) | ✓ | — |
 | `esim euicc apdu HEX` | raw ES10x C-APDU to the ISD-R; returns response hex | ✓ | — |
+| `esim euicc seq HEX... [RESET]...` | many APDUs on ONE ISD-R channel (state persists); `RESET` close+reopens the channel | ✓ | — |
 | `esim euicc nickname N NAME` | ES10c: set a profile nickname (`""` clears) | ✓ | — |
 | `esim euicc remove-notification SEQ` | ES10b: delete a pending notification locally | ✓ | — |
 | `esim euicc handle-notification SEQ` | ES9+: send a pending notification to its SM-DP+ | ✓ | — |
