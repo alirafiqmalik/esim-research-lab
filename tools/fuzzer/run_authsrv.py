@@ -43,11 +43,24 @@ from pathlib import Path
 
 import ber
 from authsrv_fuzz import generate_mutations, Mutation
-from authsrv_seed import AuthCommand, build_synthetic_command, load_seed
-from safety import Classification, classify
+from authsrv_seed import (
+    INS_STORE_DATA,
+    AuthCommand,
+    build_synthetic_command,
+    load_seed,
+    reassemble_blocks,
+)
+from safety import Classification, SafetyError, classify, guard_send
+from seq_transport import SeqStepResult, SeqTransport, SeqTransportError
 
 GET_CHALLENGE_APDU = "81E2910003BF2E00"
 CANCEL_SESSION_TAG = 0xBF41
+
+# STORE DATA payload per block. 0x3F (63 bytes) reproduces the lpac chaining that
+# produced the captured seed exactly (13 blocks, 81E211.. x12 + 81E2910C.. final).
+STORE_DATA_CHUNK = 0x3F
+P1_INTERMEDIATE = 0x11  # STORE DATA P1, more-blocks-follow
+P1_LAST = 0x91  # STORE DATA P1, final block (bit 0x80 set)
 
 # BF38 response inner CHOICE tags (rsp.asn AuthenticateServerResponse).
 RESP_OK_TAG = 0xA0  # authenticateResponseOk (euicc-signed)
@@ -198,6 +211,50 @@ def _dry_run(mutations: list[Mutation], synthetic: bool) -> int:
     return 0
 
 
+def chunk_store_data(bf38_tlv: bytes, chunk_size: int = STORE_DATA_CHUNK) -> list[str]:
+    """Re-split a BF38 command TLV into block-chained STORE DATA APDUs.
+
+    Intermediate blocks are ``81 E2 11 <p2> <Lc> <chunk>``; the final block is
+    ``81 E2 91 <p2> <Lc> <chunk>``. ``p2`` is the zero-based block index, matching
+    the lpac chaining that produced the captured seed. ``reassemble_blocks`` over
+    the returned blocks reproduces ``bf38_tlv`` byte-for-byte.
+    """
+    if len(bf38_tlv) < 2 or bf38_tlv[:2] != b"\xbf\x38":
+        raise ValueError("chunk_store_data requires a BF38-tagged command TLV")
+    if not 1 <= chunk_size <= 0xFF:
+        raise ValueError(f"chunk_size {chunk_size} out of 1..255 range")
+
+    blocks: list[str] = []
+    total = len(bf38_tlv)
+    offset = 0
+    index = 0
+    while offset < total:
+        chunk = bf38_tlv[offset : offset + chunk_size]
+        last = offset + len(chunk) >= total
+        p1 = P1_LAST if last else P1_INTERMEDIATE
+        header = bytes([0x81, INS_STORE_DATA, p1, index & 0xFF, len(chunk)])
+        blocks.append((header + chunk).hex().upper())
+        offset += len(chunk)
+        index += 1
+    return blocks
+
+
+def _bf38_response_step(block_steps: list[SeqStepResult]) -> SeqStepResult | None:
+    """Pick the step carrying the AuthenticateServer response.
+
+    In GP block chaining the response completes on the final block. This scans the
+    block steps for the one whose response bytes carry the BF38 response TLV, and
+    falls back to the last block step when none decode (a reject the classifier
+    then labels safely).
+    """
+    if not block_steps:
+        return None
+    for step in block_steps:
+        if "BF38" in step.resp_hex.replace(" ", "").upper():
+            return step
+    return block_steps[-1]
+
+
 def _cancel_session_apdu(transaction_id: bytes) -> str:
     """Build a CancelSession (BF41) store-data APDU to tear down the session."""
     # reason 1 = postponed (SGP.22 CancelSessionReason); benign teardown value.
@@ -207,14 +264,128 @@ def _cancel_session_apdu(transaction_id: bytes) -> str:
     return (bytes([0x81, 0xE2, 0x91, 0x00, lc]) + tlv).hex().upper()
 
 
+def _repo_root() -> Path:
+    return Path(__file__).resolve().parents[2]
+
+
+def _guard_and_build(mutation: Mutation, cancel_apdu: str) -> tuple[list[str], int]:
+    """Guard one attempt through the safety chokepoint and build its wire sequence.
+
+    Every APDU that will reach the card is guarded ALLOWED here BEFORE any send:
+    the fresh GetEUICCChallenge (BF2E), the logical BF38 command, and the
+    CancelSession (BF41) teardown. The BF38 is then re-split into block-chained
+    STORE DATA APDUs, and the chain is asserted to reassemble byte-for-byte to the
+    exact BF38 TLV that was just guarded, so nothing but the guarded command can
+    reach the card. Raises SafetyError if any invariant fails.
+    """
+    guard_send(GET_CHALLENGE_APDU, live=True)
+    verdict = guard_send(mutation.apdu_hex, live=True)
+    if verdict.tag != 0xBF38:
+        raise SafetyError(
+            f"{mutation.label}: logical command is tag {verdict.tag}, not BF38"
+        )
+    guard_send(cancel_apdu, live=True)
+
+    bf38_tlv = mutation.command.to_command_tlv()
+    blocks = chunk_store_data(bf38_tlv)
+    reassembled = reassemble_blocks([bytes.fromhex(b) for b in blocks])
+    if reassembled != bf38_tlv:
+        raise SafetyError(
+            f"{mutation.label}: block chain does not reassemble to the guarded BF38"
+        )
+    for block in blocks:
+        if classify(block).classification is Classification.BLOCKED:
+            raise SafetyError(f"{mutation.label}: a wire block classified BLOCKED")
+
+    seq = [GET_CHALLENGE_APDU, *blocks, cancel_apdu]
+    return seq, len(blocks)
+
+
+def _run_one(
+    transport: SeqTransport, mutation: Mutation, cancel_apdu: str
+) -> tuple[Outcome, SeqStepResult | None]:
+    seq, nblocks = _guard_and_build(mutation, cancel_apdu)
+    results = transport.send_sequence(seq)
+    # results: [challenge, block_0 .. block_{n-1}, cancel]
+    block_steps = results[1 : 1 + nblocks]
+    step = _bf38_response_step(block_steps)
+    resp_hex = step.resp_hex if step else ""
+    sw = step.sw if step else ""
+    return classify_outcome(mutation, resp_hex, sw), step
+
+
 def _live_run(mutations: list[Mutation], args: argparse.Namespace) -> int:
-    # The live path requires a block-chaining BF38 transport (the gated run phase
-    # provides it). It is intentionally not wired to a device in this build phase.
-    raise SystemExit(
-        "live run is gated: it requires the block-chaining BF38 transport and an "
-        "independent safety review of the BF38/BF41 allowlist change before any "
-        "device send. Re-run without --live for the dry-run build."
-    )
+    transport = SeqTransport(_repo_root(), python_executable="python3")
+    seed_txid = mutations[0].command.transaction_id if mutations else b"\x00"
+    cancel_apdu = _cancel_session_apdu(seed_txid)
+
+    out_path: Path = args.out
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    summary: dict[str, int] = {"total": 0, "rejected": 0, "accepted_info": 0,
+                               "critical": 0, "errors": 0}
+    records: list[dict[str, object]] = []
+    critical: Outcome | None = None
+
+    with out_path.open("w") as fh:
+        for mutation in mutations:
+            summary["total"] += 1
+            try:
+                outcome, step = _run_one(transport, mutation, cancel_apdu)
+            except (SeqTransportError, SafetyError) as exc:
+                summary["errors"] += 1
+                record = {
+                    "ts": _now(), "label": mutation.label,
+                    "category": mutation.category, "error": str(exc),
+                }
+                records.append(record)
+                fh.write(json.dumps(record) + "\n")
+                fh.flush()
+                continue
+
+            record = {
+                "ts": _now(), "label": outcome.label, "category": outcome.category,
+                "accepted": outcome.accepted, "severity": outcome.severity,
+                "stage": outcome.stage, "sw": outcome.sw,
+                "error_code": outcome.error_code, "detail": outcome.detail,
+                "resp_hex": (step.resp_hex if step else ""),
+            }
+            records.append(record)
+            fh.write(json.dumps(record) + "\n")
+            fh.flush()
+
+            if outcome.severity == Severity.CRITICAL.value:
+                summary["critical"] += 1
+                critical = outcome
+                # A candidate bypass. STOP immediately; attempt no follow-on.
+                break
+            if outcome.accepted:
+                summary["accepted_info"] += 1
+            else:
+                summary["rejected"] += 1
+
+    summary_record = {
+        "ts": _now(), "kind": "summary", "mode": "live",
+        "seed_log": str(args.seed_log) if args.seed_log else "synthetic",
+        "device_serial": None, **summary,
+        "critical_bypass": critical.label if critical else None,
+    }
+    with out_path.open("a") as fh:
+        fh.write(json.dumps(summary_record) + "\n")
+
+    print(json.dumps({
+        "mode": "live", "out": str(out_path), "summary": summary,
+        "critical_bypass": critical.label if critical else None,
+        "per_mutation": [
+            {
+                "label": r.get("label"), "category": r.get("category"),
+                "sw": r.get("sw"), "stage": r.get("stage"),
+                "error_code": r.get("error_code"),
+                "severity": r.get("severity"), "error": r.get("error"),
+            }
+            for r in records
+        ],
+    }, indent=2))
+    return 2 if critical else 0
 
 
 def _parse_args(argv: list[str]) -> argparse.Namespace:
