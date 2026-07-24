@@ -1,0 +1,88 @@
+# SGP.22 RSP fuzzing dictionary (libFuzzer -dict / AFL++ -x).
+# Covers BER-TLV tags, long-form length octets, ES9+/ES11 JSON keys and status
+# structure, and base64 markers. Keep focused (skills: fuzzing-dictionary).
+
+# --- BER-TLV / DER length octets (long form) ---
+len81="\x81"
+len82="\x82"
+len83="\x83"
+len84="\x84"
+
+# --- ES10 / SGP.22 constructed tags (2-byte, high tag number form 0xBFxx) ---
+bf20="\xBF\x20"
+bf22="\xBF\x22"
+bf27="\xBF\x27"
+bf28="\xBF\x28"
+bf2b="\xBF\x2B"
+bf2d="\xBF\x2D"
+bf2f="\xBF\x2F"
+bf30="\xBF\x30"
+bf31="\xBF\x31"
+bf36="\xBF\x36"
+bf37="\xBF\x37"
+bf38="\xBF\x38"
+bf3c="\xBF\x3C"
+bf3e="\xBF\x3E"
+bf3f="\xBF\x3F"
+
+# --- single-byte context/application tags used by the parsers ---
+tag_80="\x80"
+tag_81="\x81"
+tag_82="\x82"
+tag_83="\x83"
+tag_84="\x84"
+tag_90="\x90"
+tag_91="\x91"
+tag_92="\x92"
+tag_93="\x93"
+tag_94="\x94"
+tag_95="\x95"
+tag_99="\x99"
+tag_9f70="\x9F\x70"
+tag_a0="\xA0"
+tag_a1="\xA1"
+tag_a2="\xA2"
+tag_a3="\xA3"
+tag_4f="\x4F"
+tag_5a="\x5A"
+tag_e3="\xE3"
+tag_0c="\x0C"
+tag_b6="\xB6"
+tag_b7="\xB7"
+
+# real euiccInfo1 prefix (captured, .sessions/openeuicc-rsp-20260627)
+euiccinfo1="\xBF\x20\x35\x82\x03\x02\x03\x00"
+
+# --- ES9+/ES11 JSON keys ---
+"header"
+"functionExecutionStatus"
+"status"
+"statusCodeData"
+"subjectCode"
+"reasonCode"
+"subjectIdentifier"
+"message"
+"transactionId"
+"serverSigned1"
+"serverSignature1"
+"euiccCiPKIdToBeUsed"
+"serverCertificate"
+"profileMetadata"
+"smdpSigned2"
+"smdpSignature2"
+"smdpCertificate"
+"boundProfilePackage"
+"eventEntries"
+"rspServerAddress"
+"Executed-Success"
+"Failed"
+
+# --- JSON structural / value tokens ---
+json_obj="{}"
+json_hdr="{\"header\":{\"functionExecutionStatus\":{\"status\":\"Executed-Success\"}}}"
+"\"status\":"
+"\"statusCodeData\":"
+
+# --- base64 markers ---
+b64_pad="=="
+b64_pad1="="

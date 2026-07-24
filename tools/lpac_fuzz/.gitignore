@@ -1,0 +1,20 @@
+# build artifacts
+build/
+*.o
+*.profraw
+*.profdata
+fuzz_derutil
+fuzz_es8p
+fuzz_es10
+fuzz_es9p
+
+# libFuzzer crash / run artifacts (kept out of git; may embed fuzz data)
+crashes/
+crash-*
+leak-*
+timeout-*
+oom-*
+slow-unit-*
+*.log
+findings/
+coverage_html/
