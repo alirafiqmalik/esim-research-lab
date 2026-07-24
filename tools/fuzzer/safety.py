@@ -30,6 +30,19 @@ ALLOWLIST_TAGS: dict[int, str] = {
     # list; it removes nothing. The write is RemoveNotification (BF30), which
     # stays blocked below.
     0xBF28: "ListNotification",
+    # verify-only: ES10b.AuthenticateServer (SGP.22 v2.x §5.7.13) only VERIFIES the
+    # SM-DP+ server certificate (must be CI-signed) and ServerSignature1, then opens
+    # a transient download session. It writes no profile and installs nothing. A
+    # passing AuthenticateServer is NOT chainable to a write: the very next RSP step
+    # (PrepareDownload BF21, LoadBoundProfilePackage BF37) stays blocked below, so
+    # even an accepted response cannot provision anything. This is the target of the
+    # certificate/signature-verification fuzzing campaign.
+    0xBF38: "AuthenticateServer",
+    # verify-only: ES10b.CancelSession (BF41) tears down the transient download
+    # session opened by AuthenticateServer. It carries a transactionId + reason,
+    # writes no profile, and cannot install. Used only to clean up after each
+    # AuthenticateServer attempt in the fuzzing campaign.
+    0xBF41: "CancelSession",
 }
 
 # ISO-7816 / GlobalPlatform instruction bytes that only read state. These are not
