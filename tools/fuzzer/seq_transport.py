@@ -34,6 +34,7 @@ from pathlib import Path
 
 _CLI_MODULE = "esim.cli"
 _TIMEOUT_SECONDS = 60
+_PER_STEP_SECONDS = 0.5  # extra headroom per token for large sequences
 _RESET_TOKEN = "RESET"
 
 
@@ -84,17 +85,21 @@ class SeqTransport:
 
         tokens = [self._normalize(tok) for tok in seq]
         cmd = [self._python, "-m", _CLI_MODULE, "euicc", "seq", *tokens]
+        # The CLI transparently switches to on-device file delivery for large/many-block
+        # sequences (bypassing the intent-extra and logcat-line limits), but those run
+        # many more card round trips — scale the host-side subprocess timeout with length.
+        timeout = self._timeout(len(tokens))
         try:
             proc = subprocess.run(
                 cmd,
                 cwd=self._repo_root,
                 capture_output=True,
                 text=True,
-                timeout=_TIMEOUT_SECONDS,
+                timeout=timeout,
             )
         except subprocess.TimeoutExpired as exc:
             raise SeqTransportError(
-                f"CLI timed out after {_TIMEOUT_SECONDS}s: {cmd}"
+                f"CLI timed out after {timeout}s: {cmd}"
             ) from exc
 
         if proc.returncode != 0:
@@ -104,6 +109,10 @@ class SeqTransport:
             )
 
         return self._parse(proc.stdout, tokens)
+
+    @staticmethod
+    def _timeout(n_tokens: int) -> int:
+        return max(_TIMEOUT_SECONDS, int(n_tokens * _PER_STEP_SECONDS))
 
     @staticmethod
     def _normalize(token: str) -> str:
@@ -152,3 +161,22 @@ class SeqTransport:
             reset=reset,
             raw=element,
         )
+
+
+class LargeSeqTransport(SeqTransport):
+    """Same interface as :class:`SeqTransport`, for oversized / many-block sequences.
+
+    Delivery of large sequences is handled by the CLI itself: `esim euicc seq` stages
+    the tokens in an on-device file (``--es apdus_file``) once they exceed the inline
+    intent-extra bound, and reads the results back from a device-side ``--es
+    results_file`` — bypassing the binder intent-extra limit (in) and the ~4KB logcat
+    line cap (out). This subclass is a semantic marker plus a longer per-token timeout
+    budget for sequences with thousands of card round trips; the guarding contract is
+    unchanged (``seq_safety.guard_sequence`` MUST run BEFORE send_sequence).
+    """
+
+    _PER_STEP_SECONDS_LARGE = 1.0
+
+    @classmethod
+    def _timeout(cls, n_tokens: int) -> int:
+        return max(_TIMEOUT_SECONDS, int(n_tokens * cls._PER_STEP_SECONDS_LARGE))

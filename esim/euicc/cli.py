@@ -27,7 +27,8 @@ import sys
 
 from esim.euicc.const import REPO
 from esim.euicc.session import Session, detect_serial
-from esim.euicc.backends import _activity, _resolve_iccid
+from esim.euicc.backends import (_activity, _activity_seq_file, _resolve_iccid,
+                                  _SEQ_INLINE_MAX_BYTES, _SEQ_INLINE_MAX_TOKENS)
 from esim.euicc.tlv import _parse_addresses
 from esim.euicc.session import _extract_rsp
 from esim.euicc.ui import OPS
@@ -128,7 +129,12 @@ def av_seq(serial, sess, args):
     # APDUs close+reopens the channel (re-SELECT ISD-R, transient state only). The list
     # is joined with commas for the activity extra — each APDU hex has no commas itself.
     tokens = [t.replace(" ", "") if t.upper() != "RESET" else "RESET" for t in args.apdus]
-    return _activity(serial, sess, "seq", args.backend, apdus=",".join(tokens))
+    joined = ",".join(tokens)
+    # Large/many-block sequences overflow the inline --es apdus intent extra and the
+    # logcat result line; route them through an on-device file instead (same tokens).
+    if len(tokens) > _SEQ_INLINE_MAX_TOKENS or len(joined) > _SEQ_INLINE_MAX_BYTES:
+        return _activity_seq_file(serial, sess, tokens)
+    return _activity(serial, sess, "seq", args.backend, apdus=joined)
 
 
 def av_get_addresses(serial, sess, args):

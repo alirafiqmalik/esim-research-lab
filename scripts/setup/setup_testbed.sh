@@ -55,6 +55,15 @@ if ! grep -q '"seq"' "$OPENEUICC_DIR/app/src/main/java/im/angry/openeuicc/ui/Esi
 else
   echo "seq primitive already present in snapshot, skipping seq-primitive.patch"
 fi
+# large-seq delivery: file-based --es apdus_file / --es results_file path for big
+# sequences (records the seqTokens() change as a standalone diff; the snapshot already
+# contains it, so this is normally a no-op).
+if ! grep -q 'seqTokens' "$OPENEUICC_DIR/app/src/main/java/im/angry/openeuicc/ui/EsimCtlActivity.kt"; then
+  git -C "$OPENEUICC_DIR" apply "$REPO/testbed/openeuicc/largeseq.patch" \
+    || die "largeseq.patch failed to apply"
+else
+  echo "large-seq file delivery already present in snapshot, skipping largeseq.patch"
+fi
 # frontier patch: ES11 discovery + AuthenticateServer JNI + card wrapper override
 if ! grep -q es11Discovery "$OPENEUICC_DIR/libs/lpac-jni/src/main/jni/lpac-jni/lpac-jni.c" 2>/dev/null; then
   git -C "$OPENEUICC_DIR" apply "$REPO/testbed/openeuicc/es11-discovery.patch" \

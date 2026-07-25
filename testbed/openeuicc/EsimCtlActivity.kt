@@ -198,9 +198,21 @@ class EsimCtlActivity : BaseEuiccAccessActivity() {
             // the ISD-R channel — re-SELECT ISD-R, clearing transient state only. It
             // is NOT a write and NOT eUICCMemoryReset. This op sends only the APDUs it
             // is given; it selects/resets nothing on its own.
-            "seq" -> out.put("results", seqExchange(slot, port,
-                requireExtra("apdus").split(Regex("[,\\s]+")).map { it.trim() }.filter { it.isNotEmpty() }))
-                .put("count", out.getJSONArray("results").length())
+            "seq" -> {
+                val results = seqExchange(slot, port, seqTokens())
+                out.put("count", results.length())
+                // Large mode: when the caller staged the tokens in a file (--es apdus_file)
+                // it also names a --es results_file; spill the full results array there and
+                // keep only a pointer in the logged RESULT line, which otherwise blows past
+                // logcat's ~4KB per-line cap and gets truncated (host JSON parse then fails).
+                val resultsFile = intent.getStringExtra("results_file")
+                if (resultsFile != null) {
+                    java.io.File(resultsFile).writeText(JSONObject().put("results", results).toString())
+                    out.put("results_file", resultsFile)
+                } else {
+                    out.put("results", results)
+                }
+            }
             "get-addresses" -> // ES10a GetEuiccConfiguredAddresses (BF3C)
                 out.put("resp", isdrExchange(slot, port, storeData(byteArrayOf(0xBF.toByte(), 0x3C, 0x00))).encodeHex())
             "get-rat" -> // ES10b GetRAT (BF43)
@@ -252,6 +264,18 @@ class EsimCtlActivity : BaseEuiccAccessActivity() {
             if (handle != null) omapi.transmit(handle, apdu)
             else omapi.withLogicalChannel(ch.isdrAid) { it(apdu) }
         }
+
+    // The seq token list. Large/many-block sequences exceed the intent-extra binder
+    // limit as an inline --es apdus string, so the caller may stage them in an on-device
+    // file named by --es apdus_file (a path in this app's own files dir, staged there
+    // with root). Same tokens either way — the file only changes HOW they arrive; the
+    // split is identical to the inline path. Adds no command capability.
+    private fun seqTokens(): List<String> {
+        val raw = intent.getStringExtra("apdus_file")
+            ?.let { java.io.File(it).readText() }
+            ?: requireExtra("apdus")
+        return raw.split(Regex("[,\\s]+")).map { it.trim() }.filter { it.isNotEmpty() }
+    }
 
     // Send an ordered list of APDU tokens on ONE ISD-R logical channel so transient
     // state persists across them. Reuses lpac's already-open channel (the same handle
