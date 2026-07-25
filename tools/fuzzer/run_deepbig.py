@@ -74,7 +74,7 @@ from safety import Classification, SafetyError, classify, guard_send
 from seq_transport import LargeSeqTransport, SeqStepResult, SeqTransport, SeqTransportError
 
 # Canary: GetEID (BF3E), read-only, used as the post-attempt responsiveness probe.
-GET_EID_APDU = "81E2910003BF3E00"
+GET_EID_APDU = "81E2910006BF3E035C015A"
 RESET_TOKEN = "RESET"
 
 RESP_OK_TAG = 0xA0  # authenticateResponseOk
@@ -493,6 +493,9 @@ def _parse_args(argv: list[str]) -> argparse.Namespace:
                     help="cap the number of live attempts (0 = no cap)")
     ap.add_argument("--max-seconds", type=float, default=0.0,
                     help="cap the live wall-clock seconds (0 = no cap)")
+    ap.add_argument("--only-class", default=None,
+                    help="run only mutations whose class starts with this prefix "
+                         "(e.g. deep, oversized, huge, massive, read, length)")
     return ap.parse_args(argv)
 
 
@@ -500,6 +503,8 @@ def main(argv: list[str]) -> int:
     args = _parse_args(argv)
     seed, synthetic = _load_seed_or_synthetic(args.seed_log)
     mutations = generate_mutations(seed)
+    if args.only_class:
+        mutations = [m for m in mutations if m.mutation_class.startswith(args.only_class)]
     if not args.live:
         return _dry_run(mutations, synthetic)
     if not args.i_have_safety_review:
