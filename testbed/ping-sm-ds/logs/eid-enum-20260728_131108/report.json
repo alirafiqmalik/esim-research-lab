@@ -1,0 +1,101 @@
+{
+  "timestamp": "2026-07-28T17:10:59.320940+00:00",
+  "host_side": [
+    {
+      "host": "lpa.live.esimdiscovery.com",
+      "note": "Thales, host-reachable",
+      "attempt": 1,
+      "eid_field_present_in_request": false,
+      "http_status": 200,
+      "function_status": "Failed",
+      "error": ""
+    },
+    {
+      "host": "lpa.live.esimdiscovery.com",
+      "note": "Thales, host-reachable",
+      "attempt": 2,
+      "eid_field_present_in_request": false,
+      "http_status": 200,
+      "function_status": "Failed",
+      "error": ""
+    },
+    {
+      "host": "lpa.live.esimdiscovery.com",
+      "note": "Thales, host-reachable",
+      "attempt": 3,
+      "eid_field_present_in_request": false,
+      "http_status": 200,
+      "function_status": "Failed",
+      "error": ""
+    },
+    {
+      "host": "lpa.live.esimdiscovery.dev",
+      "note": "Thales/Google UE4 lab, host-reachable",
+      "attempt": 1,
+      "eid_field_present_in_request": false,
+      "http_status": 200,
+      "function_status": "Failed",
+      "error": ""
+    },
+    {
+      "host": "lpa.live.esimdiscovery.dev",
+      "note": "Thales/Google UE4 lab, host-reachable",
+      "attempt": 2,
+      "eid_field_present_in_request": false,
+      "http_status": 200,
+      "function_status": "Failed",
+      "error": ""
+    },
+    {
+      "host": "lpa.live.esimdiscovery.dev",
+      "note": "Thales/Google UE4 lab, host-reachable",
+      "attempt": 3,
+      "eid_field_present_in_request": false,
+      "http_status": 200,
+      "function_status": "Failed",
+      "error": ""
+    },
+    {
+      "host": "lpa.ds.gsma.com",
+      "note": "GSMA root, phone-only (mutual TLS)",
+      "attempt": 1,
+      "eid_field_present_in_request": false,
+      "http_status": 200,
+      "function_status": "Failed",
+      "error": ""
+    },
+    {
+      "host": "lpa.ds.gsma.com",
+      "note": "GSMA root, phone-only (mutual TLS)",
+      "attempt": 2,
+      "eid_field_present_in_request": false,
+      "http_status": 200,
+      "function_status": "Failed",
+      "error": ""
+    },
+    {
+      "host": "lpa.ds.gsma.com",
+      "note": "GSMA root, phone-only (mutual TLS)",
+      "attempt": 3,
+      "eid_field_present_in_request": false,
+      "http_status": 200,
+      "function_status": "Failed",
+      "error": ""
+    }
+  ],
+  "device_discovery": {
+    "ok": true,
+    "event_count": 0,
+    "raw_keys": [
+      "op",
+      "backend",
+      "slot",
+      "port",
+      "smds",
+      "events",
+      "count",
+      "ok"
+    ]
+  },
+  "conclusion": "No pre-authentication EID oracle. InitiateAuthentication carries no EID field, so an unauthenticated caller has no input to enumerate over; eventEntries are returned only by AuthenticateClient, which requires an eUICC-signed response embedding CERT.EUICC (the EID). You can only learn 'event waiting vs nothing' for an EID whose eUICC you control."
+}
