@@ -11,3 +11,7 @@ venv/
 *.har
 bugreport*.zip
 .env
+
+# raw device logcat captures under the download lifecycle logs (bulky, and the
+# parsed ES9+ chain is kept in the sibling rsp.json)
+testbed/profile-download/logs/**/logcat.txt

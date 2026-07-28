@@ -1,0 +1,9 @@
+{
+  "op": "enable",
+  "backend": "lpac",
+  "slot": 0,
+  "port": 0,
+  "iccid": "8944476500015257715",
+  "ok": true,
+  "log_dir": "/home/ahm/Desktop/project/Research/exp/eSIM_phone_mitm/.sessions/esimctl/20260728-044413-enable"
+}

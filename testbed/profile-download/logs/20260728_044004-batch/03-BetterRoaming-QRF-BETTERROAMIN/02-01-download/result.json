@@ -1,0 +1,37 @@
+{
+  "op": "download",
+  "backend": "lpac",
+  "slot": 0,
+  "port": 0,
+  "smdp": "rsp.truphone.com",
+  "matchingId": "QRF-BETTERROAMING-PMRDGIR2EARDEIT5",
+  "ok": false,
+  "error": "ProfileDownloadException(lpaErrorReason=ES10B_ERROR_REASON_UNDEFINED, lastHttpResponse=HttpResponse(rcode=200, data=[123, 34, 104, 101, 97, 100, 101, 114, 34, 58, 123, 34, 102, 117, 110, 99, 116, 105, 111, 110, 69, 120, 101, 99, 117, 116, 105, 111, 110, 83, 116, 97, 116, 117, 115, 34, 58, 123, 34, 115, 116, 97, 116, 117, 115, 34, 58, 34, 70, 97, 105, 108, 101, 100, 34, 44, 34, 115, 116, 97, 116, 1\u2026",
+  "rsp": [
+    {
+      "kind": "request-url",
+      "value": "https://rsp.truphone.com/gsma/rsp2/es9plus/initiateAuthentication"
+    },
+    {
+      "kind": "request-body",
+      "value": "{\"smdpAddress\":\"rsp.truphone.com\",\"euiccChallenge\":\"ljHd5jamRul8M0zUf6sNNQ==\",\"euiccInfo1\":\"vyA1ggMCAwCpFgQUgTcPUSXQsdQI1MOyMubSXnlb6/uqFgQUgTcPUSXQsdQI1MOyMubSXnlb6/s=\"}"
+    },
+    {
+      "kind": "response-body",
+      "value": "{\"header\":{\"functionExecutionStatus\":{\"status\":\"Executed-Success\"}},\"transactionId\":\"000000001CD5847D\",\"serverSigned1\":\"MECACAAAAAAc1YR9gRCWMd3mNqZG6XwzTNR/qw01gxByc3AudHJ1cGhvbmUuY29thBA9IOukcGp102316l9zzap/\",\"serverSignature1\":\"XzdAyEE/d1U8//GIpF4SFhmV+ftX/lyPybpKdGc9YubsgJuu71/bvTg8G1yIGg2gBt6Ilqw+i1ltP4jS2IRHBPx+5g==\",\"euiccCiPKIdToBeUsed\":\"BBSBNw9RJdCx1AjUw7Iy5tJeeVvr+w==\",\"serverCertificate\":\"MIICgzCCAiigAwIBAgIQZAVRhSGL0nffpH10bZlDJDAKBggqhkjOPQQDAjBEMRgwFgYDVQQKEw9HU00gQXNzb2NpYXRpb24xKDAmBgNVBAMTH0dTTSBBc3NvY2lhdGlvbiAtIFJTUDIgUm9vdCBDSTEwHhcNMjQwMjI3MDAwMDAwWhcNMjcwMjI2MjM1OTU5WjBsMQ"
+    },
+    {
+      "kind": "request-url",
+      "value": "https://rsp.truphone.com/gsma/rsp2/es9plus/authenticateClient"
+    },
+    {
+      "kind": "request-body",
+      "value": "{\"transactionId\":\"000000001CD5847D\",\"authenticateServerResponse\":\"vziCBbSgggWwMIHpgAgAAAAAHNWEfYMQcnNwLnRydXBob25lLmNvbYQQPSDrpHBqddNt9epfc82qf78igYeBAwIDAYIDAgMAgwNCcQCED4EBAIIEAAycgIMEAAA+T4UFBn8298CGAw0BAIcDAgMAiAID2KkWBBSBNw9RJdCx1AjUw7Iy5tJeeVvr+6oWBBSBNw9RJdCx1AjUw7Iy5tJeeVvr+4sBApkCBkAEAwEAAAwUVFMtUEEtVVAtMDQyMyAgICAgICCgLoAiUVJGLUJFVFRFUlJPQU1JTkctUE1SREdJUjJFQVJERUlUNaEIgAQ1KQYRoQBfN0DjH6m431nKqQdxlh5q7tJc5AoebRSd02g6yPE9yjN89ey35hu+OHxbBl2qdaNUyqBmygGARv5JOCogCNHLzI1CMIIB3DCCAYKgAwIBAgIRAIBQVqWrUjN8Y0ra+CScGWkwCgYIKoZIzj0EAwIwMjETMBEGA1UECgwKR0VNQUxUTyBTQTEbMBkGA1UEAwwSR0VNQUxUTyBFVU"
+    },
+    {
+      "kind": "response-body",
+      "value": "{\"header\":{\"functionExecutionStatus\":{\"status\":\"Failed\",\"statusCodeData\":{\"subjectCode\":\"8.2.6\",\"reasonCode\":\"3.8\",\"subjectIdentifier\":\"Matching ID\",\"message\":\"Refused\"}}},\"transactionId\":\"000000001CD5847D\"}"
+    }
+  ],
+  "log_dir": "/home/ahm/Desktop/project/Research/exp/eSIM_phone_mitm/.sessions/esimctl/20260728-044309-download"
+}

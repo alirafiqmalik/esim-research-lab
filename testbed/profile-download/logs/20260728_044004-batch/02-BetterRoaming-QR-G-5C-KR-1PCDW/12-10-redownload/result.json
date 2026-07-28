@@ -1,0 +1,56 @@
+{
+  "op": "download",
+  "backend": "lpac",
+  "slot": 0,
+  "port": 0,
+  "smdp": "rsp.truphone.com",
+  "matchingId": "QR-G-5C-KR-1PCDWP9",
+  "ok": true,
+  "rsp": [
+    {
+      "kind": "request-url",
+      "value": "https://rsp.truphone.com/gsma/rsp2/es9plus/initiateAuthentication"
+    },
+    {
+      "kind": "request-body",
+      "value": "{\"smdpAddress\":\"rsp.truphone.com\",\"euiccChallenge\":\"F9dyyxNVPLirfxJnCxIcYg==\",\"euiccInfo1\":\"vyA1ggMCAwCpFgQUgTcPUSXQsdQI1MOyMubSXnlb6/uqFgQUgTcPUSXQsdQI1MOyMubSXnlb6/s=\"}"
+    },
+    {
+      "kind": "response-body",
+      "value": "{\"header\":{\"functionExecutionStatus\":{\"status\":\"Executed-Success\"}},\"transactionId\":\"000000001CD5841D\",\"serverSigned1\":\"MECACAAAAAAc1YQdgRAX13LLE1U8uKt/EmcLEhxigxByc3AudHJ1cGhvbmUuY29thBBncEw4fqC5OJ6u8JO2CQDq\",\"serverSignature1\":\"XzdAZx+ilN7tGk/IbUGLpp4ZBBentXuz3nK+7MQuGN81f8lCXm2teVTP9DprsVQlPFPxtlHSpGZgoC+lIN/Ge5f9fw==\",\"euiccCiPKIdToBeUsed\":\"BBSBNw9RJdCx1AjUw7Iy5tJeeVvr+w==\",\"serverCertificate\":\"MIICgzCCAiigAwIBAgIQZAVRhSGL0nffpH10bZlDJDAKBggqhkjOPQQDAjBEMRgwFgYDVQQKEw9HU00gQXNzb2NpYXRpb24xKDAmBgNVBAMTH0dTTSBBc3NvY2lhdGlvbiAtIFJTUDIgUm9vdCBDSTEwHhcNMjQwMjI3MDAwMDAwWhcNMjcwMjI2MjM1OTU5WjBsMQ"
+    },
+    {
+      "kind": "request-url",
+      "value": "https://rsp.truphone.com/gsma/rsp2/es9plus/authenticateClient"
+    },
+    {
+      "kind": "request-body",
+      "value": "{\"transactionId\":\"000000001CD5841D\",\"authenticateServerResponse\":\"vziCBaCgggWcMIHVgAgAAAAAHNWEHYMQcnNwLnRydXBob25lLmNvbYQQZ3BMOH6guTiervCTtgkA6r8igYOBAwIDAYIDAgMAgwNCcQCED4EBAIIEAA0cjIMEAABAV4UFBn8298CGAw0BAIcDAgMAiAID2KkWBBSBNw9RJdCx1AjUw7Iy5tJeeVvr+6oWBBSBNw9RJdCx1AjUw7Iy5tJeeVvr+4sBAgQDAQAADBRUUy1QQS1VUC0wNDIzICAgICAgIKAegBJRUi1HLTVDLUtSLTFQQ0RXUDmhCIAENSkGEaEAXzdAyfutbGP6d2n0RoxqW1Jhf/uspD23qGNPyczKoCtWa60NxAzjKydHdxQKNfnuF+QmQ2xz6CnCx1lJdU41zHn3IjCCAdwwggGCoAMCAQICEQCAUFalq1IzfGNK2vgknBlpMAoGCCqGSM49BAMCMDIxEzARBgNVBAoMCkdFTUFMVE8gU0ExGzAZBgNVBAMMEkdFTUFMVE8gRVVNIENFIFBBVTAeFw0yMDA2MTkwMD"
+    },
+    {
+      "kind": "response-body",
+      "value": "{\"header\":{\"functionExecutionStatus\":{\"status\":\"Executed-Success\"}},\"transactionId\":\"000000001CD5841D\",\"profileMetadata\":\"vyWBploKmER0VgAQJXUX9ZENQmV0dGVyUm9hbWluZ5INQmV0dGVyUm9hbWluZ7YYMBaAAgRwgRByc3AudHJ1cGhvbmUuY29ttxuAAwL0gIEJVHJ1VUswMGVugglUcnVVSzAwZW6/dkLiQOE+wRT/9alRe1p0/A/nbGmfsdTYsuyY/coaY29tLnRydXBob25lLmJldHRlcnJvYW1pbmfjCtsIAAAAAAAAAAE=\",\"smdpSigned2\":\"MA2ACAAAAAAc1YQdAQEA\",\"smdpSignature2\":\"XzdAC6Ov6nZ/CSHPvJQkdg2QHJJ0zk6DxPZN86/zp2h3jqIhZNV4KKCKQRCKs6KIDzJnNaVqBcPkNK3U8AQmBS/eKw==\",\"smdpCertificate\":\"MIICgTCCAiigAwIBAgIQQTJ3aEWzuCcrOYhJAqkcRTAKBggqhkjOPQQDAjBEMRgwFgYDVQQKEw9HU00g"
+    },
+    {
+      "kind": "request-url",
+      "value": "https://rsp.truphone.com/gsma/rsp2/es9plus/getBoundProfilePackage"
+    },
+    {
+      "kind": "request-body",
+      "value": "{\"transactionId\":\"000000001CD5841D\",\"prepareDownloadResponse\":\"vyGBlqCBkzBOgAgAAAAAHNWEHV9JQQR2c1m02AUGvg/kyZDSJivs6WF+VLElXL57Gx/qybKObMD62mMeXtTU9pSG53JnhDdWQAZr6G6lR/NDBwdn9vkZXzdAeyd4Sz0PLalqjzmDQhZxQZP1+D+lwVdX771aRcZEqKdzs6TIEg282rLlKY9K7u+rNHQKvW/bbxhP2W2SWvN94Q==\"}"
+    },
+    {
+      "kind": "response-body",
+      "value": "{\"header\":{\"functionExecutionStatus\":{\"status\":\"Executed-Success\"}},\"transactionId\":\"000000001CD5841D\",\"boundProfilePackage\":\"vzaCS76/I4GuggEBgAgAAAAAHNWEHaYYgAGIgQEQhBAAAQIDBAUGBwgJCgsMDQ4PX0lBBIhpPgU7cl0vke7CTocBB9g+QRahbBNcXI2/CInOs8BkWpWX4u8ePZLoYsYauUc6LzahCOK3oZmfNrZC73iRh5VfN0D1y7Ts4i77DP1L0NshOQ1JgEFR11Ty/FJw4HqYPIVuCjovmSp27iV+SEFoaT5btARoHAmAYKRKYZeLDeh5yEDzoBqHGCFtGkVNlpzTf0W6/KGKZfQpv68ApmASoaGBtYiBsr8lgaZaCphEdFYAECV1F/WRDUJldHRlclJvYW1pbmeSDUJldHRlclJvYW1pbme2GDAWgAIEcIEQcnNwLnRydXBob25lLmNvbbcbgAMC9ICBCVRydVVLMDBlboIJVHJ1VUswMGVuv3ZC4kDhPsEU//WpUXtadPwP52xpn7HU2LLsmP3KGmNvbS50cn"
+    },
+    {
+      "kind": "request-url",
+      "value": "https://rsp.truphone.com/gsma/rsp2/es9plus/handleNotification"
+    },
+    {
+      "kind": "request-body",
+      "value": "{\"pendingNotification\":\"vzeBpr8nYIAIAAAAABzVhB2/LyWAASCBAgeADBByc3AudHJ1cGhvbmUuY29tWgqYRHRWABAldRf1BgsrBgEEAYHsRQEBAaIfoB1PEKAAAAVZEBD/////iQAAEQAECTAHoAUwA4ABAF83QCOBY31we9kEZ+yzO6zZ8zFh7iETrelcSwbmmLGVoTHDCqPMkoC2Rzzw1vSXF9x6Er347PoihF83J7MYLF5rCGw=\"}"
+    }
+  ],
+  "log_dir": "/home/ahm/Desktop/project/Research/exp/eSIM_phone_mitm/.sessions/esimctl/20260728-044227-download"
+}

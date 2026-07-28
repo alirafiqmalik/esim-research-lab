@@ -1,0 +1,26 @@
+[
+  {
+    "kind": "request-url",
+    "value": "https://rsp.truphone.com/gsma/rsp2/es9plus/initiateAuthentication"
+  },
+  {
+    "kind": "request-body",
+    "value": "{\"smdpAddress\":\"rsp.truphone.com\",\"euiccChallenge\":\"b31X27v5qSyA8oWzzd8grg==\",\"euiccInfo1\":\"vyA1ggMCAwCpFgQUgTcPUSXQsdQI1MOyMubSXnlb6/uqFgQUgTcPUSXQsdQI1MOyMubSXnlb6/s=\"}"
+  },
+  {
+    "kind": "response-body",
+    "value": "{\"header\":{\"functionExecutionStatus\":{\"status\":\"Executed-Success\"}},\"transactionId\":\"000000001CD582FB\",\"serverSigned1\":\"MECACAAAAAAc1YL7gRBvfVfbu/mpLIDyhbPN3yCugxByc3AudHJ1cGhvbmUuY29thBDB0dRI7SCJ7NTo8bgjv+0q\",\"serverSignature1\":\"XzdAwKA4tq+oiLayHhPYMiBifiPOQksQuAKssQOa3pnJJElakJzrNPoOIVBbD98YXBM5vWWCAwwFWw7/kdwgxtyOtw==\",\"euiccCiPKIdToBeUsed\":\"BBSBNw9RJdCx1AjUw7Iy5tJeeVvr+w==\",\"serverCertificate\":\"MIICgzCCAiigAwIBAgIQZAVRhSGL0nffpH10bZlDJDAKBggqhkjOPQQDAjBEMRgwFgYDVQQKEw9HU00gQXNzb2NpYXRpb24xKDAmBgNVBAMTH0dTTSBBc3NvY2lhdGlvbiAtIFJTUDIgUm9vdCBDSTEwHhcNMjQwMjI3MDAwMDAwWhcNMjcwMjI2MjM1OTU5WjBsMQ"
+  },
+  {
+    "kind": "request-url",
+    "value": "https://rsp.truphone.com/gsma/rsp2/es9plus/authenticateClient"
+  },
+  {
+    "kind": "request-body",
+    "value": "{\"transactionId\":\"000000001CD582FB\",\"authenticateServerResponse\":\"vziCBaGgggWdMIHWgAgAAAAAHNWC+4MQcnNwLnRydXBob25lLmNvbYQQwdHUSO0giezU6PG4I7/tKr8igYOBAwIDAYIDAgMAgwNCcQCED4EBAIIEAA0cjIMEAABAV4UFBn8298CGAw0BAIcDAgMAiAID2KkWBBSBNw9RJdCx1AjUw7Iy5tJeeVvr+6oWBBSBNw9RJdCx1AjUw7Iy5tJeeVvr+4sBAgQDAQAADBRUUy1QQS1VUC0wNDIzICAgICAgIKAfgBNRUi1HLTVDLTFMUy0xVzFaOVA3oQiABDUpBhGhAF83QHbD3eNvTIsf690GxlzSjD/NEoTNbcv3+pcjf0Zo0zbDyG8Kuv9Kss8zw4tlWgmuYEQXNlZ15BqXPeynXzkj8kgwggHcMIIBgqADAgECAhEAgFBWpatSM3xjStr4JJwZaTAKBggqhkjOPQQDAjAyMRMwEQYDVQQKDApHRU1BTFRPIFNBMRswGQYDVQQDDBJHRU1BTFRPIEVVTSBDRSBQQVUwHhcNMjAwNjE5MD"
+  },
+  {
+    "kind": "response-body",
+    "value": "{\"header\":{\"functionExecutionStatus\":{\"status\":\"Failed\",\"statusCodeData\":{\"subjectCode\":\"8.1.1\",\"reasonCode\":\"3.8\",\"subjectIdentifier\":\"EID\",\"message\":\"Refused\"}}},\"transactionId\":\"000000001CD582FB\"}"
+  }
+]

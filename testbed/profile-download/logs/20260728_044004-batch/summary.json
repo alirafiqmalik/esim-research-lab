@@ -1,0 +1,120 @@
+{
+  "timestamp": "20260728_044004",
+  "initial_installed": [
+    "8944476500015257715",
+    "8944476500015198679"
+  ],
+  "normalized_removed": [
+    "8944476500015257715",
+    "8944476500015198679"
+  ],
+  "results": [
+    {
+      "brand": "BetterRoaming",
+      "provider": "1GLOBAL (Truphone)",
+      "full_lpa_string": "LPA:1$rsp.truphone.com$QR-G-5C-1LS-1W1Z9P7",
+      "iccid_a": null,
+      "iccid_b": null,
+      "same_iccid": null,
+      "download_ok": false,
+      "collided": true,
+      "enabled_state": null,
+      "disabled_state": null,
+      "deleted_ok": false,
+      "redownload_ok": false,
+      "rsp_ops": [
+        "initiateAuthentication",
+        "authenticateClient"
+      ],
+      "status": "download_failed",
+      "error": "ProfileDownloadException(lpaErrorReason=ES10B_ERROR_REASON_UNDEFINED, lastHttpResponse=HttpResponse(rcode=200, data=[123, 34, 104, 101, 97, 100, 101, 114, 34, 58, 123, 34, 102, 117, 110, 99, 116, 105, 111, 110, 69, 120, 101, 99, 117, 116, 105, 111, 110, 83, 116, 97, 116, 117, 115, 34, 58, 123, 34, 115, 116, 97, 116, 117, 115, 34, 58, 34, 70, 97, 105, 108, 101, 100, 34, 44, 34, 115, 116, 97, 116, 1\u2026"
+    },
+    {
+      "brand": "BetterRoaming",
+      "provider": "1GLOBAL (Truphone)",
+      "full_lpa_string": "LPA:1$rsp.truphone.com$QR-G-5C-KR-1PCDWP9",
+      "iccid_a": "8944476500015257715",
+      "iccid_b": "8944476500015257715",
+      "same_iccid": true,
+      "download_ok": true,
+      "collided": false,
+      "enabled_state": "Enabled",
+      "disabled_state": "Disabled",
+      "deleted_ok": true,
+      "redownload_ok": true,
+      "rsp_ops": [
+        "initiateAuthentication",
+        "authenticateClient",
+        "getBoundProfilePackage",
+        "handleNotification"
+      ],
+      "status": "ok",
+      "error": ""
+    },
+    {
+      "brand": "BetterRoaming",
+      "provider": "1GLOBAL (Truphone)",
+      "full_lpa_string": "LPA:1$rsp.truphone.com$QRF-BETTERROAMING-PMRDGIR2EARDEIT5",
+      "iccid_a": "8944476500015257715",
+      "iccid_b": "8944476500015257715",
+      "same_iccid": true,
+      "download_ok": true,
+      "collided": true,
+      "enabled_state": "Enabled",
+      "disabled_state": "Disabled",
+      "deleted_ok": true,
+      "redownload_ok": true,
+      "rsp_ops": [
+        "initiateAuthentication",
+        "authenticateClient",
+        "getBoundProfilePackage",
+        "handleNotification"
+      ],
+      "status": "ok",
+      "error": ""
+    },
+    {
+      "brand": "Speedtest",
+      "provider": "1GLOBAL (Truphone)",
+      "full_lpa_string": "LPA:1$rsp.truphone.com$QRF-SPEEDTEST",
+      "iccid_a": "8944476500015198679",
+      "iccid_b": "8944476500015198679",
+      "same_iccid": true,
+      "download_ok": true,
+      "collided": false,
+      "enabled_state": "Enabled",
+      "disabled_state": "Disabled",
+      "deleted_ok": true,
+      "redownload_ok": true,
+      "rsp_ops": [
+        "initiateAuthentication",
+        "authenticateClient",
+        "getBoundProfilePackage",
+        "handleNotification"
+      ],
+      "status": "ok",
+      "error": ""
+    },
+    {
+      "brand": "RedteaGO",
+      "provider": "Redtea Mobile",
+      "full_lpa_string": "LPA:1$rsp-eu.redteamobile.com$5901981126831169",
+      "iccid_a": null,
+      "iccid_b": null,
+      "same_iccid": null,
+      "download_ok": false,
+      "collided": true,
+      "enabled_state": null,
+      "disabled_state": null,
+      "deleted_ok": false,
+      "redownload_ok": false,
+      "rsp_ops": [
+        "initiateAuthentication",
+        "authenticateClient"
+      ],
+      "status": "download_failed",
+      "error": "ProfileDownloadException(lpaErrorReason=ES10B_ERROR_REASON_UNDEFINED, lastHttpResponse=HttpResponse(rcode=200, data=[123, 34, 104, 101, 97, 100, 101, 114, 34, 58, 123, 34, 102, 117, 110, 99, 116, 105, 111, 110, 69, 120, 101, 99, 117, 116, 105, 111, 110, 83, 116, 97, 116, 117, 115, 34, 58, 123, 34, 115, 116, 97, 116, 117, 115, 34, 58, 34, 70, 97, 105, 108, 101, 100, 34, 44, 34, 115, 116, 97, 116, 1\u2026"
+    }
+  ],
+  "final_installed": []
+}

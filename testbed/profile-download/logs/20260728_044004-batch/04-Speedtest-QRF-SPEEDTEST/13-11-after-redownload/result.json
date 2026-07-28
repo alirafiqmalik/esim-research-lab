@@ -1,0 +1,27 @@
+{
+  "op": "list",
+  "backend": "lpac",
+  "slot": 0,
+  "port": 0,
+  "profiles": [
+    {
+      "iccid": "8944476500015257715",
+      "name": "BetterRoaming",
+      "nickname": "",
+      "provider": "BetterRoaming",
+      "state": "Disabled",
+      "class": "Operational"
+    },
+    {
+      "iccid": "8944476500015198679",
+      "name": "BetterRoaming",
+      "nickname": "",
+      "provider": "Speedtest Travel",
+      "state": "Disabled",
+      "class": "Operational"
+    }
+  ],
+  "count": 2,
+  "ok": true,
+  "log_dir": "/home/ahm/Desktop/project/Research/exp/eSIM_phone_mitm/.sessions/esimctl/20260728-044733-list"
+}

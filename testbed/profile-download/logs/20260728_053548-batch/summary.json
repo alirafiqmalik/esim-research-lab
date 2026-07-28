@@ -1,0 +1,123 @@
+{
+  "timestamp": "20260728_053548",
+  "initial_installed": [
+    "8944476500015198679",
+    "8944476500015257715"
+  ],
+  "restored": [
+    "8944476500015198679",
+    "8944476500015257715"
+  ],
+  "results": [
+    {
+      "brand": "BetterRoaming",
+      "provider": "1GLOBAL (Truphone)",
+      "full_lpa_string": "LPA:1$rsp.truphone.com$QR-G-5C-1LS-1W1Z9P7",
+      "iccid_a": null,
+      "iccid_b": null,
+      "same_iccid": null,
+      "download_ok": false,
+      "collided": true,
+      "enabled_state": null,
+      "disabled_state": null,
+      "deleted_ok": false,
+      "redownload_ok": false,
+      "rsp_ops": [
+        "initiateAuthentication",
+        "authenticateClient"
+      ],
+      "status": "download_failed",
+      "error": "8.1.1/3.8 EID Refused"
+    },
+    {
+      "brand": "BetterRoaming",
+      "provider": "1GLOBAL (Truphone)",
+      "full_lpa_string": "LPA:1$rsp.truphone.com$QR-G-5C-KR-1PCDWP9",
+      "iccid_a": "8944476500015257715",
+      "iccid_b": "8944476500015257715",
+      "same_iccid": true,
+      "download_ok": true,
+      "collided": true,
+      "enabled_state": "Enabled",
+      "disabled_state": "Disabled",
+      "deleted_ok": true,
+      "redownload_ok": true,
+      "rsp_ops": [
+        "initiateAuthentication",
+        "authenticateClient",
+        "getBoundProfilePackage",
+        "handleNotification"
+      ],
+      "status": "ok",
+      "error": ""
+    },
+    {
+      "brand": "BetterRoaming",
+      "provider": "1GLOBAL (Truphone)",
+      "full_lpa_string": "LPA:1$rsp.truphone.com$QRF-BETTERROAMING-PMRDGIR2EARDEIT5",
+      "iccid_a": "8944476500015257715",
+      "iccid_b": "8944476500015257715",
+      "same_iccid": true,
+      "download_ok": true,
+      "collided": true,
+      "enabled_state": "Enabled",
+      "disabled_state": "Disabled",
+      "deleted_ok": true,
+      "redownload_ok": true,
+      "rsp_ops": [
+        "initiateAuthentication",
+        "authenticateClient",
+        "getBoundProfilePackage",
+        "handleNotification"
+      ],
+      "status": "ok",
+      "error": ""
+    },
+    {
+      "brand": "Speedtest",
+      "provider": "1GLOBAL (Truphone)",
+      "full_lpa_string": "LPA:1$rsp.truphone.com$QRF-SPEEDTEST",
+      "iccid_a": "8944476500015198679",
+      "iccid_b": "8944476500015198679",
+      "same_iccid": true,
+      "download_ok": true,
+      "collided": true,
+      "enabled_state": "Enabled",
+      "disabled_state": "Disabled",
+      "deleted_ok": true,
+      "redownload_ok": true,
+      "rsp_ops": [
+        "initiateAuthentication",
+        "authenticateClient",
+        "getBoundProfilePackage",
+        "handleNotification"
+      ],
+      "status": "ok",
+      "error": ""
+    },
+    {
+      "brand": "RedteaGO",
+      "provider": "Redtea Mobile",
+      "full_lpa_string": "LPA:1$rsp-eu.redteamobile.com$5901981126831169",
+      "iccid_a": null,
+      "iccid_b": null,
+      "same_iccid": null,
+      "download_ok": false,
+      "collided": true,
+      "enabled_state": null,
+      "disabled_state": null,
+      "deleted_ok": false,
+      "redownload_ok": false,
+      "rsp_ops": [
+        "initiateAuthentication",
+        "authenticateClient"
+      ],
+      "status": "download_failed",
+      "error": "9.4/10.1 5901981126831169 campaign resource pool is empty"
+    }
+  ],
+  "final_installed": [
+    "8944476500015198679",
+    "8944476500015257715"
+  ]
+}

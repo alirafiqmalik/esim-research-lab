@@ -1,0 +1,14 @@
+{
+  "lpa": "LPA:1$rsp.truphone.com$QRF-SPEEDTEST",
+  "iccid_A": "8944476500015198679",
+  "iccid_B": "8944476500015198679",
+  "same_iccid": true,
+  "installed_before": [
+    "8944476500015198679",
+    "8944476500015257715"
+  ],
+  "installed_after": [
+    "8944476500015198679",
+    "8944476500015257715"
+  ]
+}

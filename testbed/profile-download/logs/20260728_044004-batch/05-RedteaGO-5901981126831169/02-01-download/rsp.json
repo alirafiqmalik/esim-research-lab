@@ -1,0 +1,26 @@
+[
+  {
+    "kind": "request-url",
+    "value": "https://rsp-eu.redteamobile.com/gsma/rsp2/es9plus/initiateAuthentication"
+  },
+  {
+    "kind": "request-body",
+    "value": "{\"smdpAddress\":\"rsp-eu.redteamobile.com\",\"euiccChallenge\":\"0A3DMQEa3Zt0O/ID51eamg==\",\"euiccInfo1\":\"vyA1ggMCAwCpFgQUgTcPUSXQsdQI1MOyMubSXnlb6/uqFgQUgTcPUSXQsdQI1MOyMubSXnlb6/s=\"}"
+  },
+  {
+    "kind": "response-body",
+    "value": "{\"header\":{\"functionExecutionStatus\":{\"status\":\"Executed-Success\"}},\"transactionId\":\"0000000003efb6f9\",\"serverSigned1\":\"MEeACAAAAAAD77b5gRDQDcMxARrdm3Q78gPnV5qagxdyc3AtZXUucmVkdGVhbW9iaWxlLmNvbYQQboOE/bixH48h5IL9drHkhQ==\",\"serverSignature1\":\"XzdAwzZfK5KU1Xr1w0QAFRT2lAvp9rwLJObMPft0L+qKGA86iAjA4A9eJiomZNS/LYWhSKlyIvuA8ftUhTI5/e5aJQ==\",\"euiccCiPKIdToBeUsed\":\"BBSBNw9RJdCx1AjUw7Iy5tJeeVvr+w==\",\"serverCertificate\":\"MIICVDCCAfugAwIBAgIQZumBlNebG7wHl/5VrnPCxDAKBggqhkjOPQQDAjBEMRgwFgYDVQQKEw9HU00gQXNzb2NpYXRpb24xKDAmBgNVBAMTH0dTTSBBc3NvY2lhdGlvbiAtIFJTUDIgUm9vdCBDSTEwHhcNMjQwOTE4MDAwMDAwWhcNMjcwOTE3Mj"
+  },
+  {
+    "kind": "request-url",
+    "value": "https://rsp-eu.redteamobile.com/gsma/rsp2/es9plus/authenticateClient"
+  },
+  {
+    "kind": "request-body",
+    "value": "{\"transactionId\":\"0000000003efb6f9\",\"authenticateServerResponse\":\"vziCBamgggWlMIHegAgAAAAAA++2+YMXcnNwLWV1LnJlZHRlYW1vYmlsZS5jb22EEG6DhP24sR+PIeSC/Xax5IW/IoGHgQMCAwGCAwIDAIMDQnEAhA+BAQCCBAAMHQSDBAAAPEeFBQZ/NvfAhgMNAQCHAwIDAIgCA9ipFgQUgTcPUSXQsdQI1MOyMubSXnlb6/uqFgQUgTcPUSXQsdQI1MOyMubSXnlb6/uLAQKZAgZABAMBAAAMFFRTLVBBLVVQLTA0MjMgICAgICAgoByAEDU5MDE5ODExMjY4MzExNjmhCIAENSkGEaEAXzdAAclCGx5KNsjyiuK1CHqtk00lkihmp9cRuOcTvh9SSSbsyTptXqT8bZBS5qWcmkwlgki34DHJTEcKPwErNeR/iDCCAdwwggGCoAMCAQICEQCAUFalq1IzfGNK2vgknBlpMAoGCCqGSM49BAMCMDIxEzARBgNVBAoMCkdFTUFMVE8gU0ExGzAZBgNVBAMMEkdFTUFMVE8gRVVNIENFIFBBVTAeFw"
+  },
+  {
+    "kind": "response-body",
+    "value": "{\"header\":{\"functionExecutionStatus\":{\"status\":\"Failed\",\"statusCodeData\":{\"subjectCode\":\"9.4\",\"reasonCode\":\"10.1\",\"message\":\"campaign resource pool is empty\",\"subjectIdentifier\":\"5901981126831169\"}}}}"
+  }
+]

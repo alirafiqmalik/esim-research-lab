@@ -1,0 +1,5 @@
+{
+  "op": "list",
+  "error": "activity op 'list' timed out (no ESIMCTL result)",
+  "log_dir": "/home/ahm/Desktop/project/Research/exp/eSIM_phone_mitm/.sessions/esimctl/20260728-053604-list"
+}

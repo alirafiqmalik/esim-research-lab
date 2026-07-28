@@ -1,0 +1,46 @@
+[
+  {
+    "kind": "request-url",
+    "value": "https://rsp.truphone.com/gsma/rsp2/es9plus/initiateAuthentication"
+  },
+  {
+    "kind": "request-body",
+    "value": "{\"smdpAddress\":\"rsp.truphone.com\",\"euiccChallenge\":\"wHAGNDIRBkYX60XTpgUFRw==\",\"euiccInfo1\":\"vyA1ggMCAwCpFgQUgTcPUSXQsdQI1MOyMubSXnlb6/uqFgQUgTcPUSXQsdQI1MOyMubSXnlb6/s=\"}"
+  },
+  {
+    "kind": "response-body",
+    "value": "{\"header\":{\"functionExecutionStatus\":{\"status\":\"Executed-Success\"}},\"transactionId\":\"000000001CD5A6FE\",\"serverSigned1\":\"MECACAAAAAAc1ab+gRDAcAY0MhEGRhfrRdOmBQVHgxByc3AudHJ1cGhvbmUuY29thBCtxFaaIoGQhQy6jNug+lcW\",\"serverSignature1\":\"XzdAGUcfTbvKAxiAwr/NZadszui1UZtYrBVJV7ZFhOEr7vy03bV4EMUXi9/FpLhjai4w7lJ3XyYe51plrZxQRJcWlA==\",\"euiccCiPKIdToBeUsed\":\"BBSBNw9RJdCx1AjUw7Iy5tJeeVvr+w==\",\"serverCertificate\":\"MIICgzCCAiigAwIBAgIQZAVRhSGL0nffpH10bZlDJDAKBggqhkjOPQQDAjBEMRgwFgYDVQQKEw9HU00gQXNzb2NpYXRpb24xKDAmBgNVBAMTH0dTTSBBc3NvY2lhdGlvbiAtIFJTUDIgUm9vdCBDSTEwHhcNMjQwMjI3MDAwMDAwWhcNMjcwMjI2MjM1OTU5WjBsMQ"
+  },
+  {
+    "kind": "request-url",
+    "value": "https://rsp.truphone.com/gsma/rsp2/es9plus/authenticateClient"
+  },
+  {
+    "kind": "request-body",
+    "value": "{\"transactionId\":\"000000001CD5A6FE\",\"authenticateServerResponse\":\"vziCBaCgggWcMIHVgAgAAAAAHNWm/oMQcnNwLnRydXBob25lLmNvbYQQrcRWmiKBkIUMuozboPpXFr8igYOBAwIDAYIDAgMAgwNCcQCED4EBAIIEAA0cjIMEAABAV4UFBn8298CGAw0BAIcDAgMAiAID2KkWBBSBNw9RJdCx1AjUw7Iy5tJeeVvr+6oWBBSBNw9RJdCx1AjUw7Iy5tJeeVvr+4sBAgQDAQAADBRUUy1QQS1VUC0wNDIzICAgICAgIKAegBJRUi1HLTVDLUtSLTFQQ0RXUDmhCIAENSkGEaEAXzdA3QAFwApTo70WRHXnvuHyELqxyOUew0HEQMQNkSdCJPiLT9JSxoBPc0JUZuAyyPml4K3JKDALHB5+D1lGMVbZhjCCAdwwggGCoAMCAQICEQCAUFalq1IzfGNK2vgknBlpMAoGCCqGSM49BAMCMDIxEzARBgNVBAoMCkdFTUFMVE8gU0ExGzAZBgNVBAMMEkdFTUFMVE8gRVVNIENFIFBBVTAeFw0yMDA2MTkwMD"
+  },
+  {
+    "kind": "response-body",
+    "value": "{\"header\":{\"functionExecutionStatus\":{\"status\":\"Executed-Success\"}},\"transactionId\":\"000000001CD5A6FE\",\"profileMetadata\":\"vyWBploKmER0VgAQJXUX9ZENQmV0dGVyUm9hbWluZ5INQmV0dGVyUm9hbWluZ7YYMBaAAgRwgRByc3AudHJ1cGhvbmUuY29ttxuAAwL0gIEJVHJ1VUswMGVugglUcnVVSzAwZW6/dkLiQOE+wRT/9alRe1p0/A/nbGmfsdTYsuyY/coaY29tLnRydXBob25lLmJldHRlcnJvYW1pbmfjCtsIAAAAAAAAAAE=\",\"smdpSigned2\":\"MA2ACAAAAAAc1ab+AQEA\",\"smdpSignature2\":\"XzdA9r4MlhBd4V5JHHuCKjNxHJxjSculA2WwbJKh0LnZbPhV7vPMLIeR6dkK2inmAdttl+SDPmYVrKWeImFxouIdwg==\",\"smdpCertificate\":\"MIICgTCCAiigAwIBAgIQQTJ3aEWzuCcrOYhJAqkcRTAKBggqhkjOPQQDAjBEMRgwFgYDVQQKEw9HU00g"
+  },
+  {
+    "kind": "request-url",
+    "value": "https://rsp.truphone.com/gsma/rsp2/es9plus/getBoundProfilePackage"
+  },
+  {
+    "kind": "request-body",
+    "value": "{\"transactionId\":\"000000001CD5A6FE\",\"prepareDownloadResponse\":\"vyGBlqCBkzBOgAgAAAAAHNWm/l9JQQS0AmovSHyKDISnuTSCt8rPeawjexICLBpA+K5lCpSakQa1iMmOQ6sB/Fij2e8BBQkkyalvPnerXGQdf7Cj7MdwXzdAQIf3BKyFKZCtcjAPKH8/yxrjWbMmN15A4bSmJJk4DL/4nOo7+7/d32WCDK07QcAHHfEES1ibY3MS/Ig2sL4NGg==\"}"
+  },
+  {
+    "kind": "response-body",
+    "value": "{\"header\":{\"functionExecutionStatus\":{\"status\":\"Executed-Success\"}},\"transactionId\":\"000000001CD5A6FE\",\"boundProfilePackage\":\"vzaCS76/I4GuggEBgAgAAAAAHNWm/qYYgAGIgQEQhBAAAQIDBAUGBwgJCgsMDQ4PX0lBBMNq/7813on0wzvK/aJOKBLR/JhippWV3MTThYg0uIePpmkkWDsTYfTO4O40aiy9qs5aFu25uzGiOcXu3lBSTytfN0ARa+i+fRIDsOPpHSq6cpXcsTmdWO0yxVTTSUo6DDYhEp97xdu+q51/CkEkiK713ALa0Pw+7Q+yS/c6w92NXNThoBqHGJaaui+pQvSh2zhzWZZZ1yO0NxxtOgtN76GBtYiBsr8lgaZaCphEdFYAECV1F/WRDUJldHRlclJvYW1pbmeSDUJldHRlclJvYW1pbme2GDAWgAIEcIEQcnNwLnRydXBob25lLmNvbbcbgAMC9ICBCVRydVVLMDBlboIJVHJ1VUswMGVuv3ZC4kDhPsEU//WpUXtadPwP52xpn7HU2LLsmP3KGmNvbS50cn"
+  },
+  {
+    "kind": "request-url",
+    "value": "https://rsp.truphone.com/gsma/rsp2/es9plus/handleNotification"
+  },
+  {
+    "kind": "request-body",
+    "value": "{\"pendingNotification\":\"vzeBpr8nYIAIAAAAABzVpv6/LyWAATaBAgeADBByc3AudHJ1cGhvbmUuY29tWgqYRHRWABAldRf1BgsrBgEEAYHsRQEBAaIfoB1PEKAAAAVZEBD/////iQAAEQAECTAHoAUwA4ABAF83QDIl7JZavCia2UZtsHg3m4Qy1ezH6PI8j4Iogdk132+I1EFmOIzFCvGHrh5gGuo+amXIIkRuY72JFc7u4yLSaG8=\"}"
+  }
+]
