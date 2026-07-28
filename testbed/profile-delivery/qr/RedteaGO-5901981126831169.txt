@@ -1,0 +1,6 @@
+LPA:1$rsp-eu.redteamobile.com$5901981126831169
+
+No QR library (segno/qrcode) in this venv. To render:
+  ./venv/bin/pip install segno
+  ./venv/bin/python -c "import segno; segno.make('LPA:1$rsp-eu.redteamobile.com$5901981126831169').save('RedteaGO-5901981126831169.png', scale=8)"
+Or paste the first line into any QR generator.

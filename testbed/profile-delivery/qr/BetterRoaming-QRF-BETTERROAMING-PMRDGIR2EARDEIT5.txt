@@ -1,0 +1,6 @@
+LPA:1$rsp.truphone.com$QRF-BETTERROAMING-PMRDGIR2EARDEIT5
+
+No QR library (segno/qrcode) in this venv. To render:
+  ./venv/bin/pip install segno
+  ./venv/bin/python -c "import segno; segno.make('LPA:1$rsp.truphone.com$QRF-BETTERROAMING-PMRDGIR2EARDEIT5').save('BetterRoaming-QRF-BETTERROAMING-PMRDGIR2EARDEIT5.png', scale=8)"
+Or paste the first line into any QR generator.
