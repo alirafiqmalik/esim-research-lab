@@ -1,0 +1,652 @@
+--------- beginning of main
+07-28 05:37:34.702 I/adbd    ( 1637): adbd service requested 'shell,v2,TERM=xterm-256color:export ANDROID_LOG_TAGS=''; exec logcat '-v' 'time''
+07-28 05:37:35.020 I/HalDevMgr( 1752): bestIfaceCreationProposal is null, requestIface=STA, existingIface=[name=wlan0 type=STA]
+07-28 05:37:35.047 I/pixel-thermal( 2266): VIRTUAL-SKIN-CHARGE-WLC:31.8717 raw data: VIRTUAL-SKIN-CHARGE-WLC:31871.6 disp_therm:30437 skin_therm2:33152 usb_pwr_therm2:30637 
+07-28 05:37:35.050 I/pixel-thermal( 2266): VIRTUAL-SKIN-CPU:29.9535 raw data: VIRTUAL-NEU-QUT-SKIN1-SKIN2-USB-USB2-GNSS-1:29640.2 VIRTUAL-NEU-QUT-SKIN1-SKIN2-USB-USB2-GNSS-4:28985.8 VIRTUAL-QUT-SKIN2-USB-GNSS-3:29953.5 VIRTUAL-QUT-SKIN2-USB-USB2-2:29940.8 VIRTUAL-SKIN:29953.5 VIRTUAL-SKIN-CPU:29953.5 gnss_tcxo_therm:31972 neutral_therm:31728 quiet_therm:30281 skin_therm1:31038 skin_therm2:33152 usb_pwr_therm:30503 usb_pwr_therm2:30637 
+07-28 05:37:35.050 I/pixel-thermal( 2266): VIRTUAL-SKIN:29.9535 raw data: VIRTUAL-SKIN:29953.5 
+07-28 05:37:35.050 I/pixel-thermal( 2266): VIRTUAL-SKIN-CHARGE:29.9535 raw data: VIRTUAL-SKIN:29953.5 VIRTUAL-SKIN-CHARGE:29953.5 
+07-28 05:37:35.050 I/pixel-thermal( 2266): VIRTUAL-SKIN-HINT:29.9535 raw data: VIRTUAL-SKIN:29953.5 VIRTUAL-SKIN-HINT:29953.5 
+07-28 05:37:35.051 I/pixel-thermal( 2266): VIRTUAL-SKIN-CPU-GPU:29.9535 raw data: VIRTUAL-SKIN:29953.5 VIRTUAL-SKIN-CPU-GPU:29953.5 
+07-28 05:37:35.051 I/pixel-thermal( 2266): cellular-emergency:29.9535 raw data: VIRTUAL-SKIN:29953.5 cellular-emergency:29953.5 
+07-28 05:37:35.051 I/pixel-thermal( 2266): skin_therm1:31.038 raw data: skin_therm1:31038 
+07-28 05:37:35.079 V/RebootReadinessManager( 1752): Reboot blocked by device interactivity
+07-28 05:37:35.305 I/adbd    ( 1637): adbd service requested 'shell,v2,TERM=xterm-256color,raw:am start -n im.angry.openeuicc/.ui.EsimCtlActivity --es id ee063239 --es op authenticate --es backend lpac --es server lpa.live.esimdiscovery.dev'
+--------- beginning of system
+07-28 05:37:35.355 W/ActivityTaskManager( 1752): callingPackage for (uid=2000, pid=18327) has no WPC
+07-28 05:37:35.356 V/GrammaticalInflectionUtils( 1752): AttributionSource: android.content.AttributionSource@929ccbfa does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
+07-28 05:37:35.358 D/RecentsView( 2962): onTaskDisplayChanged: 3100, new displayId = 0
+07-28 05:37:35.361 D/CorePackageUpdate( 1752): onRecentTaskRemoved Removing task: 3099
+07-28 05:37:35.361 D/CorePackageUpdate( 1752): Couldn't find a persistent state for task= 3099
+07-28 05:37:35.361 V/ActivityTaskManager( 1752): TaskLaunchParamsModifier: phase=3 task=Task{2dd43fe #3100 type=standard A=10317:im.angry.openeuicc} activity=ActivityRecord{29074361 u0 im.angry.openeuicc/.ui.EsimCtlActivity t-1} display-from-task=0 display-id=0 task-display-area-windowing-mode=1 suggested-display-area=DefaultTaskDisplayArea@38803403 inherit-from-task=fullscreen non-freeform-task-display-area display-area=DefaultTaskDisplayArea@38803403 default-portrait freeform-size-mismatch=Rect(278, 687 - 803, 1767)
+07-28 05:37:35.361 I/libbinder.BpBinder(  555): onLastStrongRef automatically unlinking death recipients for binder (0xb4000077e9a63d70) with descriptor: '(not cached)'
+07-28 05:37:35.361 I/ActivityTaskManager( 1752): START u0 {flg=0x10000000 xflg=0x4 cmp=im.angry.openeuicc/.ui.EsimCtlActivity (has extras)} with LAUNCH_MULTIPLE from uid 2000 (com.android.shell) (BAL_ALLOW_PERMISSION) result code=0
+07-28 05:37:35.361 D/BaseActivity( 2962): Launcher flags updated: [state_started|state_resumed|state_deferred_resumed|state_window_focused|state_user_active] -[]
+07-28 05:37:35.362 D/BaseActivity( 2962): Launcher flags updated: [state_started|state_resumed|state_deferred_resumed|state_window_focused] -[state_user_active]
+07-28 05:37:35.362 D/BaseActivity( 2962): Launcher flags updated: [state_started|state_window_focused] -[state_resumed|state_deferred_resumed]
+07-28 05:37:35.362 W/SplitSelectStateCtor( 2962): Missing session instanceIds
+07-28 05:37:35.362 D/StatsLog( 2962): LAUNCHER_SPLIT_SELECTION_EXIT_INTERRUPTED
+07-28 05:37:35.364 D/CorePackageUpdate( 1752): Couldn't find a persistent state for task= 3100
+07-28 05:37:35.364 V/WindowManagerShell( 2633): Transition requested (#6638): android.os.BinderProxy@aff0635 TransitionRequestInfo { type = OPEN, triggerTask = TaskInfo{userId=0 taskId=3100 effectiveUid=10317 displayId=0 isRunning=true baseIntent=Intent { flg=0x10800000 cmp=im.angry.openeuicc/.ui.EsimCtlActivity } baseActivity=ComponentInfo{im.angry.openeuicc/im.angry.openeuicc.ui.EsimCtlActivity} topActivity=ComponentInfo{im.angry.openeuicc/im.angry.openeuicc.ui.EsimCtlActivity} origActivity=null realActivity=ComponentInfo{im.angry.openeuicc/im.angry.openeuicc.ui.EsimCtlActivity} realActivityIsAppLockEnabled=false numActivities=1 lastActiveTime=1115957015 supportsMultiWindow=true supportsMultiWindowWithoutConstraints=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{android.os.BinderProxy@477faca} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=Rect(0, 118 - 0, 0) topActivityInfo=ActivityInfo{7bb843b im.angry.openeuicc.ui.EsimCtlActivity} launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=false isInteractive=false isVisible=false isVisibleRequested=false isTopActivityNoDisplay=false isSleeping=false locusId=null displayAreaFeatureId=1 isTopActivityTransparent=false isActivityStackTransparent=false lastNonFullscreenBounds=Rect(278, 687 - 803, 1767) leafTaskBoundsFromOptions= false capturedLink=null capturedLinkTimestamp=0 requestedVisibleTypes=503 topActivityRequestOpenInBrowserEducationTimestamp=0 appCompatTaskInfo=AppCompatTaskInfo { topActivityInSizeCompat=false isLeafTask= true eligibleForLetterboxEducation= false isLetterboxEducationEnabled= false isLetterboxDoubleTapEnabled= false eligibleForUserAspectRatioButton= false topActivityBoundsLetterboxed= false isFromLetterboxDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=-1 topActivityLetterboxHeight=-1 topActivityAppBounds=Rect(0, 0 - 1080, 2400) isUserFullscreenOverrideEnabled=false isSystemFullscreenOverrideEnabled=false hasMinAspectRatioOverride=false topActivityLetterboxBounds=null topNonResizableActivityAspectRatio=-1.0} topActivityMainWindowFrame=null isAppBubble=false}, pipChange = null, remoteTransitionInfo = null, displayChanges = null, requestedLocation = null, userChange = null, windowingLayerChange = null, fullscreenRequestChange = null, flags = 0, debugId = 6638 }
+07-28 05:37:35.364 W/DisconnectHandler( 2633): No disconnect change found in the transition, not handling request.
+07-28 05:37:35.364 D/ShellSplitScreen( 2633): logExit: no-op, mLoggerSessionId is null
+07-28 05:37:35.365 V/WindowManager( 1752): Defer transition id=6638 for TaskFragmentTransaction=android.os.Binder@e69c275
+07-28 05:37:35.366 V/WindowManager( 1752): Continue transition id=6638 for TaskFragmentTransaction=android.os.Binder@e69c275
+07-28 05:37:35.366 D/WindowManagerShell( 2633): setLauncherKeepClearAreaHeight: visible=false, height=495
+07-28 05:37:35.366 V/RecentTasksController( 2633): Notify recent tasks changed
+07-28 05:37:35.366 D/RecentTasksList( 2962): invalidateLoadedTasks - previous requestLoadId: -1
+07-28 05:37:35.367 V/RecentTasksController( 2633): Notify recent tasks changed
+07-28 05:37:35.367 D/RecentTasksList( 2962): invalidateLoadedTasks - previous requestLoadId: -1
+07-28 05:37:35.372 W/InputChannel-JNI( 1752): Channel already disposed.
+07-28 05:37:35.374 D/WindowManager( 1752): setClientSurface Surface(name=VRI-Splash Screen im.angry.openeuicc#72654)/@0x39f0357 for 5b99098 Splash Screen im.angry.openeuicc
+07-28 05:37:35.375 I/Surface ( 2633): Creating surface for consumer unnamed-2633-3077 with slotExpansion=1 for 64 slots
+07-28 05:37:35.375 I/Surface ( 2633): Creating surface for consumer VRI[openeuicc]#3039(BLAST Consumer)3039 with slotExpansion=1 for 64 slots
+07-28 05:37:35.378 I/pixel-thermal( 2266): VIRTUAL-USB-THROTTLING:0 raw data: USB-MINUS-SKIN2:-2649 VIRTUAL-USB-THROTTLING:0 skin_therm2:33152 usb_pwr_therm:30503 
+07-28 05:37:35.378 I/pixel-thermal( 2266): cellular-emergency:29.9535 raw data: cellular-emergency:29953.5 
+07-28 05:37:35.378 I/pixel-thermal( 2266): VIRTUAL-SKIN-CHARGE:29.9535 raw data: VIRTUAL-SKIN-CHARGE:29953.5 
+07-28 05:37:35.378 I/pixel-thermal( 2266): VIRTUAL-SKIN-HINT:29.9535 raw data: VIRTUAL-SKIN-HINT:29953.5 
+07-28 05:37:35.378 I/pixel-thermal( 2266): VIRTUAL-SKIN:29.9535 raw data: VIRTUAL-SKIN:29953.5 
+07-28 05:37:35.378 I/pixel-thermal( 2266): USB-MINUS-SKIN2:-2.649 raw data: USB-MINUS-SKIN2:-2649 
+07-28 05:37:35.378 I/pixel-thermal( 2266): VIRTUAL-USB-UI:0 raw data: USB-MINUS-SKIN2:-2649 VIRTUAL-USB-UI:0 usb_pwr_therm:30503 
+07-28 05:37:35.378 I/pixel-thermal( 2266): skin_therm1:31.038 raw data: skin_therm1:31038 
+07-28 05:37:35.378 I/pixel-thermal( 2266): usb_pwr_therm:30.503 raw data: usb_pwr_therm:30503 
+07-28 05:37:35.378 I/pixel-thermal( 2266): VIRTUAL-SKIN-CHARGE-WLC:31.8717 raw data: VIRTUAL-SKIN-CHARGE-WLC:31871.6 
+07-28 05:37:35.386 V/WindowManager( 1752): Sent Transition (#6638) createdAt=07-28 05:37:35.356 via request=TransitionRequestInfo { type = OPEN, triggerTask = TaskInfo{userId=0 taskId=3100 effectiveUid=10317 displayId=0 isRunning=true baseIntent=Intent { flg=0x10800000 cmp=im.angry.openeuicc/.ui.EsimCtlActivity } baseActivity=ComponentInfo{im.angry.openeuicc/im.angry.openeuicc.ui.EsimCtlActivity} topActivity=ComponentInfo{im.angry.openeuicc/im.angry.openeuicc.ui.EsimCtlActivity} origActivity=null realActivity=ComponentInfo{im.angry.openeuicc/im.angry.openeuicc.ui.EsimCtlActivity} realActivityIsAppLockEnabled=false numActivities=1 lastActiveTime=1115957015 supportsMultiWindow=true supportsMultiWindowWithoutConstraints=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{RemoteToken{ce0a8ae Task{2dd43fe #3100 type=standard A=10317:im.angry.openeuicc}}} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=Rect(0, 118 - 0, 0) topActivityInfo=ActivityInfo{3a1064f im.angry.openeuicc.ui.EsimCtlActivity} launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=false isInteractive=false isVisible=false isVisibleRequested=false isTopActivityNoDisplay=false isSleeping=false locusId=null displayAreaFeatureId=1 isTopActivityTransparent=false isActivityStackTransparent=false lastNonFullscreenBounds=Rect(278, 687 - 803, 1767) leafTaskBoundsFromOptions= false capturedLink=null capturedLinkTimestamp=0 requestedVisibleTypes=503 topActivityRequestOpenInBrowserEducationTimestamp=0 appCompatTaskInfo=AppCompatTaskInfo { topActivityInSizeCompat=false isLeafTask= true eligibleForLetterboxEducation= false isLetterboxEducationEnabled= false isLetterboxDoubleTapEnabled= false eligibleForUserAspectRatioButton= false topActivityBoundsLetterboxed= false isFromLetterboxDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=-1 topActivityLetterboxHeight=-1 topActivityAppBounds=Rect(0, 0 - 1080, 2400) isUserFullscreenOverrideEnabled=false isSystemFullscreenOverrideEnabled=false hasMinAspectRatioOverride=false topActivityLetterboxBounds=null topNonResizableActivityAspectRatio=-1.0} topActivityMainWindowFrame=null isAppBubble=false}, pipChange = null, remoteTransitionInfo = null, displayChanges = null, requestedLocation = null, userChange = null, windowingLayerChange = null, fullscreenRequestChange = null, flags = 0, debugId = 6638 }
+07-28 05:37:35.386 V/WindowManager( 1752):     startWCT=WindowContainerTransaction { changes= {} hops= [] flags= 0 errorCallbackToken=null taskFragmentOrganizer=null }
+07-28 05:37:35.386 V/WindowManager( 1752):     info={id=6638 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[
+07-28 05:37:35.386 V/WindowManager( 1752):         {WCT{RemoteToken{ce0a8ae Task{2dd43fe #3100 type=standard A=10317:im.angry.openeuicc}}} m=OPEN f=MOVE_TO_TOP|FLAG_CHANGED_INTERACTIVE leash=Surface(name=Task=3100#72651)/@0xca67df3 sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) epz=Point(1080, 2400) d=0 taskParent=-1 winMode=1 userId=0},
+07-28 05:37:35.386 V/WindowManager( 1752):         {WCT{RemoteToken{a539a16 Task{73abf47 #1 type=home}}} m=TO_BACK f=SHOW_WALLPAPER|FLAG_CHANGED_INTERACTIVE leash=Surface(name=Task=1#45)/@0xa315cc0 sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) epz=Point(1080, 2400) d=0 taskParent=-1 winMode=1 userId=0},
+07-28 05:37:35.386 V/WindowManager( 1752):         {m=TO_BACK f=IS_WALLPAPER leash=Surface(name=WallpaperWindowToken{9628d4e}#59)/@0x64f4bd0 sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) epz=Point(1080, 2400) d=0}
+07-28 05:37:35.386 V/WindowManager( 1752):     ]}
+07-28 05:37:35.387 V/WindowManagerShell( 2633): onTransitionReady(transaction=7524783097513)
+07-28 05:37:35.387 V/WindowManagerShell( 2633): onTransitionReady (#6638) android.os.BinderProxy@aff0635: {id=6638 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[
+07-28 05:37:35.387 V/WindowManagerShell( 2633):         {m=OPEN f=MOVE_TO_TOP|FLAG_CHANGED_INTERACTIVE leash=Surface(name=Task=3100#72651)/@0x6986334 sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) epz=Point(1080, 2400) d=0 taskParent=-1 winMode=1 userId=0},
+07-28 05:37:35.387 V/WindowManagerShell( 2633):         {m=TO_BACK f=SHOW_WALLPAPER|FLAG_CHANGED_INTERACTIVE leash=Surface(name=Task=1#45)/@0xb54455d sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) epz=Point(1080, 2400) d=0 taskParent=-1 winMode=1 userId=0},
+07-28 05:37:35.387 V/WindowManagerShell( 2633):         {m=TO_BACK f=IS_WALLPAPER leash=Surface(name=WallpaperWindowToken{9628d4e}#59)/@0x2f20ed2 sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) epz=Point(1080, 2400) d=0}
+07-28 05:37:35.387 V/WindowManagerShell( 2633):     ]}
+07-28 05:37:35.387 W/InputChannel-JNI( 1752): Channel already disposed.
+07-28 05:37:35.387 V/WindowManagerShell( 2633): Playing animation for (#6638) android.os.BinderProxy@aff0635@0
+07-28 05:37:35.387 D/ShellSplitScreen( 2633): startAnimation: transition=6638 isSplitActive=false
+07-28 05:37:35.387 V/ShellRecents( 2633): RecentsTransitionHandler.startAnimation: no controller found
+07-28 05:37:35.387 V/WindowManagerShell( 2633): Transition doesn't have explicit remote, search filters for match for {id=6638 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[{m=OPEN f=MOVE_TO_TOP|FLAG_CHANGED_INTERACTIVE leash=Surface(name=Task=3100#72651)/@0x6986334 sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) epz=Point(1080, 2400) d=0 taskParent=-1 winMode=1 userId=0},{m=TO_BACK f=SHOW_WALLPAPER|FLAG_CHANGED_INTERACTIVE leash=Surface(name=Task=1#45)/@0xb54455d sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) epz=Point(1080, 2400) d=0 taskParent=-1 winMode=1 userId=0},{m=TO_BACK f=IS_WALLPAPER leash=Surface(name=WallpaperWindowToken{9628d4e}#59)/@0x2f20ed2 sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) epz=Point(1080, 2400) d=0}]}
+07-28 05:37:35.387 V/WindowManagerShell( 2633):  Checking filter Pair{{types=[] flags=0x0 notFlags=0x0 checks=[{atype=undefined independent=true modes=[CLOSE,TO_BACK] flags=IN_TASK_WITH_EMBEDDED_ACTIVITY mustBeTask=false order=ANY topActivity=null launchCookie=null taskFragmentToken=android.os.BinderProxy@133d578 windowingMode=undefined isCrossDisplayMove=false}]} RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@eca451, appThread = android.app.IApplicationThread$Stub$Proxy@678d4b6, debugName = overlayBackTransition, filter = {types=[] flags=0x0 notFlags=0x0 checks=[{atype=undefined independent=true modes=[CLOSE,TO_BACK] flags=IN_TASK_WITH_EMBEDDED_ACTIVITY mustBeTask=false order=ANY topActivity=null launchCookie=null taskFragmentToken=android.os.BinderProxy@133d578 windowingMode=undefined isCrossDisplayMove=false}]} }}
+07-28 05:37:35.387 V/WindowManagerShell( 2633):  Checking filter Pair{{types=[] flags=0x0 notFlags=0x0 checks=[{atype=dream independent=true modes=[OPEN,TO_FRONT] flags=NONE mustBeTask=false order=ANY topActivity=null launchCookie=null windowingMode=undefined isCrossDisplayMove=false},{atype=home independent=true modes=[CLOSE,TO_BACK] flags=NONE mustBeTask=false order=ANY topActivity=null launchCookie=null windowingMode=undefined isCrossDisplayMove=false}]} RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@d0635b7, appThread = android.app.IApplicationThread$Stub$Proxy@28cd124, debugName = LauncherToDream, filter = {types=[] flags=0x0 notFlags=0x0 checks=[{atype=dream independent=true modes=[OPEN,TO_FRONT] flags=NONE mustBeTask=false order=ANY topActivity=null launchCookie=null windowingMode=undefined isCrossDisplayMove=false},{atype=home independent=true modes=[CLOSE,TO_BACK] flags=NONE mustBeTask=false order=ANY topActivity=null launchCookie=null windowingMode=undefined isCrossDisplayMove=false}]} }}
+07-28 05:37:35.387 V/WindowManagerShell( 2633):  Checking filter Pair{{types=[] flags=0x0 notFlags=0x0 checks=[{atype=standard independent=false modes=[CHANGE] flags=NONE mustBeTask=true order=ANY topActivity=null launchCookie=null windowingMode=undefined isCrossDisplayMove=true}]} RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@386348d, appThread = android.app.IApplicationThread$Stub$Proxy@6358642, debugName = QuickstepDisplayMove, filter = {types=[] flags=0x0 notFlags=0x0 checks=[{atype=standard independent=false modes=[CHANGE] flags=NONE mustBeTask=true order=ANY topActivity=null launchCookie=null windowingMode=undefined isCrossDisplayMove=true}]} }}
+07-28 05:37:35.387 V/WindowManagerShell( 2633):  Checking filter Pair{{types=[] flags=0x0 notFlags=0x100 checks=[{atype=home independent=true modes=[OPEN,TO_FRONT] flags=NONE mustBeTask=false order=ANY topActivity=ComponentInfo{com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity} launchCookie=null windowingMode=undefined isCrossDisplayMove=false},{atype=standard independent=true modes=[CLOSE,TO_BACK] flags=NONE mustBeTask=false order=ANY topActivity=null launchCookie=null windowingMode=undefined isCrossDisplayMove=false},{NOT atype=undefined independent=true modes=[] flags=NONE mustBeTask=true order=ANY topActivity=null launchCookie=null customAnim=true windowingMode=undefined isCrossDisplayMove=false}]} RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@cbe7653, appThread = android.app.IApplicationThread$Stub$Proxy@c57db90, debugName = QuickstepLaunchHome, filter = {types=[] flags=0x0 notFlags=0x100 checks=[{atype=home independent=true modes=[OPEN,TO_FRONT] flags=NONE mustBeTask=false order=ANY topActivity=ComponentInfo{com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity} launchCookie=null windowingMode=undefined isCrossDisplayMove=false},{atype=standard independent=true modes=[CLOSE,TO_BACK] flags=NONE mustBeTask=false order=ANY topActivity=null launchCookie=null windowingMode=undefined isCrossDisplayMove=false},{NOT atype=undefined independent=true modes=[] flags=NONE mustBeTask=true order=ANY topActivity=null launchCookie=null customAnim=true windowingMode=undefined isCrossDisplayMove=false}]} }}
+07-28 05:37:35.387 V/WindowManagerShell( 2633):  Delegate animation for (#6638) to null
+07-28 05:37:35.387 V/WindowManagerShell( 2633): start default transition animation, info = {id=6638 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[{m=OPEN f=MOVE_TO_TOP|FLAG_CHANGED_INTERACTIVE leash=Surface(name=Task=3100#72651)/@0x6986334 sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) epz=Point(1080, 2400) d=0 taskParent=-1 winMode=1 userId=0},{m=TO_BACK f=SHOW_WALLPAPER|FLAG_CHANGED_INTERACTIVE leash=Surface(name=Task=1#45)/@0xb54455d sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) epz=Point(1080, 2400) d=0 taskParent=-1 winMode=1 userId=0},{m=TO_BACK f=IS_WALLPAPER leash=Surface(name=WallpaperWindowToken{9628d4e}#59)/@0x2f20ed2 sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) epz=Point(1080, 2400) d=0}]}
+07-28 05:37:35.387 V/WindowManagerShell( 2633): loadAnimation: anim=android.view.animation.AnimationSet@af27ea0 animAttr=0x13 type=OPEN isEntrance=false
+07-28 05:37:35.387 V/WindowManagerShell( 2633): loadAnimation: anim=android.view.animation.AnimationSet@b94da59 animAttr=0x12 type=OPEN isEntrance=true
+07-28 05:37:35.388 V/WindowManagerShell( 2633):  animated by com.android.wm.shell.transition.DefaultTransitionHandler@8f825c4
+07-28 05:37:35.390 D/WindowOnBackDispatcher( 6023): setTopOnBackInvokedCallback (unwrapped): android.app.Activity$$ExternalSyntheticLambda0@9078ca3
+07-28 05:37:35.390 D/VRI[EsimCtlActivity]( 6023): WindowInsets changed: 1080x2400 statusBars:[0,118,0,0] navigationBars:[0,0,0,63] mandatorySystemGestures:[0,150,0,84] 
+07-28 05:37:35.390 D/CoreBackPreview( 1752): Window{ab132e5 u0 im.angry.openeuicc/im.angry.openeuicc.ui.EsimCtlActivity}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@17e4fc8, mPriority=-1, mIsAnimationCallback=false, mOverrideBehavior=0}
+07-28 05:37:35.391 D/WindowManager( 1752): setClientSurface Surface(name=VRI-im.angry.openeuicc/im.angry.openeuicc.ui.EsimCtlActivity#72657)/@0xbc71861 for ab132e5 im.angry.openeuicc/im.angry.openeuicc.ui.EsimCtlActivity
+07-28 05:37:35.391 V/ShellTaskOrganizer( 2633): Task appeared taskId=3100 listener=FullscreenTaskListener
+07-28 05:37:35.391 V/ShellTaskOrganizer( 2633): Fullscreen Task Appeared: #3100
+07-28 05:37:35.391 D/ShellPackageUpdate( 2633): PackageUpdateController: Setting handlePackageUpdate for task: 3100
+07-28 05:37:35.392 E/TransitionChain( 1752): Can't collect into a chain with no transition
+07-28 05:37:35.392 V/RecentTasksController( 2633): Notify recent tasks changed
+07-28 05:37:35.393 D/RecentTasksList( 2962): invalidateLoadedTasks - previous requestLoadId: -1
+07-28 05:37:35.393 I/Surface ( 6023): Creating surface for consumer unnamed-6023-263 with slotExpansion=1 for 64 slots
+07-28 05:37:35.393 I/Surface ( 6023): Creating surface for consumer VRI[EsimCtlActivity]#263(BLAST Consumer)263 with slotExpansion=1 for 64 slots
+07-28 05:37:35.395 D/BaseActivity( 2962): Launcher flags updated: [state_started] -[state_window_focused]
+07-28 05:37:35.397 I/ESIMCTL ( 6023): ee063239 START op=authenticate backend=lpac
+07-28 05:37:35.398 I/ActivityTaskManager( 1752): Displayed im.angry.openeuicc/.ui.EsimCtlActivity for user 0: +43ms
+07-28 05:37:35.399 I/EuiccChannelManager( 6023): Trying TelephonyManager for slot 0 port 0
+07-28 05:37:35.400 W/ProcessStats( 1752): Tracking association SourceState{79aaf7d system/1000 ImpBg #324972} whose proc state 6 is better than process ProcessState{9241115 com.google.android.inputmethod.latin/10209 pkg=com.google.android.inputmethod.latin} proc state 14 (9 skipped)
+07-28 05:37:35.400 E/PhoneInterfaceManager( 2940): The calling package is not allowed to access ISD-R.
+07-28 05:37:35.400 W/EuiccChannelManager( 6023): TelephonyManager APDU interface unavailable for slot 0 port 0 with ISD-R AID: A0000005591010FFFFFFFF8900000100.
+07-28 05:37:35.401 I/OMAPI.SEService( 6023): No SecureElementService available from system, sending intent to start it
+07-28 05:37:35.402 I/OMAPI.SEService( 6023): bindService successful
+07-28 05:37:35.402 I/OMAPI.SEService( 6023): Service onServiceConnected
+07-28 05:37:35.402 I/EuiccChannelManager( 6023): Trying OMAPI for physical slot 0
+07-28 05:37:35.402 D/SecureElementService( 2857): getReaders() for im.angry.openeuicc
+07-28 05:37:35.402 D/SecureElementService( 2857): getReader() eSE1
+07-28 05:37:35.402 D/SecureElementService( 2857): getReader() for im.angry.openeuicc
+07-28 05:37:35.402 D/SecureElementService( 2857): getReader() eSE2
+07-28 05:37:35.402 D/SecureElementService( 2857): getReader() for im.angry.openeuicc
+07-28 05:37:35.403 D/SecureElementService( 2857): getReader() SIM1
+07-28 05:37:35.403 D/SecureElementService( 2857): getReader() for im.angry.openeuicc
+07-28 05:37:35.403 D/SecureElementService( 2857): getReader() SIM2
+07-28 05:37:35.403 D/SecureElementService( 2857): getReader() for im.angry.openeuicc
+07-28 05:37:35.403 I/UiccHal-SE( 1382): getAtr() [<-- 
+07-28 05:37:35.403 I/UiccHal-Interface( 1382): GetAtr() [<-- 
+07-28 05:37:35.403 I/UiccHal-Interface( 1382): SendRequest() [<-- 
+07-28 05:37:35.403 I/UiccHal-Interface( 1382): SendRequest() socket id : 1
+07-28 05:37:35.403 D/RILClient( 1382): [OemClient] RILC_Send msgId:304 lengh:0 channel:1
+07-28 05:37:35.403 D/RILClient( 1382): [OemClient]REQ (clientId = 6, t = 165, msgId = 304, len = 0 channel = 1)
+07-28 05:37:35.431 I/ImeTracker( 1752): im.angry.openeuicc:89c1dd0b: onRequestHide at ORIGIN_SERVER reason HIDE_UNSPECIFIED_WINDOW fromUser false userId 0 displayId 0
+07-28 05:37:35.431 D/InsetsController( 6023): hide(ime())
+07-28 05:37:35.431 I/ImeTracker( 6023): im.angry.openeuicc:89c1dd0b: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
+07-28 05:37:35.432 W/InputChannel-JNI( 1752): Channel already disposed.
+07-28 05:37:35.432 I/GoogleInputMethodService( 7828): GoogleInputMethodService.onFinishInput():2276 
+07-28 05:37:35.432 I/GoogleInputMethodService( 7828): GoogleInputMethodService.onStartInput():1460 onStartInput(EditorInfo{EditorInfo{packageName=im.angry.openeuicc, inputType=0, inputTypeString=NULL, enableLearning=false, autoCorrection=false, autoComplete=false, imeOptions=0, privateImeOptions=null, actionName=UNSPECIFIED, actionLabel=null, initialSelStart=-1, initialSelEnd=-1, initialCapsMode=0, label=null, fieldId=0, fieldName=null, extras=null, hintText=null, hintLocales=[]}}, false)
+07-28 05:37:35.432 W/LatinIMEBase( 7828): LatinIMEBase.updateInputViewCoverNavigation():322 Null input view, cannot update padding!
+07-28 05:37:35.432 I/Module  ( 7828): DeviceLockedStatusModuleProvider$Module.updateDeviceLockedStatusInternal():129 repeatCheckTimes = 0, locked = false
+07-28 05:37:35.433 I/ImeTracker( 1752): system_server:306ee8a7: onRequestHide at ORIGIN_SERVER reason IME_REQUESTED_CHANGED_LISTENER fromUser false displayId 0
+07-28 05:37:35.433 I/Module  ( 7828): DeviceLockedStatusModuleProvider$Module.updateDeviceLockedStatusInternal():129 repeatCheckTimes = 1, locked = false
+07-28 05:37:35.433 W/PackageConfigPersister( 1752): App-specific configuration not found for packageName: im.angry.openeuicc and userId: 0
+07-28 05:37:35.433 I/ImeTracker( 1752): system_server:306ee8a7: onCancelled at PHASE_SERVER_SHOULD_HIDE
+07-28 05:37:35.443 D/RILClient( 1382): [OemClient]RSP: (clientId = 6, t = 165, msgId = 304, len = 55, channel = 1, status = 0)
+07-28 05:37:35.443 I/UiccHal-Interface( 1382): SendRequest() [--> 
+07-28 05:37:35.443 I/UiccHal-Interface( 1382): GetAtr() [--> 
+07-28 05:37:35.443 I/UiccHal-SE( 1382): getAtr() [--> 
+07-28 05:37:35.445 W/SecureElement-Terminal-SIM2( 2857): Enable access control on logical channel for im.angry.openeuicc
+07-28 05:37:35.445 I/UiccHal-SE( 1382): openLogicalChannel() [<-- 
+07-28 05:37:35.445 I/UiccHal-Interface( 1382): OpenLogicalChannel() [<-- 
+07-28 05:37:35.445 I/UiccHal-Interface( 1382): SendRequest() [<-- 
+07-28 05:37:35.445 I/UiccHal-Interface( 1382): SendRequest() socket id : 1
+07-28 05:37:35.445 D/RILClient( 1382): [OemClient] RILC_Send msgId:300 lengh:18 channel:1
+07-28 05:37:35.445 D/RILClient( 1382): [OemClient]REQ (clientId = 6, t = 166, msgId = 300, len = 18 channel = 1)
+07-28 05:37:35.465 V/RecentTasksController( 2633): Notify recent tasks changed
+07-28 05:37:35.466 D/RecentTasksList( 2962): invalidateLoadedTasks - previous requestLoadId: -1
+07-28 05:37:35.467 V/RecentTasksController( 2633): generateList(getRecentTasks)
+07-28 05:37:35.467 V/RecentTasksController( 2633): initializeDesksMap - desktop windowing not available
+07-28 05:37:35.467 V/RecentTasksController( 2633): Added fullscreen task: 3100
+07-28 05:37:35.467 V/RecentTasksController( 2633): generateList - complete
+07-28 05:37:35.467 D/PreloadThumbnailUseCase( 2962): Preloading thumbnails for task ids: [[id=3100 windowingMode=1 user=0 lastActiveTime=1115957018] null]
+07-28 05:37:35.468 D/RILClient( 1382): [OemClient]RSP: (clientId = 6, t = 166, msgId = 300, len = 264, channel = 1, status = 0)
+07-28 05:37:35.468 I/UiccHal-Interface( 1382): SendRequest() [--> 
+07-28 05:37:35.468 I/UiccHal-Interface( 1382): OpenLogicalChannel() [--> 
+07-28 05:37:35.468 D/UiccHal-SE( 1382): openLogicalChannel() Response sw1 : 0x90, sw2 : 0x00, sessionId : 1
+07-28 05:37:35.468 D/UiccHal-SE( 1382): openLogicalChannel() return sestatus : SUCCESS
+07-28 05:37:35.468 I/UiccHal-SE( 1382): openLogicalChannel() [--> 
+07-28 05:37:35.468 I/SecureElementService( 2857): openLogicalChannel() Success. Channel: 1
+07-28 05:37:35.470 D/OmapiApduInterface( 6023): OMAPI APDU: 81E2910003BF2200
+07-28 05:37:35.470 I/UiccHal-SE( 1382): transmit() [<-- 
+07-28 05:37:35.470 I/UiccHal-SE( 1382): internalTransmit() [<-- 
+07-28 05:37:35.470 I/UiccHal-Interface( 1382): TransmitApduLogicalChannel() [<-- 
+07-28 05:37:35.470 I/UiccHal-Interface( 1382): SendRequest() [<-- 
+07-28 05:37:35.470 I/UiccHal-Interface( 1382): SendRequest() socket id : 1
+07-28 05:37:35.470 D/RILClient( 1382): [OemClient] RILC_Send msgId:301 lengh:29 channel:1
+07-28 05:37:35.470 D/RILClient( 1382): [OemClient]REQ (clientId = 6, t = 167, msgId = 301, len = 29 channel = 1)
+07-28 05:37:35.493 D/RILClient( 1382): [OemClient]RSP: (clientId = 6, t = 167, msgId = 301, len = 145, channel = 1, status = 0)
+07-28 05:37:35.494 I/UiccHal-Interface( 1382): SendRequest() [--> 
+07-28 05:37:35.494 I/UiccHal-Interface( 1382): TransmitApduLogicalChannel() [--> 
+07-28 05:37:35.494 I/UiccHal-SE( 1382): internalTransmit() [--> 
+07-28 05:37:35.494 D/UiccHal-SE( 1382): transmit() transmit received sw1: 0x90, sw2 : 0x00, pResponse->nResponseCount : 141
+07-28 05:37:35.494 I/UiccHal-SE( 1382): transmit() [--> 
+07-28 05:37:35.498 D/OmapiApduInterface( 6023): OMAPI APDU response: BF228187810302030182030203008303427100840F8101008204000C9CD0830400003E4F8505067F36F7C086030D01008703020300880203D8A916041481370F5125D0B1D408D4C3B232E6D25E795BEBFBAA16041481370F5125D0B1D408D4C3B232E6D25E795BEBFB8B01029902064004030100000C1454532D50412D55502D30343233202020202020209000
+07-28 05:37:35.504 D/OmapiApduInterface( 6023): OMAPI APDU: 81E2910006BF3E035C015A
+07-28 05:37:35.505 I/UiccHal-SE( 1382): transmit() [<-- 
+07-28 05:37:35.505 I/UiccHal-SE( 1382): internalTransmit() [<-- 
+07-28 05:37:35.505 I/UiccHal-Interface( 1382): TransmitApduLogicalChannel() [<-- 
+07-28 05:37:35.505 I/UiccHal-Interface( 1382): SendRequest() [<-- 
+07-28 05:37:35.505 I/UiccHal-Interface( 1382): SendRequest() socket id : 1
+07-28 05:37:35.505 D/RILClient( 1382): [OemClient] RILC_Send msgId:301 lengh:32 channel:1
+07-28 05:37:35.505 D/RILClient( 1382): [OemClient]REQ (clientId = 6, t = 168, msgId = 301, len = 32 channel = 1)
+07-28 05:37:35.515 D/RILClient( 1382): [OemClient]RSP: (clientId = 6, t = 168, msgId = 301, len = 27, channel = 1, status = 0)
+07-28 05:37:35.515 I/UiccHal-Interface( 1382): SendRequest() [--> 
+07-28 05:37:35.515 I/UiccHal-Interface( 1382): TransmitApduLogicalChannel() [--> 
+07-28 05:37:35.515 I/UiccHal-SE( 1382): internalTransmit() [--> 
+07-28 05:37:35.515 D/UiccHal-SE( 1382): transmit() transmit received sw1: 0x90, sw2 : 0x00, pResponse->nResponseCount : 23
+07-28 05:37:35.515 I/UiccHal-SE( 1382): transmit() [--> 
+07-28 05:37:35.516 D/OmapiApduInterface( 6023): OMAPI APDU response: BF3E125A10890330234271000000000271438668169000
+07-28 05:37:35.517 D/OmapiApduInterface( 6023): OMAPI APDU: 81E2910003BF2200
+07-28 05:37:35.518 I/UiccHal-SE( 1382): transmit() [<-- 
+07-28 05:37:35.518 I/UiccHal-SE( 1382): internalTransmit() [<-- 
+07-28 05:37:35.518 I/UiccHal-Interface( 1382): TransmitApduLogicalChannel() [<-- 
+07-28 05:37:35.518 I/UiccHal-Interface( 1382): SendRequest() [<-- 
+07-28 05:37:35.518 I/UiccHal-Interface( 1382): SendRequest() socket id : 1
+07-28 05:37:35.518 D/RILClient( 1382): [OemClient] RILC_Send msgId:301 lengh:29 channel:1
+07-28 05:37:35.518 D/RILClient( 1382): [OemClient]REQ (clientId = 6, t = 169, msgId = 301, len = 29 channel = 1)
+07-28 05:37:35.535 D/RILClient( 1382): [OemClient]RSP: (clientId = 6, t = 169, msgId = 301, len = 145, channel = 1, status = 0)
+07-28 05:37:35.535 I/UiccHal-Interface( 1382): SendRequest() [--> 
+07-28 05:37:35.535 I/UiccHal-Interface( 1382): TransmitApduLogicalChannel() [--> 
+07-28 05:37:35.535 I/UiccHal-SE( 1382): internalTransmit() [--> 
+07-28 05:37:35.535 D/UiccHal-SE( 1382): transmit() transmit received sw1: 0x90, sw2 : 0x00, pResponse->nResponseCount : 141
+07-28 05:37:35.535 I/UiccHal-SE( 1382): transmit() [--> 
+07-28 05:37:35.539 D/OmapiApduInterface( 6023): OMAPI APDU response: BF228187810302030182030203008303427100840F8101008204000C9CD0830400003E4F8505067F36F7C086030D01008703020300880203D8A916041481370F5125D0B1D408D4C3B232E6D25E795BEBFBAA16041481370F5125D0B1D408D4C3B232E6D25E795BEBFB8B01029902064004030100000C1454532D50412D55502D30343233202020202020209000
+07-28 05:37:35.540 W/SecureElement-Terminal-SIM2( 2857): Enable access control on logical channel for im.angry.openeuicc
+07-28 05:37:35.541 I/UiccHal-SE( 1382): openLogicalChannel() [<-- 
+07-28 05:37:35.541 I/UiccHal-Interface( 1382): OpenLogicalChannel() [<-- 
+07-28 05:37:35.541 I/UiccHal-Interface( 1382): SendRequest() [<-- 
+07-28 05:37:35.541 I/UiccHal-Interface( 1382): SendRequest() socket id : 1
+07-28 05:37:35.541 D/RILClient( 1382): [OemClient] RILC_Send msgId:300 lengh:18 channel:1
+07-28 05:37:35.541 D/RILClient( 1382): [OemClient]REQ (clientId = 6, t = 170, msgId = 300, len = 18 channel = 1)
+07-28 05:37:35.558 D/RILClient( 1382): [OemClient]RSP: (clientId = 6, t = 170, msgId = 300, len = 264, channel = 1, status = 17)
+07-28 05:37:35.559 I/UiccHal-Interface( 1382): SendRequest() [--> 
+07-28 05:37:35.559 I/UiccHal-Interface( 1382): OpenLogicalChannel() [--> 
+07-28 05:37:35.559 D/UiccHal-SE( 1382): openLogicalChannel() return sestatus : NO_SUCH_ELEMENT_ERROR
+07-28 05:37:35.559 I/UiccHal-SE( 1382): openLogicalChannel() [--> 
+07-28 05:37:35.560 D/EuiccChannelManager( 6023): Found eUICC on slot 0 port 0
+07-28 05:37:35.562 I/EuiccChannelManager( 6023): Trying OMAPI for physical slot 1
+07-28 05:37:35.562 D/SecureElementService( 2857): getReaders() for im.angry.openeuicc
+07-28 05:37:35.564 W/EuiccChannelManager( 6023): OMAPI APDU interface unavailable for physical slot 1 with ISD-R AID: A0000005591010FFFFFFFF8900000100.
+07-28 05:37:35.568 D/OmapiApduInterface( 6023): OMAPI APDU: 81E2910006BF3E035C015A
+07-28 05:37:35.568 I/UiccHal-SE( 1382): transmit() [<-- 
+07-28 05:37:35.568 I/UiccHal-SE( 1382): internalTransmit() [<-- 
+07-28 05:37:35.568 I/UiccHal-Interface( 1382): TransmitApduLogicalChannel() [<-- 
+07-28 05:37:35.568 I/UiccHal-Interface( 1382): SendRequest() [<-- 
+07-28 05:37:35.568 I/UiccHal-Interface( 1382): SendRequest() socket id : 1
+07-28 05:37:35.568 D/RILClient( 1382): [OemClient] RILC_Send msgId:301 lengh:32 channel:1
+07-28 05:37:35.568 D/RILClient( 1382): [OemClient]REQ (clientId = 6, t = 171, msgId = 301, len = 32 channel = 1)
+07-28 05:37:35.579 D/RILClient( 1382): [OemClient]RSP: (clientId = 6, t = 171, msgId = 301, len = 27, channel = 1, status = 0)
+07-28 05:37:35.579 I/UiccHal-Interface( 1382): SendRequest() [--> 
+07-28 05:37:35.579 I/UiccHal-Interface( 1382): TransmitApduLogicalChannel() [--> 
+07-28 05:37:35.579 I/UiccHal-SE( 1382): internalTransmit() [--> 
+07-28 05:37:35.579 D/UiccHal-SE( 1382): transmit() transmit received sw1: 0x90, sw2 : 0x00, pResponse->nResponseCount : 23
+07-28 05:37:35.580 I/UiccHal-SE( 1382): transmit() [--> 
+07-28 05:37:35.581 D/OmapiApduInterface( 6023): OMAPI APDU response: BF3E125A10890330234271000000000271438668169000
+07-28 05:37:35.582 D/OmapiApduInterface( 6023): OMAPI APDU: 81E2910003BF2200
+07-28 05:37:35.583 I/UiccHal-SE( 1382): transmit() [<-- 
+07-28 05:37:35.583 I/UiccHal-SE( 1382): internalTransmit() [<-- 
+07-28 05:37:35.583 I/UiccHal-Interface( 1382): TransmitApduLogicalChannel() [<-- 
+07-28 05:37:35.583 I/UiccHal-Interface( 1382): SendRequest() [<-- 
+07-28 05:37:35.583 I/UiccHal-Interface( 1382): SendRequest() socket id : 1
+07-28 05:37:35.583 D/RILClient( 1382): [OemClient] RILC_Send msgId:301 lengh:29 channel:1
+07-28 05:37:35.583 D/RILClient( 1382): [OemClient]REQ (clientId = 6, t = 172, msgId = 301, len = 29 channel = 1)
+07-28 05:37:35.603 D/RILClient( 1382): [OemClient]RSP: (clientId = 6, t = 172, msgId = 301, len = 145, channel = 1, status = 0)
+07-28 05:37:35.603 I/UiccHal-Interface( 1382): SendRequest() [--> 
+07-28 05:37:35.603 I/UiccHal-Interface( 1382): TransmitApduLogicalChannel() [--> 
+07-28 05:37:35.603 I/UiccHal-SE( 1382): internalTransmit() [--> 
+07-28 05:37:35.603 D/UiccHal-SE( 1382): transmit() transmit received sw1: 0x90, sw2 : 0x00, pResponse->nResponseCount : 141
+07-28 05:37:35.604 I/UiccHal-SE( 1382): transmit() [--> 
+07-28 05:37:35.608 D/OmapiApduInterface( 6023): OMAPI APDU response: BF228187810302030182030203008303427100840F8101008204000C9CD0830400003E4F8505067F36F7C086030D01008703020300880203D8A916041481370F5125D0B1D408D4C3B232E6D25E795BEBFBAA16041481370F5125D0B1D408D4C3B232E6D25E795BEBFB8B01029902064004030100000C1454532D50412D55502D30343233202020202020209000
+07-28 05:37:35.611 D/OmapiApduInterface( 6023): OMAPI APDU: 81E2910003BF2E00
+07-28 05:37:35.611 I/UiccHal-SE( 1382): transmit() [<-- 
+07-28 05:37:35.611 I/UiccHal-SE( 1382): internalTransmit() [<-- 
+07-28 05:37:35.611 I/UiccHal-Interface( 1382): TransmitApduLogicalChannel() [<-- 
+07-28 05:37:35.612 I/UiccHal-Interface( 1382): SendRequest() [<-- 
+07-28 05:37:35.612 I/UiccHal-Interface( 1382): SendRequest() socket id : 1
+07-28 05:37:35.612 D/RILClient( 1382): [OemClient] RILC_Send msgId:301 lengh:29 channel:1
+07-28 05:37:35.612 D/RILClient( 1382): [OemClient]REQ (clientId = 6, t = 173, msgId = 301, len = 29 channel = 1)
+07-28 05:37:35.691 V/WindowManagerShell( 2633): Transition animation finished (aborted=false), notifying core (#6638) android.os.BinderProxy@aff0635@0
+07-28 05:37:35.699 V/WindowManager( 1752): Finish Transition (#6638): created at 07-28 05:37:35.356 collect-started=0.038ms request-sent=4.753ms started=9.388ms ready=9.981ms sent=28.513ms commit=6.569ms finished=341.461ms
+07-28 05:37:35.700 D/VRI[NexusLauncherActivity]( 2962): visibilityChanged oldVisibility=true newVisibility=false
+07-28 05:37:35.700 D/WallpaperService( 2633): onVisibilityChanged(false): com.android.systemui.wallpapers.ImageWallpaper$CanvasEngine@c0160e8
+07-28 05:37:35.702 V/WindowManagerShell( 2633): Track 0 became idle
+07-28 05:37:35.702 V/WindowManagerShell( 2633): All active transition animations finished
+07-28 05:37:35.707 D/SmartspaceInteractor( 2962): notifySmartspaceEvent: SmartspaceTargetEvent{mSmartspaceTarget=null, mSmartspaceActionId='null', mEventType=7}
+07-28 05:37:35.711 I/AiAiEcho( 6350): (REDACTED) %s No tracked ambient data found for ID: %s; for event type: %d, skipping event processing.
+07-28 05:37:35.711 D/BaseActivity( 2962): Launcher flags updated: [] -[state_started]
+07-28 05:37:35.711 D/BaseDepthController( 2962): setSurface:
+07-28 05:37:35.711 D/BaseDepthController( 2962): 	mWaitingOnSurfaceValidity: false
+07-28 05:37:35.711 D/BaseDepthController( 2962): 	mBaseSurface: null
+07-28 05:37:35.711 D/BaseDepthController( 2962): mSurface is null and mCurrentBlur is: 0
+07-28 05:37:35.712 D/LauncherStateManager( 2962): StateManager.goToState: fromState: Normal, toState: Normal, partial trace:
+07-28 05:37:35.712 D/LauncherStateManager( 2962): 	at com.android.launcher3.statemanager.StateManager.moveToRestState(go/retraceme 8bcbbc35bb13161dedaa519f339f298517b051dcbf8e2046701ae935fa579434:26)
+07-28 05:37:35.712 D/LauncherStateManager( 2962): 	at com.android.launcher3.statemanager.StateManager.moveToRestState(go/retraceme 8bcbbc35bb13161dedaa519f339f298517b051dcbf8e2046701ae935fa579434:35)
+07-28 05:37:35.712 D/LauncherStateManager( 2962): 	at com.android.launcher3.statemanager.StatefulActivity.onStop(go/retraceme 8bcbbc35bb13161dedaa519f339f298517b051dcbf8e2046701ae935fa579434:31)
+07-28 05:37:35.712 D/LauncherStateManager( 2962): StateManager.onRepeatStateSetAborted: state: Normal
+07-28 05:37:35.712 D/KeyboardStateManager( 2962): hideKeyboard
+07-28 05:37:35.712 D/KeyboardStateManager( 2962): isImeShown: false
+07-28 05:37:35.712 D/StatsLog( 2962): LAUNCHER_ONSTOP
+07-28 05:37:35.712 D/GmsPlayProvider( 2962): Initiating graceful shutdown of binder channel.
+07-28 05:37:35.712 D/GmsPlayProvider( 2962): Binder channel was terminated gracefully.
+07-28 05:37:35.712 D/StatsLog( 2962): LAUNCHER_GOOGLE_SEARCH_RESTORE_LIST_SIZE_AFTER_ACTIVITY_RESTART
+07-28 05:37:35.775 D/RILClient( 1382): [OemClient]RSP: (clientId = 6, t = 173, msgId = 301, len = 27, channel = 1, status = 0)
+07-28 05:37:35.776 I/UiccHal-Interface( 1382): SendRequest() [--> 
+07-28 05:37:35.776 I/UiccHal-Interface( 1382): TransmitApduLogicalChannel() [--> 
+07-28 05:37:35.776 I/UiccHal-SE( 1382): internalTransmit() [--> 
+07-28 05:37:35.776 D/UiccHal-SE( 1382): transmit() transmit received sw1: 0x90, sw2 : 0x00, pResponse->nResponseCount : 23
+07-28 05:37:35.776 I/UiccHal-SE( 1382): transmit() [--> 
+07-28 05:37:35.779 D/OmapiApduInterface( 6023): OMAPI APDU response: BF2E12801095722AFB3932B4FCC21AFB0660CC00519000
+07-28 05:37:35.780 D/OmapiApduInterface( 6023): OMAPI APDU: 81E2910003BF2000
+07-28 05:37:35.781 I/UiccHal-SE( 1382): transmit() [<-- 
+07-28 05:37:35.782 I/UiccHal-SE( 1382): internalTransmit() [<-- 
+07-28 05:37:35.782 I/UiccHal-Interface( 1382): TransmitApduLogicalChannel() [<-- 
+07-28 05:37:35.782 I/UiccHal-Interface( 1382): SendRequest() [<-- 
+07-28 05:37:35.782 I/UiccHal-Interface( 1382): SendRequest() socket id : 1
+07-28 05:37:35.782 D/RILClient( 1382): [OemClient] RILC_Send msgId:301 lengh:29 channel:1
+07-28 05:37:35.782 D/RILClient( 1382): [OemClient]REQ (clientId = 6, t = 174, msgId = 301, len = 29 channel = 1)
+07-28 05:37:35.807 I/NearbyDiscovery(17160): AccountKeyHitHandler: FastPairSeeker: accountKeyHitListener is null. [CONTEXT service_id=265 ]
+07-28 05:37:36.072 D/RILClient( 1382): [OemClient]RSP: (clientId = 6, t = 174, msgId = 301, len = 62, channel = 1, status = 0)
+07-28 05:37:36.073 I/UiccHal-Interface( 1382): SendRequest() [--> 
+07-28 05:37:36.073 I/UiccHal-Interface( 1382): TransmitApduLogicalChannel() [--> 
+07-28 05:37:36.073 I/UiccHal-SE( 1382): internalTransmit() [--> 
+07-28 05:37:36.073 D/UiccHal-SE( 1382): transmit() transmit received sw1: 0x90, sw2 : 0x00, pResponse->nResponseCount : 58
+07-28 05:37:36.074 I/UiccHal-SE( 1382): transmit() [--> 
+07-28 05:37:36.078 D/OmapiApduInterface( 6023): OMAPI APDU response: BF20358203020300A916041481370F5125D0B1D408D4C3B232E6D25E795BEBFBAA16041481370F5125D0B1D408D4C3B232E6D25E795BEBFB9000
+07-28 05:37:36.079 D/HttpInterfaceImpl( 6023): transmit(url = https://lpa.live.esimdiscovery.dev/gsma/rsp2/es9plus/initiateAuthentication)
+07-28 05:37:36.080 D/HttpInterfaceImpl( 6023): HTTP tx = {"smdpAddress":"lpa.live.esimdiscovery.dev","euiccChallenge":"lXIq+zkytPzCGvsGYMwAUQ==","euiccInfo1":"vyA1ggMCAwCpFgQUgTcPUSXQsdQI1MOyMubSXnlb6/uqFgQUgTcPUSXQsdQI1MOyMubSXnlb6/s="}
+07-28 05:37:37.050 D/HttpInterfaceImpl( 6023): transmit responseCode = 200
+07-28 05:37:37.051 D/HttpInterfaceImpl( 6023): HTTP response body = {"euiccCiPKIdToBeUsed":"BBSBNw9RJdCx1AjUw7Iy5tJeeVvr+w==","header":{"functionExecutionStatus":{"status":"Executed-Success"}},"serverCertificate":"MIICeTCCAh+gAwIBAgIQMCU2+qzQoseZXDEAPkzHVzAKBggqhkjOPQQDAjBEMRgwFgYDVQQKEw9HU00gQXNzb2NpYXRpb24xKDAmBgNVBAMTH0dTTSBBc3NvY2lhdGlvbiAtIFJTUDIgUm9vdCBDSTEwHhcNMjYwMTI5MDAwMDAwWhcNMjkwMTI4MjM1OTU5WjBgMQswCQYDVQQGEwJVUzERMA8GA1UEBwwIVmlyZ2luaWExDzANBgNVBAoMBlRoYWxlczEPMA0GA1UECwwGT0RDIFVTMRwwGgYDVQQDDBNHb29nbGUgU01EUyBVRTQgTEFCMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWGXzSG7A6aJuKFjGuJh/5m6JtfyYsKjK6Gdc32Gu2XFeb6SCpOYfRSJm+Ds2Qlw7qpX8y5QLxWJyo1eq42Pz3aOB1jCB0zAXBgNVHSABAf8EDTALMAkGB2eBEgECAQcwGQYDVR0RBBIwEIgOKwYBBAGB+AIBgVyCLG4wHQYDVR0OBBYEFMaMvzvdqGDcZDTZ0o2o64bXIrpqMA4GA1UdDwEB/wQEAwIHgDBNBgNVHR8ERjBEMEKgQKA+hjxodHRwOi8vZ3NtYS1jcmwuc3ltYXV0aC5jb20vb2ZmbGluZWNhL2dzbWEtcnNwMi1yb290LWNpMS5jcmwwHwYDVR0jBBgwFoAUgTcPUSXQsdQI1MOyMubSXnlb6/swCgYIKoZIzj0EAwIDSAAwRQIgKWgQSRwYpMgB9Qw3kyMk/jOMTjVUV+lybtcLcFymGR8CIQC1tnk8XAiy/Dwa5553N7pnPD7TFlTin3bppFm3anDXjQ==","serverSignature1":"XzdA9J4nZXaO6+cV4IIb7OEF/c9WcZdJawiMQqMoDhpddtzvviGv0TNsdONIOCHcfBCScqgjhMzdMX1QoNVKEKfYhQ==","serverSigned1":"MFKAEEYYg+5uqksbhULRyukAG62BEJVyKvs5MrT8whr7BmDMAFGDGmxwYS5saXZlLmVzaW1kaXNjb3ZlcnkuZGV2hBBJF6OCDbJHTbyeOdGlYHLO","transactionId":"461883EE6EAA4B1B8542D1CAE9001BAD"}
+07-28 05:37:37.054 D/OmapiApduInterface( 6023): OMAPI APDU: 81E211003FBF3882033630528010461883EE6EAA4B1B8542D1CAE9001BAD811095722AFB3932B4FCC21AFB0660CC0051831A6C70612E6C6976652E6573696D646973636F
+07-28 05:37:37.056 I/UiccHal-SE( 1382): transmit() [<-- 
+07-28 05:37:37.057 I/UiccHal-SE( 1382): internalTransmit() [<-- 
+07-28 05:37:37.057 I/UiccHal-Interface( 1382): TransmitApduLogicalChannel() [<-- 
+07-28 05:37:37.057 I/UiccHal-Interface( 1382): SendRequest() [<-- 
+07-28 05:37:37.057 I/UiccHal-Interface( 1382): SendRequest() socket id : 1
+07-28 05:37:37.057 D/RILClient( 1382): [OemClient] RILC_Send msgId:301 lengh:89 channel:1
+07-28 05:37:37.057 D/RILClient( 1382): [OemClient]REQ (clientId = 6, t = 175, msgId = 301, len = 89 channel = 1)
+07-28 05:37:37.111 D/RILClient( 1382): [OemClient]RSP: (clientId = 6, t = 175, msgId = 301, len = 6, channel = 1, status = 0)
+07-28 05:37:37.112 I/UiccHal-Interface( 1382): SendRequest() [--> 
+07-28 05:37:37.112 I/UiccHal-Interface( 1382): TransmitApduLogicalChannel() [--> 
+07-28 05:37:37.112 I/UiccHal-SE( 1382): internalTransmit() [--> 
+07-28 05:37:37.112 D/UiccHal-SE( 1382): transmit() transmit received sw1: 0x90, sw2 : 0x00, pResponse->nResponseCount : 2
+07-28 05:37:37.113 I/UiccHal-SE( 1382): transmit() [--> 
+07-28 05:37:37.115 D/OmapiApduInterface( 6023): OMAPI APDU response: 9000
+07-28 05:37:37.118 D/OmapiApduInterface( 6023): OMAPI APDU: 81E211013F766572792E64657684104917A3820DB2474DBC9E39D1A56072CE5F3740F49E2765768EEBE715E0821BECE105FDCF567197496B088C42A3280E1A5D76DCEFBE
+07-28 05:37:37.119 I/UiccHal-SE( 1382): transmit() [<-- 
+07-28 05:37:37.120 I/UiccHal-SE( 1382): internalTransmit() [<-- 
+07-28 05:37:37.120 I/UiccHal-Interface( 1382): TransmitApduLogicalChannel() [<-- 
+07-28 05:37:37.120 I/UiccHal-Interface( 1382): SendRequest() [<-- 
+07-28 05:37:37.120 I/UiccHal-Interface( 1382): SendRequest() socket id : 1
+07-28 05:37:37.120 D/RILClient( 1382): [OemClient] RILC_Send msgId:301 lengh:89 channel:1
+07-28 05:37:37.120 D/RILClient( 1382): [OemClient]REQ (clientId = 6, t = 176, msgId = 301, len = 89 channel = 1)
+07-28 05:37:37.131 D/RILClient( 1382): [OemClient]RSP: (clientId = 6, t = 176, msgId = 301, len = 6, channel = 1, status = 0)
+07-28 05:37:37.132 I/UiccHal-Interface( 1382): SendRequest() [--> 
+07-28 05:37:37.132 I/UiccHal-Interface( 1382): TransmitApduLogicalChannel() [--> 
+07-28 05:37:37.132 I/UiccHal-SE( 1382): internalTransmit() [--> 
+07-28 05:37:37.133 D/UiccHal-SE( 1382): transmit() transmit received sw1: 0x90, sw2 : 0x00, pResponse->nResponseCount : 2
+07-28 05:37:37.133 I/UiccHal-SE( 1382): transmit() [--> 
+07-28 05:37:37.135 D/OmapiApduInterface( 6023): OMAPI APDU response: 9000
+07-28 05:37:37.138 D/OmapiApduInterface( 6023): OMAPI APDU: 81E211023F21AFD1336C74E3483821DC7C109272A82384CCDD317D50A0D54A10A7D885041481370F5125D0B1D408D4C3B232E6D25E795BEBFB308202793082021FA00302
+07-28 05:37:37.139 I/UiccHal-SE( 1382): transmit() [<-- 
+07-28 05:37:37.139 I/UiccHal-SE( 1382): internalTransmit() [<-- 
+07-28 05:37:37.139 I/UiccHal-Interface( 1382): TransmitApduLogicalChannel() [<-- 
+07-28 05:37:37.139 I/UiccHal-Interface( 1382): SendRequest() [<-- 
+07-28 05:37:37.140 I/UiccHal-Interface( 1382): SendRequest() socket id : 1
+07-28 05:37:37.140 D/RILClient( 1382): [OemClient] RILC_Send msgId:301 lengh:89 channel:1
+07-28 05:37:37.140 D/RILClient( 1382): [OemClient]REQ (clientId = 6, t = 177, msgId = 301, len = 89 channel = 1)
+07-28 05:37:37.151 D/RILClient( 1382): [OemClient]RSP: (clientId = 6, t = 177, msgId = 301, len = 6, channel = 1, status = 0)
+07-28 05:37:37.152 I/UiccHal-Interface( 1382): SendRequest() [--> 
+07-28 05:37:37.153 I/UiccHal-Interface( 1382): TransmitApduLogicalChannel() [--> 
+07-28 05:37:37.153 I/UiccHal-SE( 1382): internalTransmit() [--> 
+07-28 05:37:37.153 D/UiccHal-SE( 1382): transmit() transmit received sw1: 0x90, sw2 : 0x00, pResponse->nResponseCount : 2
+07-28 05:37:37.154 I/UiccHal-SE( 1382): transmit() [--> 
+07-28 05:37:37.155 D/OmapiApduInterface( 6023): OMAPI APDU response: 9000
+07-28 05:37:37.158 D/OmapiApduInterface( 6023): OMAPI APDU: 81E211033F01020210302536FAACD0A2C7995C31003E4CC757300A06082A8648CE3D040302304431183016060355040A130F47534D204173736F63696174696F6E312830
+07-28 05:37:37.160 I/UiccHal-SE( 1382): transmit() [<-- 
+07-28 05:37:37.160 I/UiccHal-SE( 1382): internalTransmit() [<-- 
+07-28 05:37:37.160 I/UiccHal-Interface( 1382): TransmitApduLogicalChannel() [<-- 
+07-28 05:37:37.160 I/UiccHal-Interface( 1382): SendRequest() [<-- 
+07-28 05:37:37.160 I/UiccHal-Interface( 1382): SendRequest() socket id : 1
+07-28 05:37:37.160 D/RILClient( 1382): [OemClient] RILC_Send msgId:301 lengh:89 channel:1
+07-28 05:37:37.160 D/RILClient( 1382): [OemClient]REQ (clientId = 6, t = 178, msgId = 301, len = 89 channel = 1)
+07-28 05:37:37.171 D/RILClient( 1382): [OemClient]RSP: (clientId = 6, t = 178, msgId = 301, len = 6, channel = 1, status = 0)
+07-28 05:37:37.172 I/UiccHal-Interface( 1382): SendRequest() [--> 
+07-28 05:37:37.172 I/UiccHal-Interface( 1382): TransmitApduLogicalChannel() [--> 
+07-28 05:37:37.172 I/UiccHal-SE( 1382): internalTransmit() [--> 
+07-28 05:37:37.172 D/UiccHal-SE( 1382): transmit() transmit received sw1: 0x90, sw2 : 0x00, pResponse->nResponseCount : 2
+07-28 05:37:37.173 I/UiccHal-SE( 1382): transmit() [--> 
+07-28 05:37:37.174 D/OmapiApduInterface( 6023): OMAPI APDU response: 9000
+07-28 05:37:37.177 D/OmapiApduInterface( 6023): OMAPI APDU: 81E211043F260603550403131F47534D204173736F63696174696F6E202D205253503220526F6F7420434931301E170D3236303132393030303030305A170D3239303132
+07-28 05:37:37.179 I/UiccHal-SE( 1382): transmit() [<-- 
+07-28 05:37:37.179 I/UiccHal-SE( 1382): internalTransmit() [<-- 
+07-28 05:37:37.179 I/UiccHal-Interface( 1382): TransmitApduLogicalChannel() [<-- 
+07-28 05:37:37.179 I/UiccHal-Interface( 1382): SendRequest() [<-- 
+07-28 05:37:37.179 I/UiccHal-Interface( 1382): SendRequest() socket id : 1
+07-28 05:37:37.179 D/RILClient( 1382): [OemClient] RILC_Send msgId:301 lengh:89 channel:1
+07-28 05:37:37.179 D/RILClient( 1382): [OemClient]REQ (clientId = 6, t = 179, msgId = 301, len = 89 channel = 1)
+07-28 05:37:37.189 D/RILClient( 1382): [OemClient]RSP: (clientId = 6, t = 179, msgId = 301, len = 6, channel = 1, status = 0)
+07-28 05:37:37.190 I/UiccHal-Interface( 1382): SendRequest() [--> 
+07-28 05:37:37.190 I/UiccHal-Interface( 1382): TransmitApduLogicalChannel() [--> 
+07-28 05:37:37.190 I/UiccHal-SE( 1382): internalTransmit() [--> 
+07-28 05:37:37.190 D/UiccHal-SE( 1382): transmit() transmit received sw1: 0x90, sw2 : 0x00, pResponse->nResponseCount : 2
+07-28 05:37:37.191 I/UiccHal-SE( 1382): transmit() [--> 
+07-28 05:37:37.192 D/OmapiApduInterface( 6023): OMAPI APDU response: 9000
+07-28 05:37:37.195 D/OmapiApduInterface( 6023): OMAPI APDU: 81E211053F383233353935395A3060310B30090603550406130255533111300F06035504070C0856697267696E6961310F300D060355040A0C065468616C6573310F300D
+07-28 05:37:37.196 I/UiccHal-SE( 1382): transmit() [<-- 
+07-28 05:37:37.197 I/UiccHal-SE( 1382): internalTransmit() [<-- 
+07-28 05:37:37.197 I/UiccHal-Interface( 1382): TransmitApduLogicalChannel() [<-- 
+07-28 05:37:37.197 I/UiccHal-Interface( 1382): SendRequest() [<-- 
+07-28 05:37:37.197 I/UiccHal-Interface( 1382): SendRequest() socket id : 1
+07-28 05:37:37.197 D/RILClient( 1382): [OemClient] RILC_Send msgId:301 lengh:89 channel:1
+07-28 05:37:37.197 D/RILClient( 1382): [OemClient]REQ (clientId = 6, t = 180, msgId = 301, len = 89 channel = 1)
+07-28 05:37:37.207 D/RILClient( 1382): [OemClient]RSP: (clientId = 6, t = 180, msgId = 301, len = 6, channel = 1, status = 0)
+07-28 05:37:37.209 I/UiccHal-Interface( 1382): SendRequest() [--> 
+07-28 05:37:37.209 I/UiccHal-Interface( 1382): TransmitApduLogicalChannel() [--> 
+07-28 05:37:37.209 I/UiccHal-SE( 1382): internalTransmit() [--> 
+07-28 05:37:37.209 D/UiccHal-SE( 1382): transmit() transmit received sw1: 0x90, sw2 : 0x00, pResponse->nResponseCount : 2
+07-28 05:37:37.209 I/UiccHal-SE( 1382): transmit() [--> 
+07-28 05:37:37.211 D/OmapiApduInterface( 6023): OMAPI APDU response: 9000
+07-28 05:37:37.213 D/OmapiApduInterface( 6023): OMAPI APDU: 81E211063F060355040B0C064F4443205553311C301A06035504030C13476F6F676C6520534D445320554534204C41423059301306072A8648CE3D020106082A8648CE3D
+07-28 05:37:37.215 I/UiccHal-SE( 1382): transmit() [<-- 
+07-28 05:37:37.215 I/UiccHal-SE( 1382): internalTransmit() [<-- 
+07-28 05:37:37.215 I/UiccHal-Interface( 1382): TransmitApduLogicalChannel() [<-- 
+07-28 05:37:37.215 I/UiccHal-Interface( 1382): SendRequest() [<-- 
+07-28 05:37:37.215 I/UiccHal-Interface( 1382): SendRequest() socket id : 1
+07-28 05:37:37.215 D/RILClient( 1382): [OemClient] RILC_Send msgId:301 lengh:89 channel:1
+07-28 05:37:37.215 D/RILClient( 1382): [OemClient]REQ (clientId = 6, t = 181, msgId = 301, len = 89 channel = 1)
+07-28 05:37:37.225 D/RILClient( 1382): [OemClient]RSP: (clientId = 6, t = 181, msgId = 301, len = 6, channel = 1, status = 0)
+07-28 05:37:37.226 I/UiccHal-Interface( 1382): SendRequest() [--> 
+07-28 05:37:37.226 I/UiccHal-Interface( 1382): TransmitApduLogicalChannel() [--> 
+07-28 05:37:37.226 I/UiccHal-SE( 1382): internalTransmit() [--> 
+07-28 05:37:37.226 D/UiccHal-SE( 1382): transmit() transmit received sw1: 0x90, sw2 : 0x00, pResponse->nResponseCount : 2
+07-28 05:37:37.226 I/UiccHal-SE( 1382): transmit() [--> 
+07-28 05:37:37.227 D/OmapiApduInterface( 6023): OMAPI APDU response: 9000
+07-28 05:37:37.230 D/OmapiApduInterface( 6023): OMAPI APDU: 81E211073F030107034200045865F3486EC0E9A26E2858C6B8987FE66E89B5FC98B0A8CAE8675CDF61AED9715E6FA482A4E61F452266F83B36425C3BAA95FCCB940BC562
+07-28 05:37:37.232 I/UiccHal-SE( 1382): transmit() [<-- 
+07-28 05:37:37.232 I/UiccHal-SE( 1382): internalTransmit() [<-- 
+07-28 05:37:37.232 I/UiccHal-Interface( 1382): TransmitApduLogicalChannel() [<-- 
+07-28 05:37:37.232 I/UiccHal-Interface( 1382): SendRequest() [<-- 
+07-28 05:37:37.232 I/UiccHal-Interface( 1382): SendRequest() socket id : 1
+07-28 05:37:37.232 D/RILClient( 1382): [OemClient] RILC_Send msgId:301 lengh:89 channel:1
+07-28 05:37:37.232 D/RILClient( 1382): [OemClient]REQ (clientId = 6, t = 182, msgId = 301, len = 89 channel = 1)
+07-28 05:37:37.242 D/RILClient( 1382): [OemClient]RSP: (clientId = 6, t = 182, msgId = 301, len = 6, channel = 1, status = 0)
+07-28 05:37:37.243 I/UiccHal-Interface( 1382): SendRequest() [--> 
+07-28 05:37:37.243 I/UiccHal-Interface( 1382): TransmitApduLogicalChannel() [--> 
+07-28 05:37:37.243 I/UiccHal-SE( 1382): internalTransmit() [--> 
+07-28 05:37:37.243 D/UiccHal-SE( 1382): transmit() transmit received sw1: 0x90, sw2 : 0x00, pResponse->nResponseCount : 2
+07-28 05:37:37.244 I/UiccHal-SE( 1382): transmit() [--> 
+07-28 05:37:37.245 D/OmapiApduInterface( 6023): OMAPI APDU response: 9000
+07-28 05:37:37.248 D/OmapiApduInterface( 6023): OMAPI APDU: 81E211083F72A357AAE363F3DDA381D63081D330170603551D200101FF040D300B300906076781120102010730190603551D1104123010880E2B0601040181F80201815C
+07-28 05:37:37.249 I/UiccHal-SE( 1382): transmit() [<-- 
+07-28 05:37:37.250 I/UiccHal-SE( 1382): internalTransmit() [<-- 
+07-28 05:37:37.250 I/UiccHal-Interface( 1382): TransmitApduLogicalChannel() [<-- 
+07-28 05:37:37.250 I/UiccHal-Interface( 1382): SendRequest() [<-- 
+07-28 05:37:37.250 I/UiccHal-Interface( 1382): SendRequest() socket id : 1
+07-28 05:37:37.250 D/RILClient( 1382): [OemClient] RILC_Send msgId:301 lengh:89 channel:1
+07-28 05:37:37.250 D/RILClient( 1382): [OemClient]REQ (clientId = 6, t = 183, msgId = 301, len = 89 channel = 1)
+07-28 05:37:37.260 D/RILClient( 1382): [OemClient]RSP: (clientId = 6, t = 183, msgId = 301, len = 6, channel = 1, status = 0)
+07-28 05:37:37.260 I/NearbyDiscovery(17160): (REDACTED) BloomFilterAdvManager: Detected bloom filter but too far away, ignoring. %sm, %s
+07-28 05:37:37.261 I/UiccHal-Interface( 1382): SendRequest() [--> 
+07-28 05:37:37.261 I/UiccHal-Interface( 1382): TransmitApduLogicalChannel() [--> 
+07-28 05:37:37.261 I/UiccHal-SE( 1382): internalTransmit() [--> 
+07-28 05:37:37.261 D/UiccHal-SE( 1382): transmit() transmit received sw1: 0x90, sw2 : 0x00, pResponse->nResponseCount : 2
+07-28 05:37:37.261 I/UiccHal-SE( 1382): transmit() [--> 
+07-28 05:37:37.262 D/OmapiApduInterface( 6023): OMAPI APDU response: 9000
+07-28 05:37:37.264 D/OmapiApduInterface( 6023): OMAPI APDU: 81E211093F822C6E301D0603551D0E04160414C68CBF3BDDA860DC6434D9D28DA8EB86D722BA6A300E0603551D0F0101FF040403020780304D0603551D1F044630443042
+07-28 05:37:37.265 I/UiccHal-SE( 1382): transmit() [<-- 
+07-28 05:37:37.265 I/UiccHal-SE( 1382): internalTransmit() [<-- 
+07-28 05:37:37.266 I/UiccHal-Interface( 1382): TransmitApduLogicalChannel() [<-- 
+07-28 05:37:37.266 I/UiccHal-Interface( 1382): SendRequest() [<-- 
+07-28 05:37:37.266 I/UiccHal-Interface( 1382): SendRequest() socket id : 1
+07-28 05:37:37.266 D/RILClient( 1382): [OemClient] RILC_Send msgId:301 lengh:89 channel:1
+07-28 05:37:37.266 D/RILClient( 1382): [OemClient]REQ (clientId = 6, t = 184, msgId = 301, len = 89 channel = 1)
+07-28 05:37:37.275 D/RILClient( 1382): [OemClient]RSP: (clientId = 6, t = 184, msgId = 301, len = 6, channel = 1, status = 0)
+07-28 05:37:37.275 I/UiccHal-Interface( 1382): SendRequest() [--> 
+07-28 05:37:37.276 I/UiccHal-Interface( 1382): TransmitApduLogicalChannel() [--> 
+07-28 05:37:37.276 I/UiccHal-SE( 1382): internalTransmit() [--> 
+07-28 05:37:37.276 D/UiccHal-SE( 1382): transmit() transmit received sw1: 0x90, sw2 : 0x00, pResponse->nResponseCount : 2
+07-28 05:37:37.276 I/UiccHal-SE( 1382): transmit() [--> 
+07-28 05:37:37.279 D/OmapiApduInterface( 6023): OMAPI APDU response: 9000
+07-28 05:37:37.282 D/OmapiApduInterface( 6023): OMAPI APDU: 81E2110A3FA040A03E863C687474703A2F2F67736D612D63726C2E73796D617574682E636F6D2F6F66666C696E6563612F67736D612D727370322D726F6F742D6369312E
+07-28 05:37:37.283 I/UiccHal-SE( 1382): transmit() [<-- 
+07-28 05:37:37.284 I/UiccHal-SE( 1382): internalTransmit() [<-- 
+07-28 05:37:37.284 I/UiccHal-Interface( 1382): TransmitApduLogicalChannel() [<-- 
+07-28 05:37:37.284 I/UiccHal-Interface( 1382): SendRequest() [<-- 
+07-28 05:37:37.284 I/UiccHal-Interface( 1382): SendRequest() socket id : 1
+07-28 05:37:37.284 D/RILClient( 1382): [OemClient] RILC_Send msgId:301 lengh:89 channel:1
+07-28 05:37:37.284 D/RILClient( 1382): [OemClient]REQ (clientId = 6, t = 185, msgId = 301, len = 89 channel = 1)
+07-28 05:37:37.294 D/RILClient( 1382): [OemClient]RSP: (clientId = 6, t = 185, msgId = 301, len = 6, channel = 1, status = 0)
+07-28 05:37:37.295 I/UiccHal-Interface( 1382): SendRequest() [--> 
+07-28 05:37:37.295 I/UiccHal-Interface( 1382): TransmitApduLogicalChannel() [--> 
+07-28 05:37:37.295 I/UiccHal-SE( 1382): internalTransmit() [--> 
+07-28 05:37:37.295 D/UiccHal-SE( 1382): transmit() transmit received sw1: 0x90, sw2 : 0x00, pResponse->nResponseCount : 2
+07-28 05:37:37.295 I/UiccHal-SE( 1382): transmit() [--> 
+07-28 05:37:37.296 D/OmapiApduInterface( 6023): OMAPI APDU response: 9000
+07-28 05:37:37.299 D/OmapiApduInterface( 6023): OMAPI APDU: 81E2110B3F63726C301F0603551D2304183016801481370F5125D0B1D408D4C3B232E6D25E795BEBFB300A06082A8648CE3D04030203480030450220296810491C18A4C8
+07-28 05:37:37.301 I/UiccHal-SE( 1382): transmit() [<-- 
+07-28 05:37:37.301 I/UiccHal-SE( 1382): internalTransmit() [<-- 
+07-28 05:37:37.301 I/UiccHal-Interface( 1382): TransmitApduLogicalChannel() [<-- 
+07-28 05:37:37.301 I/UiccHal-Interface( 1382): SendRequest() [<-- 
+07-28 05:37:37.301 I/UiccHal-Interface( 1382): SendRequest() socket id : 1
+07-28 05:37:37.301 D/RILClient( 1382): [OemClient] RILC_Send msgId:301 lengh:89 channel:1
+07-28 05:37:37.301 D/RILClient( 1382): [OemClient]REQ (clientId = 6, t = 186, msgId = 301, len = 89 channel = 1)
+07-28 05:37:37.311 D/RILClient( 1382): [OemClient]RSP: (clientId = 6, t = 186, msgId = 301, len = 6, channel = 1, status = 0)
+07-28 05:37:37.312 I/UiccHal-Interface( 1382): SendRequest() [--> 
+07-28 05:37:37.312 I/UiccHal-Interface( 1382): TransmitApduLogicalChannel() [--> 
+07-28 05:37:37.312 I/UiccHal-SE( 1382): internalTransmit() [--> 
+07-28 05:37:37.312 D/UiccHal-SE( 1382): transmit() transmit received sw1: 0x90, sw2 : 0x00, pResponse->nResponseCount : 2
+07-28 05:37:37.313 I/UiccHal-SE( 1382): transmit() [--> 
+07-28 05:37:37.314 D/OmapiApduInterface( 6023): OMAPI APDU response: 9000
+07-28 05:37:37.317 D/OmapiApduInterface( 6023): OMAPI APDU: 81E2110C3F01F50C37932324FE338C4E355457E9726ED70B705CA6191F022100B5B6793C5C08B2FC3C1AE79E7737BA673C3ED31654E29F76E9A459B76A70D78DA00AA108
+07-28 05:37:37.318 I/UiccHal-SE( 1382): transmit() [<-- 
+07-28 05:37:37.319 I/UiccHal-SE( 1382): internalTransmit() [<-- 
+07-28 05:37:37.319 I/UiccHal-Interface( 1382): TransmitApduLogicalChannel() [<-- 
+07-28 05:37:37.319 I/UiccHal-Interface( 1382): SendRequest() [<-- 
+07-28 05:37:37.319 I/UiccHal-Interface( 1382): SendRequest() socket id : 1
+07-28 05:37:37.319 D/RILClient( 1382): [OemClient] RILC_Send msgId:301 lengh:89 channel:1
+07-28 05:37:37.319 D/RILClient( 1382): [OemClient]REQ (clientId = 6, t = 187, msgId = 301, len = 89 channel = 1)
+07-28 05:37:37.329 D/RILClient( 1382): [OemClient]RSP: (clientId = 6, t = 187, msgId = 301, len = 6, channel = 1, status = 0)
+07-28 05:37:37.330 I/UiccHal-Interface( 1382): SendRequest() [--> 
+07-28 05:37:37.330 I/UiccHal-Interface( 1382): TransmitApduLogicalChannel() [--> 
+07-28 05:37:37.330 I/UiccHal-SE( 1382): internalTransmit() [--> 
+07-28 05:37:37.330 D/UiccHal-SE( 1382): transmit() transmit received sw1: 0x90, sw2 : 0x00, pResponse->nResponseCount : 2
+07-28 05:37:37.330 I/UiccHal-SE( 1382): transmit() [--> 
+07-28 05:37:37.332 D/OmapiApduInterface( 6023): OMAPI APDU response: 9000
+07-28 05:37:37.333 D/OmapiApduInterface( 6023): OMAPI APDU: 81E2910D08800435290611A100
+07-28 05:37:37.334 I/UiccHal-SE( 1382): transmit() [<-- 
+07-28 05:37:37.334 I/UiccHal-SE( 1382): internalTransmit() [<-- 
+07-28 05:37:37.335 I/UiccHal-Interface( 1382): TransmitApduLogicalChannel() [<-- 
+07-28 05:37:37.335 I/UiccHal-Interface( 1382): SendRequest() [<-- 
+07-28 05:37:37.335 I/UiccHal-Interface( 1382): SendRequest() socket id : 1
+07-28 05:37:37.335 D/RILClient( 1382): [OemClient] RILC_Send msgId:301 lengh:34 channel:1
+07-28 05:37:37.335 D/RILClient( 1382): [OemClient]REQ (clientId = 6, t = 188, msgId = 301, len = 34 channel = 1)
+07-28 05:37:37.908 D/RILClient( 1382): [OemClient]RSP: (clientId = 6, t = 188, msgId = 301, len = 1453, channel = 1, status = 0)
+07-28 05:37:37.909 I/UiccHal-Interface( 1382): SendRequest() [--> 
+07-28 05:37:37.909 I/UiccHal-Interface( 1382): TransmitApduLogicalChannel() [--> 
+07-28 05:37:37.909 I/UiccHal-SE( 1382): internalTransmit() [--> 
+07-28 05:37:37.909 D/UiccHal-SE( 1382): transmit() transmit received sw1: 0x90, sw2 : 0x00, pResponse->nResponseCount : 1449
+07-28 05:37:37.910 I/UiccHal-SE( 1382): transmit() [--> 
+07-28 05:37:37.956 D/OmapiApduInterface( 6023): OMAPI APDU response: BF388205A2A082059E3081D78010461883EE6EAA4B1B8542D1CAE9001BAD831A6C70612E6C6976652E6573696D646973636F766572792E64657684104917A3820DB2474DBC9E39D1A56072CEBF228187810302030182030203008303427100840F8101008204000C9CD0830400003E4F8505067F36F7C086030D01008703020300880203D8A916041481370F5125D0B1D408D4C3B232E6D25E795BEBFBAA16041481370F5125D0B1D408D4C3B232E6D25E795BEBFB8B01029902064004030100000C1454532D50412D55502D3034323320202020202020A00AA108800435290611A1005F37402223841DC0F03AB34A76EDA40A42D49A356FA3E8C28A342C26E14789C55860A89886E806FAB50CE952E0DC0FC5C10C82FE26E62C5844528A66077C127189DF3F308201DC30820182A003020102021100805056A5AB52337C634ADAF8249C1969300A06082A8648CE3D040302303231133011060355040A0C0A47454D414C544F205341311B301906035504030C1247454D414C544F2045554D20434520504155301E170D3230303631393030303030305A170D3437303532343233353935395A304031133011060355040A0C0A47454D414C544F205341312930270603550405132038393033333032333432373130303030303030303032373134333836363831363059301306072A8648CE3D020106082A8648CE3D03010703420004D3E8F844790864E5F922FCC886E5AA9C925A6A92850FC97BF5211EA78EDD354E6275061702EF5021D1D6D548E3CB2858395468F0FF607B08B0957278F4728960A36B3069301F0603551D23041830168014DCDE1A691FE9AF75DDA1BB9299318B29B1D416B2301D0603551D0E041604143A127A472AB0E52F3D233443C0AB47AA26A37D53300E0603551D0F0101FF04040302008030170603551D200101FF040D300B3009060767811201020101300A06082A8648CE3D0403020348003045022056D6C217156273F19D537DB5C2B2AE8988282AF1487718219D1CA3266B21C58802210086DD500906F285AC84A74CC5931C3986447AAAA8320D817D75ECFAA07DFD401F3082029D30820243A00302010202102674D3F39D372779087E1B5935ECFB52300A06082A8648CE3D040302304431183016060355040A130F47534D204173736F63696174696F6E312830260603550403131F47534D204173736F63696174696F6E202D205253503220526F6F7420434931301E170D3137303532353030303030305A170D3437303532343233353935395A303231133011060355040A0C0A47454D414C544F205341311B301906035504030C1247454D414C544F2045554D204345205041553059301306072A8648CE3D020106082A8648CE3D03010703420004B253B6DA9511E5E18A701EB644379EE040C0AE1F79BA26811842754BFBFC612C387E67E5DFB2F3B87D183E94F5C81538E172DD3C157D9A7B88CD1E2FBBC652B6A38201273082012330120603551D130101FF040830060101FF02010030170603551D200101FF040D300B3009060767811201020102304D0603551D1F044630443042A040A03E863C687474703A2F2F67736D612D63726C2E73796D617574682E636F6D2F6F66666C696E6563612F67736D612D727370322D726F6F742D6369312E63726C300E0603551D0F0101FF040403020106303C0603551D1E0101FF04323030A02E302CA42A302831133011060355040A0C0A47454D414C544F2053413111300F06035504051308383930333330323330170603551D110410300E880C2B0601040181F802876A0403301D0603551D0E04160414DCDE1A691FE9AF75DDA1BB9299318B29B1D416B2301F0603551D2304183016801481370F5125D0B1D408D4C3B232E6D25E795BEBFB300A06082A8648CE3D0403020348003045022042290EE9E0960D13F35BE145CCEEFB2233F2D170CE479E9F4F6A2FD254D29CBB022100CDEE45CDCAA32F23462918FA7DA5E91016C4730DA50A99B2FE6CDC588A2511A39000
+07-28 05:37:37.958 D/OmapiApduInterface( 6023): OMAPI APDU: 81E2910018BF41158010461883EE6EAA4B1B8542D1CAE9001BAD81017F
+07-28 05:37:37.959 I/UiccHal-SE( 1382): transmit() [<-- 
+07-28 05:37:37.960 I/UiccHal-SE( 1382): internalTransmit() [<-- 
+07-28 05:37:37.960 I/UiccHal-Interface( 1382): TransmitApduLogicalChannel() [<-- 
+07-28 05:37:37.960 I/UiccHal-Interface( 1382): SendRequest() [<-- 
+07-28 05:37:37.960 I/UiccHal-Interface( 1382): SendRequest() socket id : 1
+07-28 05:37:37.960 D/RILClient( 1382): [OemClient] RILC_Send msgId:301 lengh:50 channel:1
+07-28 05:37:37.960 D/RILClient( 1382): [OemClient]REQ (clientId = 6, t = 189, msgId = 301, len = 50 channel = 1)
+07-28 05:37:38.156 D/RILClient( 1382): [OemClient]RSP: (clientId = 6, t = 189, msgId = 301, len = 117, channel = 1, status = 0)
+07-28 05:37:38.157 I/UiccHal-Interface( 1382): SendRequest() [--> 
+07-28 05:37:38.157 I/UiccHal-Interface( 1382): TransmitApduLogicalChannel() [--> 
+07-28 05:37:38.157 I/UiccHal-SE( 1382): internalTransmit() [--> 
+07-28 05:37:38.157 D/UiccHal-SE( 1382): transmit() transmit received sw1: 0x90, sw2 : 0x00, pResponse->nResponseCount : 113
+07-28 05:37:38.159 I/UiccHal-SE( 1382): transmit() [--> 
+07-28 05:37:38.164 D/OmapiApduInterface( 6023): OMAPI APDU response: BF416CA06A30258010461883EE6EAA4B1B8542D1CAE9001BAD810E2B0601040181F80201815C822C6E82017F5F37400C8492566DA175029353ED8744420C0966C8979195DBC3476054820F3F27374A660FBCC5DC4204B4F69F57D16787428918E2E9DD2031721888873B60BACD9F8D9000
+07-28 05:37:38.166 I/ESIMCTL ( 6023): ee063239 RESULT {"op":"authenticate","backend":"lpac","slot":0,"port":0,"server":"lpa.live.esimdiscovery.dev","authRc":0,"ciTrusted":true,"stage":"accepted","ok":true}
+07-28 05:37:38.176 V/WindowManagerShell( 2633): Transition requested (#6639): android.os.BinderProxy@b567b91 TransitionRequestInfo { type = CLOSE, triggerTask = TaskInfo{userId=0 taskId=3100 effectiveUid=10317 displayId=0 isRunning=false baseIntent=Intent { flg=0x10800000 cmp=im.angry.openeuicc/.ui.EsimCtlActivity } baseActivity=null topActivity=null origActivity=null realActivity=ComponentInfo{im.angry.openeuicc/im.angry.openeuicc.ui.EsimCtlActivity} realActivityIsAppLockEnabled=false numActivities=0 lastActiveTime=1115957018 supportsMultiWindow=true supportsMultiWindowWithoutConstraints=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{android.os.BinderProxy@477faca} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=Rect(0, 0 - 0, 0) topActivityInfo=null launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=true isInteractive=true isVisible=true isVisibleRequested=true isTopActivityNoDisplay=false isSleeping=false locusId=null displayAreaFeatureId=1 isTopActivityTransparent=false isActivityStackTransparent=true lastNonFullscreenBounds=Rect(278, 687 - 803, 1767) leafTaskBoundsFromOptions= false capturedLink=null capturedLinkTimestamp=0 requestedVisibleTypes=503 topActivityRequestOpenInBrowserEducationTimestamp=0 appCompatTaskInfo=AppCompatTaskInfo { topActivityInSizeCompat=false isLeafTask= true eligibleForLetterboxEducation= false isLetterboxEducationEnabled= false isLetterboxDoubleTapEnabled= false eligibleForUserAspectRatioButton= false topActivityBoundsLetterboxed= false isFromLetterboxDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=-1 topActivityLetterboxHeight=-1 topActivityAppBounds=Rect(0, 0 - 0, 0) isUserFullscreenOverrideEnabled=false isSystemFullscreenOverrideEnabled=false hasMinAspectRatioOverride=false topActivityLetterboxBounds=null topNonResizableActivityAspectRatio=-1.0} topActivityMainWindowFrame=null isAppBubble=false}, pipChange = null, remoteTransitionInfo = null, displayChanges = null, requestedLocation = null, userChange = null, windowingLayerChange = null, fullscreenRequestChange = null, flags = 0, debugId = 6639 }
+07-28 05:37:38.176 W/DisconnectHandler( 2633): No disconnect change found in the transition, not handling request.
+07-28 05:37:38.180 I/libbinder.BpBinder(  555): onLastStrongRef automatically unlinking death recipients for binder (0xb4000077e9a3c390) with descriptor: '(not cached)'
+07-28 05:37:38.191 V/RecentTasksController( 2633): Notify recent tasks changed
+07-28 05:37:38.192 D/RecentTasksList( 2962): invalidateLoadedTasks - previous requestLoadId: -1
+07-28 05:37:38.196 V/WindowManager( 1752): Defer transition id=6639 for TaskFragmentTransaction=android.os.Binder@14e7636
+07-28 05:37:38.197 D/ViewRootImpl( 2962): Skipping stats log for color mode
+07-28 05:37:38.197 D/BaseActivity( 2962): Launcher flags updated: [state_started] +[state_started]
+07-28 05:37:38.197 D/BaseActivity( 2962): Launcher flags updated: [state_started|state_resumed|state_user_active] +[state_resumed|state_user_active]
+07-28 05:37:38.198 D/BaseActivity( 2962): Launcher flags updated: [state_started|state_resumed|state_user_active] +[]
+07-28 05:37:38.198 D/BaseActivity( 2962): Launcher flags updated: [state_started|state_resumed|state_deferred_resumed|state_user_active] +[state_deferred_resumed]
+07-28 05:37:38.198 D/StatsLog( 2962): LAUNCHER_ONRESUME
+07-28 05:37:38.200 D/WindowManagerShell( 2633): setLauncherKeepClearAreaHeight: visible=true, height=495
+07-28 05:37:38.200 D/QuickstepModelDelegate( 2962): notifyAppTargetEvent action=1 launchLocation=workspace/0/[-1,-1]/[1,1]
+07-28 05:37:38.201 I/AiAiEcho( 6350): (REDACTED) Predicting[%d]: %s
+07-28 05:37:38.202 I/pixel-thermal( 2266): VIRTUAL-USB-THROTTLING:0 raw data: USB-MINUS-SKIN2:-2649 VIRTUAL-USB-THROTTLING:0 skin_therm2:33152 usb_pwr_therm:30503 
+07-28 05:37:38.203 I/AiAiEcho( 6350): (REDACTED) EchoTargets: %s
+07-28 05:37:38.203 I/AiAiEcho( 6350): Filtered by AiAi flag check: %s
+07-28 05:37:38.203 I/pixel-thermal( 2266): cellular-emergency:29.9535 raw data: VIRTUAL-NEU-QUT-SKIN1-SKIN2-USB-USB2-GNSS-1:29640.2 VIRTUAL-NEU-QUT-SKIN1-SKIN2-USB-USB2-GNSS-4:28985.8 VIRTUAL-QUT-SKIN2-USB-GNSS-3:29953.5 VIRTUAL-QUT-SKIN2-USB-USB2-2:29940.8 VIRTUAL-SKIN:29953.5 cellular-emergency:29953.5 gnss_tcxo_therm:31972 neutral_therm:31728 quiet_therm:30281 skin_therm1:31038 skin_therm2:33152 usb_pwr_therm:30503 usb_pwr_therm2:30637 
+07-28 05:37:38.203 I/pixel-thermal( 2266): VIRTUAL-SKIN-CHARGE:29.9535 raw data: VIRTUAL-SKIN:29953.5 VIRTUAL-SKIN-CHARGE:29953.5 
+07-28 05:37:38.203 I/pixel-thermal( 2266): VIRTUAL-SKIN-HINT:29.9535 raw data: VIRTUAL-SKIN:29953.5 VIRTUAL-SKIN-HINT:29953.5 
+07-28 05:37:38.203 I/pixel-thermal( 2266): VIRTUAL-SKIN:29.9535 raw data: VIRTUAL-SKIN:29953.5 
+07-28 05:37:38.203 I/pixel-thermal( 2266): USB-MINUS-SKIN2:-2.649 raw data: USB-MINUS-SKIN2:-2649 
+07-28 05:37:38.203 I/pixel-thermal( 2266): VIRTUAL-USB-UI:0 raw data: USB-MINUS-SKIN2:-2649 VIRTUAL-USB-UI:0 usb_pwr_therm:30503 
+07-28 05:37:38.203 I/pixel-thermal( 2266): skin_therm1:31.038 raw data: skin_therm1:31038 
+07-28 05:37:38.203 I/pixel-thermal( 2266): usb_pwr_therm:30.503 raw data: usb_pwr_therm:30503 
+07-28 05:37:38.204 I/AiAiEcho( 6350): (REDACTED) #weatherSubItemsTwiddler: Weather removes SubtitleSupplementalItem in surface: %s
+07-28 05:37:38.203 I/pixel-thermal( 2266): VIRTUAL-SKIN-CHARGE-WLC:31.8717 raw data: VIRTUAL-SKIN-CHARGE-WLC:31871.6 disp_therm:30437 skin_therm2:33152 usb_pwr_therm2:30637 
+07-28 05:37:38.205 I/AiAiEcho( 6350): #remoteViewsTwiddler: feature disabled.
+07-28 05:37:38.207 I/HalDevMgr( 1752): bestIfaceCreationProposal is null, requestIface=STA, existingIface=[name=wlan0 type=STA]
+07-28 05:37:38.207 D/SmartspaceInteractor( 2962): notifySmartspaceEvent: SmartspaceTargetEvent{mSmartspaceTarget=null, mSmartspaceActionId='null', mEventType=6}
+07-28 05:37:38.208 I/Surface ( 2962): Creating surface for consumer unnamed-2962-600 with slotExpansion=1 for 64 slots
+07-28 05:37:38.209 D/WindowManager( 1752): setClientSurface Surface(name=VRI-com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity#72666)/@0xa30f937 for c17a878 com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity
+07-28 05:37:38.209 I/Surface ( 2962): Creating surface for consumer VRI[NexusLauncherActivity]#461(BLAST Consumer)461 with slotExpansion=1 for 64 slots
+07-28 05:37:38.209 D/BaseDepthController( 2962): setSurface:
+07-28 05:37:38.209 D/BaseDepthController( 2962): 	mWaitingOnSurfaceValidity: false
+07-28 05:37:38.209 D/BaseDepthController( 2962): 	mBaseSurface: Surface(name=VRI-com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity#72666)/@0x39a2a8d
+07-28 05:37:38.209 V/BaseDepthController( 2962): Applying blur: 0 to Surface(name=VRI-com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity#72666)/@0x39a2a8d applyImmediately: false
+07-28 05:37:38.210 D/BaseDepthController( 2962): shouldBlurWorkspace: false targetState: Normal currentStableState: Normal mCurrentBlur: 0 mLauncher.getDepthBlurTargets(): [com.android.launcher3.Workspace{ce044e3 V.ED..... .......D 0,0-1080,2400 #7f0a0486 app:id/workspace}, com.android.launcher3.Hotseat{7a94442 V.ED..... .......D 0,1905-1080,2400 #7f0a01f6 app:id/hotseat}]
+07-28 05:37:38.215 V/WindowManager( 1752): Continue transition id=6639 for TaskFragmentTransaction=android.os.Binder@14e7636
+07-28 05:37:38.217 D/WallpaperService( 2633): onVisibilityChanged(true): com.android.systemui.wallpapers.ImageWallpaper$CanvasEngine@c0160e8
+07-28 05:37:38.226 V/WindowManagerShell( 2633): onTransitionReady(transaction=7524783097590)
+07-28 05:37:38.226 V/WindowManagerShell( 2633): onTransitionReady (#6639) android.os.BinderProxy@b567b91: {id=6639 t=CLOSE f=0x0 trk=0 r=[0@Point(0, 0)] c=[
+07-28 05:37:38.226 V/WindowManagerShell( 2633):         {m=CLOSE f=FLAG_CHANGED_INTERACTIVE leash=Surface(name=Task=3100#72651)/@0x9efaf6 sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) epz=Point(1080, 2400) d=0 taskParent=-1 winMode=1 userId=0},
+07-28 05:37:38.226 V/WindowManagerShell( 2633):         {m=TO_FRONT f=SHOW_WALLPAPER|MOVE_TO_TOP|FLAG_CHANGED_INTERACTIVE leash=Surface(name=Task=1#45)/@0x46bfef7 sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) epz=Point(1080, 2400) d=0 taskParent=-1 winMode=1 userId=0},
+07-28 05:37:38.226 V/WindowManagerShell( 2633):         {m=TO_FRONT f=IS_WALLPAPER leash=Surface(name=WallpaperWindowToken{9628d4e}#59)/@0x3b50164 sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) epz=Point(1080, 2400) d=0}
+07-28 05:37:38.226 V/WindowManagerShell( 2633):     ]}
+07-28 05:37:38.227 V/WindowManagerShell( 2633): Playing animation for (#6639) android.os.BinderProxy@b567b91@0
+07-28 05:37:38.227 D/ShellSplitScreen( 2633): startAnimation: transition=6639 isSplitActive=false
+07-28 05:37:38.227 V/ShellRecents( 2633): RecentsTransitionHandler.startAnimation: no controller found
+07-28 05:37:38.227 V/WindowManagerShell( 2633): Transition doesn't have explicit remote, search filters for match for {id=6639 t=CLOSE f=0x0 trk=0 r=[0@Point(0, 0)] c=[{m=CLOSE f=FLAG_CHANGED_INTERACTIVE leash=Surface(name=Task=3100#72651)/@0x9efaf6 sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) epz=Point(1080, 2400) d=0 taskParent=-1 winMode=1 userId=0},{m=TO_FRONT f=SHOW_WALLPAPER|MOVE_TO_TOP|FLAG_CHANGED_INTERACTIVE leash=Surface(name=Task=1#45)/@0x46bfef7 sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) epz=Point(1080, 2400) d=0 taskParent=-1 winMode=1 userId=0},{m=TO_FRONT f=IS_WALLPAPER leash=Surface(name=WallpaperWindowToken{9628d4e}#59)/@0x3b50164 sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) epz=Point(1080, 2400) d=0}]}
+07-28 05:37:38.227 V/WindowManagerShell( 2633):  Checking filter Pair{{types=[] flags=0x0 notFlags=0x0 checks=[{atype=undefined independent=true modes=[CLOSE,TO_BACK] flags=IN_TASK_WITH_EMBEDDED_ACTIVITY mustBeTask=false order=ANY topActivity=null launchCookie=null taskFragmentToken=android.os.BinderProxy@133d578 windowingMode=undefined isCrossDisplayMove=false}]} RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@eca451, appThread = android.app.IApplicationThread$Stub$Proxy@678d4b6, debugName = overlayBackTransition, filter = {types=[] flags=0x0 notFlags=0x0 checks=[{atype=undefined independent=true modes=[CLOSE,TO_BACK] flags=IN_TASK_WITH_EMBEDDED_ACTIVITY mustBeTask=false order=ANY topActivity=null launchCookie=null taskFragmentToken=android.os.BinderProxy@133d578 windowingMode=undefined isCrossDisplayMove=false}]} }}
+07-28 05:37:38.227 V/WindowManagerShell( 2633):  Checking filter Pair{{types=[] flags=0x0 notFlags=0x0 checks=[{atype=dream independent=true modes=[OPEN,TO_FRONT] flags=NONE mustBeTask=false order=ANY topActivity=null launchCookie=null windowingMode=undefined isCrossDisplayMove=false},{atype=home independent=true modes=[CLOSE,TO_BACK] flags=NONE mustBeTask=false order=ANY topActivity=null launchCookie=null windowingMode=undefined isCrossDisplayMove=false}]} RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@d0635b7, appThread = android.app.IApplicationThread$Stub$Proxy@28cd124, debugName = LauncherToDream, filter = {types=[] flags=0x0 notFlags=0x0 checks=[{atype=dream independent=true modes=[OPEN,TO_FRONT] flags=NONE mustBeTask=false order=ANY topActivity=null launchCookie=null windowingMode=undefined isCrossDisplayMove=false},{atype=home independent=true modes=[CLOSE,TO_BACK] flags=NONE mustBeTask=false order=ANY topActivity=null launchCookie=null windowingMode=undefined isCrossDisplayMove=false}]} }}
+07-28 05:37:38.227 V/WindowManagerShell( 2633):  Checking filter Pair{{types=[] flags=0x0 notFlags=0x0 checks=[{atype=standard independent=false modes=[CHANGE] flags=NONE mustBeTask=true order=ANY topActivity=null launchCookie=null windowingMode=undefined isCrossDisplayMove=true}]} RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@386348d, appThread = android.app.IApplicationThread$Stub$Proxy@6358642, debugName = QuickstepDisplayMove, filter = {types=[] flags=0x0 notFlags=0x0 checks=[{atype=standard independent=false modes=[CHANGE] flags=NONE mustBeTask=true order=ANY topActivity=null launchCookie=null windowingMode=undefined isCrossDisplayMove=true}]} }}
+07-28 05:37:38.228 V/WindowManagerShell( 2633):  Checking filter Pair{{types=[] flags=0x0 notFlags=0x100 checks=[{atype=home independent=true modes=[OPEN,TO_FRONT] flags=NONE mustBeTask=false order=ANY topActivity=ComponentInfo{com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity} launchCookie=null windowingMode=undefined isCrossDisplayMove=false},{atype=standard independent=true modes=[CLOSE,TO_BACK] flags=NONE mustBeTask=false order=ANY topActivity=null launchCookie=null windowingMode=undefined isCrossDisplayMove=false},{NOT atype=undefined independent=true modes=[] flags=NONE mustBeTask=true order=ANY topActivity=null launchCookie=null customAnim=true windowingMode=undefined isCrossDisplayMove=false}]} RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@cbe7653, appThread = android.app.IApplicationThread$Stub$Proxy@c57db90, debugName = QuickstepLaunchHome, filter = {types=[] flags=0x0 notFlags=0x100 checks=[{atype=home independent=true modes=[OPEN,TO_FRONT] flags=NONE mustBeTask=false order=ANY topActivity=ComponentInfo{com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity} launchCookie=null windowingMode=undefined isCrossDisplayMove=false},{atype=standard independent=true modes=[CLOSE,TO_BACK] flags=NONE mustBeTask=false order=ANY topActivity=null launchCookie=null windowingMode=undefined isCrossDisplayMove=false},{NOT atype=undefined independent=true modes=[] flags=NONE mustBeTask=true order=ANY topActivity=null launchCookie=null customAnim=true windowingMode=undefined isCrossDisplayMove=false}]} }}
+07-28 05:37:38.228 D/RemoteTransitionHandler( 2633): Found filterPair{{types=[] flags=0x0 notFlags=0x100 checks=[{atype=home independent=true modes=[OPEN,TO_FRONT] flags=NONE mustBeTask=false order=ANY topActivity=ComponentInfo{com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity} launchCookie=null windowingMode=undefined isCrossDisplayMove=false},{atype=standard independent=true modes=[CLOSE,TO_BACK] flags=NONE mustBeTask=false order=ANY topActivity=null launchCookie=null windowingMode=undefined isCrossDisplayMove=false},{NOT atype=undefined independent=true modes=[] flags=NONE mustBeTask=true order=ANY topActivity=null launchCookie=null customAnim=true windowingMode=undefined isCrossDisplayMove=false}]} RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@cbe7653, appThread = android.app.IApplicationThread$Stub$Proxy@c57db90, debugName = QuickstepLaunchHome, filter = {types=[] flags=0x0 notFlags=0x100 checks=[{atype=home independent=true modes=[OPEN,TO_FRONT] flags=NONE mustBeTask=false order=ANY topActivity=ComponentInfo{com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity} launchCookie=null windowingMode=undefined isCrossDisplayMove=false},{atype=standard independent=true modes=[CLOSE,TO_BACK] flags=NONE mustBeTask=false order=ANY topActivity=null launchCookie=null windowingMode=undefined isCrossDisplayMove=false},{NOT atype=undefined independent=true modes=[] flags=NONE mustBeTask=true order=ANY topActivity=null launchCookie=null customAnim=true windowingMode=undefined isCrossDisplayMove=false}]} }}
+07-28 05:37:38.228 V/WindowManagerShell( 2633):  Delegate animation for (#6639) to RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@cbe7653, appThread = android.app.IApplicationThread$Stub$Proxy@c57db90, debugName = QuickstepLaunchHome, filter = {types=[] flags=0x0 notFlags=0x100 checks=[{atype=home independent=true modes=[OPEN,TO_FRONT] flags=NONE mustBeTask=false order=ANY topActivity=ComponentInfo{com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity} launchCookie=null windowingMode=undefined isCrossDisplayMove=false},{atype=standard independent=true modes=[CLOSE,TO_BACK] flags=NONE mustBeTask=false order=ANY topActivity=null launchCookie=null windowingMode=undefined isCrossDisplayMove=false},{NOT atype=undefined independent=true modes=[] flags=NONE mustBeTask=true order=ANY topActivity=null launchCookie=null customAnim=true windowingMode=undefined isCrossDisplayMove=false}]} }
+07-28 05:37:38.232 D/LauncherStateManager( 2962): StateManager.cancelAnimation: animation ongoing: false, partial trace:
+07-28 05:37:38.232 D/LauncherStateManager( 2962): 	at com.android.launcher3.statemanager.StateManager.setCurrentAnimation(go/retraceme 8bcbbc35bb13161dedaa519f339f298517b051dcbf8e2046701ae935fa579434:59)
+07-28 05:37:38.232 D/LauncherStateManager( 2962): 	at com.android.launcher3.QuickstepTransitionManager.createWallpaperOpenAnimations(go/retraceme 8bcbbc35bb13161dedaa519f339f298517b051dcbf8e2046701ae935fa579434:712)
+07-28 05:37:38.232 D/LauncherStateManager( 2962): 	at com.android.launcher3.QuickstepTransitionManager$WallpaperOpenLauncherAnimationRunner.onAnimationStart(go/retraceme 8bcbbc35bb13161dedaa519f339f298517b051dcbf8e2046701ae935fa579434:135)
+07-28 05:37:38.232 D/LauncherStateManager( 2962): StateManager.createAtomicAnimation: fromState: Normal, toState: Normal, partial trace:
+07-28 05:37:38.232 D/LauncherStateManager( 2962): 	at com.android.quickstep.util.WorkspaceRevealAnim.prepareToAnimate(go/retraceme 8bcbbc35bb13161dedaa519f339f298517b051dcbf8e2046701ae935fa579434:19)
+07-28 05:37:38.232 D/LauncherStateManager( 2962): 	at com.android.quickstep.util.WorkspaceRevealAnim.<init>(go/retraceme 8bcbbc35bb13161dedaa519f339f298517b051dcbf8e2046701ae935fa579434:10)
+07-28 05:37:38.232 D/LauncherStateManager( 2962): 	at com.android.launcher3.QuickstepTransitionManager.createWallpaperOpenAnimations(go/retraceme 8bcbbc35bb13161dedaa519f339f298517b051dcbf8e2046701ae935fa579434:753)
+07-28 05:37:38.232 D/AllAppsTransitionController( 2962): shouldProtectHeader: false skipScrim: true state: Normal stateManager.getState(): Normal
+07-28 05:37:38.232 D/KeyboardInsetsHandler( 2962): removePendingImeController: pendingImeController=null
+07-28 05:37:38.233 D/b/311077782( 2962): LauncherAnimationRunner.setAnimation
+07-28 05:37:38.236 V/WindowManager( 1752): Sent Transition (#6639) createdAt=07-28 05:37:38.170 via request=TransitionRequestInfo { type = CLOSE, triggerTask = TaskInfo{userId=0 taskId=3100 effectiveUid=10317 displayId=0 isRunning=false baseIntent=Intent { flg=0x10800000 cmp=im.angry.openeuicc/.ui.EsimCtlActivity } baseActivity=null topActivity=null origActivity=null realActivity=ComponentInfo{im.angry.openeuicc/im.angry.openeuicc.ui.EsimCtlActivity} realActivityIsAppLockEnabled=false numActivities=0 lastActiveTime=1115957018 supportsMultiWindow=true supportsMultiWindowWithoutConstraints=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{RemoteToken{ce0a8ae Task{2dd43fe #3100 type=standard A=10317:im.angry.openeuicc}}} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=Rect(0, 0 - 0, 0) topActivityInfo=null launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=true isInteractive=true isVisible=true isVisibleRequested=true isTopActivityNoDisplay=false isSleeping=false locusId=null displayAreaFeatureId=1 isTopActivityTransparent=false isActivityStackTransparent=true lastNonFullscreenBounds=Rect(278, 687 - 803, 1767) leafTaskBoundsFromOptions= false capturedLink=null capturedLinkTimestamp=0 requestedVisibleTypes=503 topActivityRequestOpenInBrowserEducationTimestamp=0 appCompatTaskInfo=AppCompatTaskInfo { topActivityInSizeCompat=false isLeafTask= true eligibleForLetterboxEducation= false isLetterboxEducationEnabled= false isLetterboxDoubleTapEnabled= false eligibleForUserAspectRatioButton= false topActivityBoundsLetterboxed= false isFromLetterboxDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=-1 topActivityLetterboxHeight=-1 topActivityAppBounds=Rect(0, 0 - 0, 0) isUserFullscreenOverrideEnabled=false isSystemFullscreenOverrideEnabled=false hasMinAspectRatioOverride=false topActivityLetterboxBounds=null topNonResizableActivityAspectRatio=-1.0} topActivityMainWindowFrame=null isAppBubble=false}, pipChange = null, remoteTransitionInfo = null, displayChanges = null, requestedLocation = null, userChange = null, windowingLayerChange = null, fullscreenRequestChange = null, flags = 0, debugId = 6639 }
+07-28 05:37:38.236 V/WindowManager( 1752):     startWCT=WindowContainerTransaction { changes= {} hops= [] flags= 0 errorCallbackToken=null taskFragmentOrganizer=null }
+07-28 05:37:38.236 V/WindowManager( 1752):     info={id=6639 t=CLOSE f=0x0 trk=0 r=[0@Point(0, 0)] c=[
+07-28 05:37:38.236 V/WindowManager( 1752):         {WCT{RemoteToken{ce0a8ae Task{2dd43fe #3100 type=standard A=10317:im.angry.openeuicc}}} m=CLOSE f=FLAG_CHANGED_INTERACTIVE leash=Surface(name=Task=3100#72651)/@0xca67df3 sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) epz=Point(1080, 2400) d=0 taskParent=-1 winMode=1 userId=0},
+07-28 05:37:38.236 V/WindowManager( 1752):         {WCT{RemoteToken{a539a16 Task{73abf47 #1 type=home}}} m=TO_FRONT f=SHOW_WALLPAPER|MOVE_TO_TOP|FLAG_CHANGED_INTERACTIVE leash=Surface(name=Task=1#45)/@0xa315cc0 sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) epz=Point(1080, 2400) d=0 taskParent=-1 winMode=1 userId=0},
+07-28 05:37:38.236 V/WindowManager( 1752):         {m=TO_FRONT f=IS_WALLPAPER leash=Surface(name=WallpaperWindowToken{9628d4e}#59)/@0x64f4bd0 sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) epz=Point(1080, 2400) d=0}
+07-28 05:37:38.236 V/WindowManager( 1752):     ]}
+07-28 05:37:38.237 W/ActivityTaskManager( 1752): setRunningRemoteTransition: no process for null
+07-28 05:37:38.237 V/WindowManagerShell( 2633):  animated by com.android.wm.shell.transition.RemoteTransitionHandler@86ebd13
+07-28 05:37:38.246 D/BaseActivity( 2962): Launcher flags updated: [state_started|state_resumed|state_deferred_resumed|state_window_focused|state_user_active] +[state_window_focused]
+07-28 05:37:38.248 I/ImeTracker( 1752): com.google.android.apps.nexuslauncher:2ccb82c5: onRequestHide at ORIGIN_SERVER reason HIDE_UNSPECIFIED_WINDOW fromUser false userId 0 displayId 0
+07-28 05:37:38.249 D/InsetsController( 2962): hide(ime())
+07-28 05:37:38.249 I/ImeTracker( 2962): com.google.android.apps.nexuslauncher:2ccb82c5: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
+07-28 05:37:38.249 D/HintManagerService( 1752): Sent cleanup message for uid 10317
+07-28 05:37:38.250 W/InputChannel-JNI( 1752): Channel already disposed.
+07-28 05:37:38.250 I/GoogleInputMethodService( 7828): GoogleInputMethodService.onFinishInput():2276 
+07-28 05:37:38.251 I/GoogleInputMethodService( 7828): GoogleInputMethodService.onStartInput():1460 onStartInput(EditorInfo{EditorInfo{packageName=com.google.android.apps.nexuslauncher, inputType=0, inputTypeString=NULL, enableLearning=false, autoCorrection=false, autoComplete=false, imeOptions=0, privateImeOptions=null, actionName=UNSPECIFIED, actionLabel=null, initialSelStart=-1, initialSelEnd=-1, initialCapsMode=0, label=null, fieldId=0, fieldName=null, extras=null, hintText=null, hintLocales=[]}}, false)
+07-28 05:37:38.251 W/LatinIMEBase( 7828): LatinIMEBase.updateInputViewCoverNavigation():322 Null input view, cannot update padding!
+07-28 05:37:38.253 I/Module  ( 7828): DeviceLockedStatusModuleProvider$Module.updateDeviceLockedStatusInternal():129 repeatCheckTimes = 0, locked = false
+07-28 05:37:38.253 I/Module  ( 7828): DeviceLockedStatusModuleProvider$Module.updateDeviceLockedStatusInternal():129 repeatCheckTimes = 1, locked = false
+07-28 05:37:38.254 I/ImeTracker( 1752): system_server:45d70ae5: onRequestHide at ORIGIN_SERVER reason IME_REQUESTED_CHANGED_LISTENER fromUser false displayId 0
+07-28 05:37:38.254 I/ImeTracker( 1752): system_server:45d70ae5: onCancelled at PHASE_SERVER_SHOULD_HIDE
+07-28 05:37:38.255 W/PackageConfigPersister( 1752): App-specific configuration not found for packageName: com.google.android.apps.nexuslauncher and userId: 0
+07-28 05:37:38.254 W/binder:558_2(  558): type=1400 audit(0.0:59439): avc:  denied  { search } for  name="log" dev="dm-60" ino=711 scontext=u:r:hal_graphics_composer_default:s0 tcontext=u:object_r:vendor_log_file:s0 tclass=dir permissive=0
+07-28 05:37:38.258 E/hwc-display(  558): [PrimaryDisplay] resetColorMappingInfoForClientComp:: resetColorMappingInfo() idx=2 error(-22)
+07-28 05:37:38.258 E/hwc-display(  558): Fail to open file /data/vendor/log/hwc/PrimaryDisplay_hwc_error_log0.txt, error: Permission denied
+07-28 05:37:38.258 E/hwc-display(  558): Fail to open file /data/log/PrimaryDisplay_hwc_error_log0.txt, error: No such file or directory
+07-28 05:37:38.258 E/hwc-display(  558): Unable to open log file for PrimaryDisplay_hwc_error_log0.txt
+07-28 05:37:38.259 I/AiAiEcho( 6350): (REDACTED) #postPredictionTargets: Sending updates to UISurface %s with targets# %s (types=[%s])
+07-28 05:37:38.260 I/AiAiEcho( 6350): (REDACTED) %s No tracked ambient data found for ID: %s; for event type: %d, skipping event processing.
+07-28 05:37:38.254 W/binder:558_2(  558): type=1400 audit(0.0:59440): avc:  denied  { search } for  name="log" dev="dm-60" ino=711 scontext=u:r:hal_graphics_composer_default:s0 tcontext=u:object_r:vendor_log_file:s0 tclass=dir permissive=0
+07-28 05:37:38.291 D/ShortcutAndWidgetContainer( 2962): appWidgetScale - [x,y]: [1.0,1.0]
+07-28 05:37:38.291 D/NavigableAppWidgetHostView( 2962): updateScale - [fitScale,bounceScale]: [1.0,1.0]
+07-28 05:37:38.292 D/SsBaseTemplateCard( 2962): Passed-in item info is null
+07-28 05:37:38.292 I/SsBaseTemplateCard( 2962): setFormattedContentDescription: text=66°F, iconDescription=Cloudy, contentDescription=Cloudy, 66°F
+07-28 05:37:38.292 D/SsBaseTemplateCard( 2962): Passed-in item info is null
+07-28 05:37:38.292 D/SsBaseTemplateCard( 2962): Passed-in item info is null
+07-28 05:37:38.292 I/SsBaseTemplateCard( 2962): Secondary card pane is null
+07-28 05:37:38.295 V/RecentTasksController( 2633): Notify recent tasks changed
+07-28 05:37:38.296 D/RecentTasksList( 2962): invalidateLoadedTasks - previous requestLoadId: -1
+07-28 05:37:38.296 V/RecentTasksController( 2633): generateList(getRecentTasks)
+07-28 05:37:38.296 V/RecentTasksController( 2633): initializeDesksMap - desktop windowing not available
+07-28 05:37:38.296 V/RecentTasksController( 2633): generateList - no desks or tasks present
+07-28 05:37:38.297 D/PreloadThumbnailUseCase( 2962): Preloading thumbnails for task ids: []
+07-28 05:37:38.301 W/System  ( 2962): A resource failed to call release. 
+07-28 05:37:38.301 W/System  ( 2962): A resource failed to call release. 
+07-28 05:37:38.301 W/System  ( 2962): A resource failed to call release. 
+07-28 05:37:38.301 W/System  ( 2962): A resource failed to call release. 
+07-28 05:37:38.301 W/System  ( 2962): A resource failed to call release. 
+07-28 05:37:38.301 W/System  ( 2962): A resource failed to call release. 
+07-28 05:37:38.301 W/System  ( 2962): A resource failed to call release. 
+07-28 05:37:38.301 W/System  ( 2962): A resource failed to call release. 
+07-28 05:37:38.301 W/System  ( 2962): A resource failed to call release. 

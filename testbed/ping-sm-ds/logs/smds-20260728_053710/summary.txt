@@ -1,0 +1,15 @@
+=== SM-DS SUMMARY ===
+  servers probed: 3
+
+  GSMA (root) @ lpa.ds.gsma.com  [production CI, root-smds]
+      authenticate : accepted (ciTrusted=True, stage=accepted)
+      discovery    : ok, events=0
+
+  Thales @ lpa.live.esimdiscovery.com  [production CI, smds]
+      authenticate : accepted (ciTrusted=True, stage=accepted)
+      discovery    : ok, events=0
+
+  Thales @ lpa.live.esimdiscovery.dev  [test CI, smds-dev]
+      authenticate : accepted (ciTrusted=True, stage=accepted)
+      discovery    : ok, events=0
+
