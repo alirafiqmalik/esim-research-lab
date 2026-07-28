@@ -1,0 +1,26 @@
+=== SUMMARY ===
+  Endpoints probed: 17
+  accepted        : 13
+  initiate_failed : 4
+
+eUICC accepted the server cert (valid authenticated request):
+  1GLOBAL @ rsp.truphone.com -> Executed-Success [1GLOBAL SM-DP+0Y0]
+  Eastcom Peace @ secsmsminiapp.eastcompeace.com -> Executed-Success [SM-DP+ DPauth0Y0]
+  Idemia @ t-mobile.idemia.io -> reached [Azure SM-DP 4020Y0]
+  Idemia @ rsp-3002.idemia.io -> reached [Azure SM-DP 4010Y0]
+  Idemia @ rsp-3036.idemia.io -> reached [Azure SM-DP 4010Y0]
+  Idemia @ rsp-4002.idemia.io -> reached [Azure SM-DP 4020Y0]
+  Idemia @ rsp-4008.idemia.io -> reached [Azure SM-DP 4020Y0]
+  Idemia @ celitech.idemia.io -> reached [Azure SM-DP 4020Y0]
+  Linksfield @ rsp-0001.linksfield.net -> Executed-Success [HlT:]
+  Redtea Mobile @ rsp-eu.redteamobile.com -> Executed-Success [<http://gsma-crl.symauth.com/offlineca/gsma-rsp2-root-ci1.crl0]
+  Valid @ demo-consumer.validspereachdpplus.com -> Executed-Success [VALID SM-DPplus0Y0]
+  Thales @ lpa.ds.gsma.com -> Executed-Success [)g_ 1]
+  Thales @ lpa.live.esimdiscovery.com -> Executed-Success [<http://gsma-crl.symauth.com/offlineca/gsma-rsp2-root-ci1.crl0]
+
+Not reached / no eUICC evaluation:
+  Giesecke+Devrient @ cust-003.oberthur.rsp.gieseckedevrient.com: initiate_failed (initiateAuthentication_failed)
+  Giesecke+Devrient @ prod.attesim.rsp.gieseckedevrient.com: initiate_failed (initiateAuthentication_failed)
+  Kigen @ smdp-plus-0.eu.cd.rsp.kigen.com: initiate_failed (initiateAuthentication_failed)
+  Kigen @ smdp-plus-1.eu.cd.rsp.kigen.com: initiate_failed (initiateAuthentication_failed)
+

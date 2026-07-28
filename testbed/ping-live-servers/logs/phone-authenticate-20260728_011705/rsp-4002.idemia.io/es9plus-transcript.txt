@@ -1,0 +1,15 @@
+07-28 01:17:43.465 D/HttpInterfaceImpl( 6023): transmit(url = https://rsp-4002.idemia.io/gsma/rsp2/es9plus/initiateAuthentication)
+07-28 01:17:43.465 D/HttpInterfaceImpl( 6023): HTTP tx = {"smdpAddress":"rsp-4002.idemia.io","euiccChallenge":"jO38QNasUahvNrSYWTdpkA==","euiccInfo1":"vyA1ggMCAwCpFgQUgTcPUSXQsdQI1MOyMubSXnlb6/uqFgQUgTcPUSXQsdQI1MOyMubSXnlb6/s="}
+07-28 01:17:43.988 D/HttpInterfaceImpl( 6023): transmit responseCode = 200
+07-28 01:17:43.990 D/HttpInterfaceImpl( 6023): HTTP response body = {
+07-28 01:17:43.990 D/HttpInterfaceImpl( 6023):   "header": {
+07-28 01:17:43.990 D/HttpInterfaceImpl( 6023):     "functionExecutionStatus": {
+07-28 01:17:43.990 D/HttpInterfaceImpl( 6023):       "status": "Executed-Success"
+07-28 01:17:43.990 D/HttpInterfaceImpl( 6023):     }
+07-28 01:17:43.990 D/HttpInterfaceImpl( 6023):   },
+07-28 01:17:43.990 D/HttpInterfaceImpl( 6023):   "transactionId": "29A14DB4F5BFA56E52AD03D5B778890E",
+07-28 01:17:43.990 D/HttpInterfaceImpl( 6023):   "serverSigned1": "MEqAECmhTbT1v6VuUq0D1bd4iQ6BEIzt/EDWrFGobza0mFk3aZCDEnJzcC00MDAyLmlkZW1pYS5pb4QQtem75ZBSX6CHaBP1AD5s/g==",
+07-28 01:17:43.990 D/HttpInterfaceImpl( 6023):   "serverSignature1": "XzdA2Or5IAWMAy1K/gffywYiyFwG+Jq9ZmpjVIhBKLsRspbj8zzEvwej1cyeRn9UocHiOWU+MvPUiqKq2ohY/A25Pg==",
+07-28 01:17:43.990 D/HttpInterfaceImpl( 6023):   "euiccCiPKIdToBeUsed": "BBSBNw9RJdCx1AjUw7Iy5tJeeVvr+w==",
+07-28 01:17:43.990 D/HttpInterfaceImpl( 6023):   "serverCertificate": "MIICZTCCAgygAwIBAgIQaTTtyTXrtjK152Q3+G2p5TAKBggqhkjOPQQDAjBEMRgwFgYDVQQKEw9HU00gQXNzb2NpYXRpb24xKDAmBgNVBAMTH0dTTSBBc3NvY2lhdGlvbiAtIFJTUDIgUm9vdCBDSTEwHhcNMjExMjA4MDAwMDAwWhcNMzExMjA3MjM1OTU5WjBLMQswCQYDVQQGEwJVUzERMA8GA1UEBwwIU3RlcmxpbmcxDzANBgNVBAoMBklERU1JQTEYMBYGA1UEAwwPQXp1cmUgU00tRFAgNDAyMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE0I/IjtYX5Jh+ePaVp+2rZAIkt9hyP3tZX4QYMg+Rak+PU8lIIL9t7qiRy5n0gH0z2Y5c3uMV7vX8Jdl3yRdOWaOB2DCB1TAXBgNVHSABAf8EDTALMAkGB2eBEgECAQQwTQYDVR0fBEYwRDBCoECgPoY8aHR0cDovL2dzbWEtY3JsLnN5bWF1dGguY29tL29mZmxpbmVjYS9nc21hLXJzcDItcm9vdC1jaTEuY3JsMA4GA1UdDwEB/wQEAwIHgDAbBgNVHREEFDASiBArBgEEAYHvb7OITYN3gxJlMB0GA1UdDgQWBBQQAyCwm5J4jjLgYqG6KJ5a5eF7UTAfBgNVHSMEGDAWgBSBNw9RJdCx1AjUw7Iy5tJeeVvr+zAKBggqhkjOPQQDAgNHADBEAiAU0ArDQO+hkkRcdYP3xTMY8WH15uxtkjGiOu0LyU0BcgIgdupDg66cyPQHt0sTY3pkiauucuOsz9Q1R6ZLDr3qywk="
+07-28 01:17:43.990 D/HttpInterfaceImpl( 6023): }

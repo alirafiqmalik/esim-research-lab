@@ -1,0 +1,4 @@
+07-28 01:17:58.875 D/HttpInterfaceImpl( 6023): transmit(url = https://smdp-plus-0.eu.cd.rsp.kigen.com/gsma/rsp2/es9plus/initiateAuthentication)
+07-28 01:17:58.876 D/HttpInterfaceImpl( 6023): HTTP tx = {"smdpAddress":"smdp-plus-0.eu.cd.rsp.kigen.com","euiccChallenge":"03UYN2Q04LXLRgpqGS86QA==","euiccInfo1":"vyA1ggMCAwCpFgQUgTcPUSXQsdQI1MOyMubSXnlb6/uqFgQUgTcPUSXQsdQI1MOyMubSXnlb6/s="}
+07-28 01:18:01.041 W/System.err( 6023): 	at net.typeblog.lpac_jni.impl.HttpInterfaceImpl.transmit(HttpInterfaceImpl.kt:61)
+07-28 01:18:01.043 I/ESIMCTL ( 6023): bde3cc3a RESULT {"op":"authenticate","backend":"lpac","slot":0,"port":0,"server":"smdp-plus-0.eu.cd.rsp.kigen.com","authRc":-2,"ciTrusted":false,"stage":"initiateAuthentication_failed","ok":true}

@@ -1,0 +1,12 @@
+{
+  "op": "authenticate",
+  "backend": "lpac",
+  "slot": 0,
+  "port": 0,
+  "server": "rsp-3036.idemia.io",
+  "authRc": 0,
+  "ciTrusted": true,
+  "stage": "accepted",
+  "ok": true,
+  "log_dir": "/home/ahm/Desktop/project/Research/exp/eSIM_phone_mitm/.sessions/esimctl/20260728-011735-authenticate"
+}

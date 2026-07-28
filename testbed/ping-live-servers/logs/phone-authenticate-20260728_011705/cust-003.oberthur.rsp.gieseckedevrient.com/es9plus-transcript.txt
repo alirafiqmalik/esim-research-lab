@@ -1,0 +1,4 @@
+07-28 01:17:21.080 D/HttpInterfaceImpl( 6023): transmit(url = https://cust-003.oberthur.rsp.gieseckedevrient.com/gsma/rsp2/es9plus/initiateAuthentication)
+07-28 01:17:21.081 D/HttpInterfaceImpl( 6023): HTTP tx = {"smdpAddress":"cust-003.oberthur.rsp.gieseckedevrient.com","euiccChallenge":"VcZzN2GfM1P3WK/3fC6eRQ==","euiccInfo1":"vyA1ggMCAwCpFgQUgTcPUSXQsdQI1MOyMubSXnlb6/uqFgQUgTcPUSXQsdQI1MOyMubSXnlb6/s="}
+07-28 01:17:21.466 W/System.err( 6023): 	at net.typeblog.lpac_jni.impl.HttpInterfaceImpl.transmit(HttpInterfaceImpl.kt:61)
+07-28 01:17:21.472 I/ESIMCTL ( 6023): 33659e66 RESULT {"op":"authenticate","backend":"lpac","slot":0,"port":0,"server":"cust-003.oberthur.rsp.gieseckedevrient.com","authRc":-2,"ciTrusted":false,"stage":"initiateAuthentication_failed","ok":true}
