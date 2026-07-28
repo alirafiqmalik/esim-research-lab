@@ -1,0 +1,62 @@
+{
+  "timestamp": "20260728_133029",
+  "servers": [
+    {
+      "provider": "1GLOBAL (Truphone)",
+      "host": "rsp.truphone.com",
+      "lpa": "LPA:1$rsp.truphone.com$QRF-SPEEDTEST",
+      "ci_trusted": true,
+      "auth_stage": "accepted",
+      "download_ok": true,
+      "downloaded_iccid": "8944476500015198679",
+      "procedures": {
+        "initiateAuthentication": {
+          "seen": true,
+          "status": "Executed-Success",
+          "reason": ""
+        },
+        "authenticateClient": {
+          "seen": true,
+          "status": "Executed-Success",
+          "reason": ""
+        },
+        "getBoundProfilePackage": {
+          "seen": true,
+          "status": "Executed-Success",
+          "reason": ""
+        },
+        "handleNotification": {
+          "seen": true,
+          "status": "",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "provider": "Redtea Mobile",
+      "host": "rsp-eu.redteamobile.com",
+      "lpa": "LPA:1$rsp-eu.redteamobile.com$5901981126831169",
+      "ci_trusted": true,
+      "auth_stage": "accepted",
+      "download_ok": false,
+      "downloaded_iccid": null,
+      "procedures": {
+        "initiateAuthentication": {
+          "seen": true,
+          "status": "Executed-Success",
+          "reason": ""
+        },
+        "authenticateClient": {
+          "seen": true,
+          "status": "Failed",
+          "reason": "9.4/10.1 5901981126831169 campaign resource pool is empty"
+        }
+      }
+    }
+  ],
+  "final_installed": [
+    "8944476500015198679",
+    "8944476500015257715"
+  ],
+  "cancelSession_note": "Not device-triggerable via lpac; LPA emits it only on user-declined confirmation or SM-DP+ abort. Modeled in ecosim + ping-live-servers/src/models.py."
+}

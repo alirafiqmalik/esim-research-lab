@@ -1,0 +1,10 @@
+{
+  "op": "delete",
+  "iccid": "8944476500015198679",
+  "index": 1,
+  "backend": "lpac",
+  "slot": 0,
+  "port": 0,
+  "ok": true,
+  "log_dir": "/home/ahm/Desktop/project/Research/exp/eSIM_phone_mitm/.sessions/esimctl/20260728-133039-delete"
+}
