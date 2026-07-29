@@ -1,0 +1,94 @@
+sequenceDiagram
+    autonumber
+    participant E as eUICC (ISD-R / ECASD)
+    participant L as LPA (OpenEUICC)
+    participant S as SM-DP+ server
+
+    Note over E: Trust anchors in ECASD: {PK.CI} ⊇ CI1 (SKI 81:37:0f:51..bebfb)<br/>Keys: SK.EUICC.ECDSA, CERT.EUICC.ECDSA (embeds EID), CERT.EUM
+    Note over S: rsp.truphone.com — SK.DPauth, SK.DPpb, CERT.DPauth/CERT.DPpb<br/>(issuer GSMA RSP2 Root CI1). Pending order: matchingId → {ICCID, profile}
+
+    rect rgba(128,128,128,0.08)
+    Note over E,L: Phase 1 — ES10b pre-auth material
+    L->>E: ES10b.GetEUICCChallenge()
+    activate E
+    Note over E: N_euicc ∈ {0,1}¹²⁸ (16-B nonce), retained pending (anti-replay)
+    E-->>L: euiccChallenge = N_euicc
+    deactivate E
+    L->>E: ES10b.GetEUICCInfo1()
+    activate E
+    E-->>L: euiccInfo1 (BF20): svn, euiccCiPKIdList (verify/sign)
+    deactivate E
+    end
+
+    rect rgba(128,128,128,0.08)
+    Note over L,S: Phase 2 — ES9+ InitiateAuthentication (TLS)
+    L->>S: POST /gsma/rsp2/es9plus/initiateAuthentication<br/>{smdpAddress, euiccChallenge=N_euicc, euiccInfo1}
+    activate S
+    Note over S: euiccCiPKId ← CI1, N_dp ∈ {0,1}¹²⁸, TID ← fresh<br/>serverSigned1 = {TID, N_euicc, smdpAddress, N_dp}<br/>serverSignature1 = Sig_SKdpauth(serverSigned1)
+    S-->>L: Executed-Success {TID, serverSigned1, serverSignature1,<br/>euiccCiPKIdToBeUsed=CI1, serverCertificate=CERT.DPauth}
+    deactivate S
+    end
+
+    rect rgba(128,128,128,0.08)
+    Note over E,L: Phase 3 — ES10b AuthenticateServer (eUICC verifies server)
+    L->>E: ES10b.AuthenticateServer(serverSigned1, serverSignature1,<br/>euiccCiPKIdToBeUsed, CERT.DPauth, ctxParams1={matchingId, deviceInfo})
+    activate E
+    Note over E: V1=VerifyChain(CERT.DPauth→CI1), V2=Verify(serverSignature1, PK.DPauth),<br/>V3=[serverSigned1.N_euicc == N_euicc]
+    alt V1 ∧ V2 ∧ V3 = 1 (OBSERVED accepted)
+        Note over E: (otSK,otPK).EUICC ← ECKA keygen<br/>euiccSigned1 = {TID, smdpAddress, N_dp, euiccInfo2, ctxParams1, otPK.EUICC}<br/>euiccSignature1 = Sig_SKeuicc(euiccSigned1)
+        E-->>L: authenticateServerResponse = ASN.1{euiccSigned1, euiccSignature1, CERT.EUICC, CERT.EUM}
+    else V1 ∨ V2 ∨ V3 = 0
+        E-->>L: error → CancelSession, abort
+    end
+    deactivate E
+    end
+
+    rect rgba(128,128,128,0.08)
+    Note over L,S: Phase 4 — ES9+ AuthenticateClient (server verifies eUICC, binds order)
+    L->>S: POST /gsma/rsp2/es9plus/authenticateClient {TID, authenticateServerResponse}
+    activate S
+    Note over S: W1=VerifyChain(CERT.EUICC→CERT.EUM→CI1), W2=Verify(euiccSignature1, PK.EUICC)<br/>W3=lookup order by matchingId ∈ euiccSigned1.ctxParams1
+    alt W1 ∧ W2 ∧ order-available (OBSERVED Truphone Executed-Success)
+        Note over S: smdpSigned2 = {TID, ccRequiredFlag, otPK.EUICC}<br/>smdpSignature2 = Sig_SKdppb(smdpSigned2)
+        S-->>L: Executed-Success {TID, profileMetadata, smdpSigned2, smdpSignature2, CERT.DPpb}
+    else refused (OBSERVED live reason codes)
+        S-->>L: Failed statusCodeData ∈ {8.1.1/3.8 EID Refused,<br/>8.2.6/3.8 MatchingId Refused, 9.4/10.1 pool empty (Redtea)}
+    end
+    deactivate S
+    end
+
+    rect rgba(128,128,128,0.08)
+    Note over E,L: Phase 5 — ES10b PrepareDownload (derive ES8+ session key)
+    L->>E: ES10b.PrepareDownload(smdpSigned2, smdpSignature2, CERT.DPpb)
+    activate E
+    Note over E: Verify(smdpSignature2, PK.DPpb)=1<br/>SK_session ← KDF( ECKA(otSK.EUICC, otPK.DP), TID )
+    E-->>L: prepareDownloadResponse {euiccSigned2, euiccSignature2}
+    deactivate E
+    end
+
+    rect rgba(128,128,128,0.08)
+    Note over L,S: Phase 6 — ES9+ GetBoundProfilePackage
+    L->>S: POST /gsma/rsp2/es9plus/getBoundProfilePackage {TID, prepareDownloadResponse}
+    activate S
+    Note over S: BPP = ES8+ segments sealed under SK_session (SCP03t):<br/>{configureISDP, storeMetadata, replaceSessionKeys, profileElements}
+    S-->>L: Executed-Success {boundProfilePackage = BPP}
+    deactivate S
+    end
+
+    rect rgba(128,128,128,0.08)
+    Note over E,L: Phase 7 — ES10b LoadBoundProfilePackage (ES8+ install)
+    L->>E: ES10b.LoadBoundProfilePackage(BPP)
+    activate E
+    Note over E: decrypt + verify each ES8+ TLV under SK_session, install → ISD-P<br/>ICCID fixed (89..5198679), build ProfileInstallationResult (signed, seq=k)
+    E-->>L: ProfileInstallationResult PIR = Sig_SKeuicc(result, seq=k)
+    deactivate E
+    end
+
+    rect rgba(128,128,128,0.08)
+    Note over L,S: Phase 8 — ES9+ HandleNotification (fire-and-forget)
+    L->>S: POST /gsma/rsp2/es9plus/handleNotification {pendingNotification = PIR}
+    activate S
+    Note over S: Verify(PIR.signature, PK.EUICC), record seq=k. No response body.
+    S-->>L: HTTP 204 No Content (no functionExecutionStatus)
+    deactivate S
+    end

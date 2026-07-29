@@ -1,0 +1,54 @@
+sequenceDiagram
+    autonumber
+    participant E as eUICC (ISD-R / ECASD)
+    participant L as LPA (OpenEUICC)
+    participant D as SM-DS server
+
+    Note over E: CERT.EUICC.ECDSA embeds the EID. SK.EUICC signs.<br/>Trust anchor CI1 (SKI 81:37:0f:51..bebfb)
+    Note over D: lpa.ds.gsma.com (root) / lpa.live.esimdiscovery.com (Thales)<br/>CERT.DSauth (issuer GSMA RSP2 Root CI1)<br/>event directory: EID → [{eventId, rspServerAddress}]
+
+    rect rgba(128,128,128,0.08)
+    Note over E,L: Phase 1 — ES10b pre-auth material
+    L->>E: ES10b.GetEUICCChallenge()
+    activate E
+    E-->>L: euiccChallenge = N_euicc ∈ {0,1}¹²⁸
+    deactivate E
+    L->>E: ES10b.GetEUICCInfo1()
+    activate E
+    E-->>L: euiccInfo1 (BF20)
+    deactivate E
+    end
+
+    rect rgba(128,128,128,0.08)
+    Note over L,D: Phase 2 — ES11 InitiateAuthentication (NO EID on the wire)
+    L->>D: POST /gsma/rsp2/es9plus/initiateAuthentication<br/>{euiccChallenge=N_euicc, euiccInfo1}
+    activate D
+    Note over D: euiccCiPKId ← CI1, N_ds ∈ {0,1}¹²⁸, TID ← fresh<br/>serverSigned1 = {TID, N_euicc, dsAddress, N_ds}<br/>serverSignature1 = Sig_SKdsauth(serverSigned1)
+    D-->>L: Executed-Success {TID, serverSigned1, serverSignature1,<br/>euiccCiPKIdToBeUsed=CI1, serverCertificate=CERT.DSauth}
+    deactivate D
+    end
+    Note over L,D: Enumeration bound: this request carries NO EID field.<br/>The SM-DS cannot be queried for an arbitrary EID here.
+
+    rect rgba(128,128,128,0.08)
+    Note over E,L: Phase 3 — ES10b AuthenticateServer (eUICC signs, EID revealed here)
+    L->>E: ES10b.AuthenticateServer(serverSigned1, serverSignature1, CI1, CERT.DSauth, ctxParams1)
+    activate E
+    Note over E: VerifyChain(CERT.DSauth→CI1)=1, Verify(serverSignature1)=1,<br/>[serverSigned1.N_euicc == N_euicc]=1
+    E-->>L: authenticateServerResponse = ASN.1{euiccSigned1, euiccSignature1,<br/>CERT.EUICC (embeds EID), CERT.EUM}
+    deactivate E
+    end
+
+    rect rgba(128,128,128,0.08)
+    Note over L,D: Phase 4 — ES11 AuthenticateClient (EID = subject(CERT.EUICC), auth-bound)
+    L->>D: POST /gsma/rsp2/es9plus/authenticateClient {TID, authenticateServerResponse}
+    activate D
+    Note over D: W1=VerifyChain(CERT.EUICC→CERT.EUM→CI1)=1, W2=Verify(euiccSignature1, PK.EUICC)=1<br/>EID ← subject(CERT.EUICC), events ← directory[EID]
+    alt events = ∅ (OBSERVED: all 3 SM-DS, events=0)
+        D-->>L: Executed-Success {eventEntries = [ ]}
+    else events ≠ ∅
+        D-->>L: Executed-Success {eventEntries = [{eventId, rspServerAddress}]}
+        Note over L,D: rspServerAddress → SM-DP+ OR another SM-DS (cascade)
+    end
+    deactivate D
+    end
+    Note over E,D: No pre-auth EID oracle: the EID is revealed only inside the eUICC-signed<br/>AuthenticateClient (CERT.EUICC). A caller discovers only the EID whose eUICC it holds.
