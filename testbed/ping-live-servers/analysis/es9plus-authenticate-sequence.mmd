@@ -4,55 +4,45 @@ sequenceDiagram
     participant L as LPA (OpenEUICC)
     participant S as SM-DP+ server
 
-    Note over E,S: LEGEND — a GREEN band marks data with NO message authentication<br/>(no signature/MAC in the RSP layer, so a MITM on L↔S can alter it undetected).<br/>NB: NO field below is application-layer encrypted — confidentiality is TLS-only,<br/>and TLS terminates at the LPA, not the eUICC.
+    Note over E: Trust anchors pre-provisioned in ECASD<br/>{PK.CI} ⊇ CI1  (SKI = 81:37:0f:51..bebfb, 160-bit)<br/>Own keys: SK.EUICC.ECDSA, CERT.EUICC.ECDSA, CERT.EUM
+    Note over S: Holds SK.DPauth.ECDSA and<br/>CERT.DPauth.ECDSA  (issuer = GSMA RSP2 Root CI1)
 
-    Note over E: Trust anchors in ECASD: {PK.CI} ⊇ CI1 (SKI = 81:37:0f:51..bebfb)<br/>Own keys: SK.EUICC.ECDSA, CERT.EUICC.ECDSA, CERT.EUM
-    Note over S: Holds SK.DPauth.ECDSA + CERT.DPauth.ECDSA (issuer = GSMA RSP2 Root CI1)
-
-    Note over E,L: Phase 1 — ES10b pre-auth material (local APDU, unsigned)
+    rect rgba(128,128,128,0.08)
+    Note over E,L: Phase 1 — ES10b pre-auth material from the eUICC
     L->>E: ES10b.GetEUICCChallenge()
     activate E
-    Note over E: sample N_euicc ∈ {0,1}¹²⁸ (16-byte nonce), retain as anti-replay state
-    rect rgb(200,240,205)
+    Note over E: sample N_euicc ∈ {0,1}¹²⁸  (16-byte nonce)<br/>retain as pending challenge (anti-replay state)
     E-->>L: euiccChallenge = N_euicc
-    Note over E,L: NO AUTH — nonce unsigned on delivery.<br/>Integrity only recovered later IF N_euicc is echoed in the signed serverSigned1.
-    end
     deactivate E
     L->>E: ES10b.GetEUICCInfo1()
     activate E
-    rect rgb(200,240,205)
-    E-->>L: euiccInfo1 = BF20 {svn, euiccCiPKIdListForVerification, euiccCiPKIdListForSigning}
-    Note over E,L: NO AUTH — unsigned end-to-end. Tamperable CI-list / SVN → bidding-down surface.
-    end
+    Note over E: euiccInfo1 = TLV BF20 (55 B)<br/>{svn, euiccCiPKIdListForVerification,<br/>euiccCiPKIdListForSigning}
+    E-->>L: euiccInfo1
     deactivate E
+    end
 
+    rect rgba(128,128,128,0.08)
     Note over L,S: Phase 2 — ES9+ InitiateAuthentication over TLS
-    rect rgb(200,240,205)
     L->>S: POST /gsma/rsp2/es9plus/initiateAuthentication<br/>{smdpAddress, euiccChallenge = N_euicc, euiccInfo1}
-    Note over L,S: NO AUTH — entire request unsigned (eUICC has signed nothing yet).<br/>smdpAddress, euiccChallenge, euiccInfo1 all attacker-forgeable.
-    end
     activate S
-    Note over S: euiccCiPKIdToBeUsed ← (euiccInfo1.verifyList ∩ serverCIs) = CI1<br/>sample N_dp ∈ {0,1}¹²⁸ (serverChallenge), TID ← fresh transactionId<br/>serverSigned1 = {TID, N_euicc, smdpAddress, N_dp}<br/>serverSignature1 = Sig_SKdpauth(serverSigned1)
-    S-->>L: [SIGNED] serverSigned1, serverSignature1,<br/>serverCertificate = CERT.DPauth (600–647 B)
-    rect rgb(200,240,205)
-    Note over L,S: SAME RESPONSE — fields NOT covered by serverSignature1:<br/>functionExecutionStatus = Executed-Success (envelope status, flippable)<br/>transactionId = TID (top-level JSON copy — canonical copy is inside signed serverSigned1)<br/>euiccCiPKIdToBeUsed = CI1 (04 14 ‖ 160-bit SKI — NOT in serverSigned1, downgrade vector)
-    end
+    Note over S: euiccCiPKIdToBeUsed ← (euiccInfo1.verifyList ∩ serverCIs) = CI1<br/>sample N_dp ∈ {0,1}¹²⁸  (serverChallenge)<br/>TID ← fresh transactionId<br/>serverSigned1 = {TID, N_euicc, smdpAddress, N_dp}<br/>serverSignature1 = Sig_SKdpauth(serverSigned1)
+    S-->>L: functionExecutionStatus = Executed-Success<br/>{transactionId = TID, serverSigned1 (66–95 B),<br/>serverSignature1, euiccCiPKIdToBeUsed = CI1 (04 14 ‖ 160-bit SKI),<br/>serverCertificate = CERT.DPauth (600–647 B)}
     deactivate S
-
-    Note over E,L: Phase 3 — ES10b AuthenticateServer (eUICC evaluates the server)
-    L->>E: ES10b.AuthenticateServer([SIGNED] serverSigned1, serverSignature1, serverCertificate,<br/>euiccCiPKIdToBeUsed, ctxParams1)
-    rect rgb(200,240,205)
-    Note over E,L: ctxParams1 = {matchingId, deviceInfo(TAC, capabilities)} — device-asserted, UNAUTHENTICATED input.<br/>eUICC signs OVER it next but never verifies its truth → LPA can spoof TAC / matchingId.
     end
+
+    rect rgba(128,128,128,0.08)
+    Note over E,L: Phase 3 — ES10b AuthenticateServer (eUICC evaluates the server)
+    L->>E: ES10b.AuthenticateServer(serverSigned1, serverSignature1,<br/>euiccCiPKIdToBeUsed, serverCertificate,<br/>ctxParams1 = {matchingId, deviceInfo(TAC, capabilities)})
     activate E
-    Note over E: V1 = VerifyChain(CERT.DPauth → PK.CI[CI1]) → {0,1}<br/>V2 = Verify(serverSignature1, serverSigned1, PK.DPauth) → {0,1}<br/>V3 = [ serverSigned1.euiccChallenge == N_euicc ] (freshness)
-    alt V1 ∧ V2 ∧ V3 = 1 (OBSERVED: ciTrusted = true, stage = accepted)
-        Note over E: sample one-time ECKA (otSK, otPK).EUICC<br/>euiccSigned1 = {TID, smdpAddress, N_dp, euiccInfo2, ctxParams1, otPK.EUICC}<br/>euiccSignature1 = Sig_SKeuicc(euiccSigned1)
-        E-->>L: [SIGNED] authenticateServerResponse =<br/>{euiccSigned1, euiccSignature1, CERT.EUICC.ECDSA, CERT.EUM}
+    Note over E: V1 = VerifyChain(CERT.DPauth → PK.CI[CI1]) → {0,1}<br/>V2 = Verify(serverSignature1, serverSigned1, PK.DPauth) → {0,1}<br/>V3 = [ serverSigned1.euiccChallenge == N_euicc ]  (freshness)
+    alt V1 ∧ V2 ∧ V3 = 1   (OBSERVED: ciTrusted = true, stage = accepted)
+        Note over E: sample one-time ECKA keypair (otSK, otPK).EUICC<br/>euiccSigned1 = {TID, smdpAddress, N_dp, euiccInfo2,<br/>ctxParams1, otPK.EUICC}<br/>euiccSignature1 = Sig_SKeuicc(euiccSigned1)
+        E-->>L: authenticateServerResponse =<br/>{euiccSigned1, euiccSignature1,<br/>CERT.EUICC.ECDSA, CERT.EUM}
     else V1 ∨ V2 ∨ V3 = 0
         Note over E: abort, emit no key material
         E-->>L: error (invalid CI / signature / stale nonce) → CancelSession
     end
     deactivate E
+    end
 
-    Note over L,S: Boundary — CI-trust probe STOPS here.<br/>Full download continues with ES9+ AuthenticateClient(TID, authenticateServerResponse)
+    Note over L,S: Boundary — CI-trust probe STOPS here.<br/>Full profile download would continue with<br/>ES9+ AuthenticateClient(TID, authenticateServerResponse)
