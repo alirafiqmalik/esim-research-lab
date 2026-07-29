@@ -222,12 +222,13 @@ class Lpa:
     def memory_reset(self) -> None:
         self._es10_get("EuiccMemoryReset.resp", codec.apdu_memory_reset())
 
-    def discover(self, smds, eid: str | None = None) -> list:
-        """SM-DS discovery (SGP.22 SS3.6), pre-authentication: queries by EID
-        alone. `eid` defaults to this device's own, but the SM-DS API accepts
-        any caller-supplied value -- there is nothing at this stage that binds
-        the query to a cryptographically-verified identity."""
-        return smds.discover(eid if eid is not None else self.get_eid())
+    def discover(self, smds) -> list[dict[str, str]]:
+        """SM-DS discovery (SGP.22 SS3.6). A device can only query its OWN
+        eUICC-attested EID: real ES11 binds the discovered EID to the eUICC
+        signature in AuthenticateClient, so there is no way to ask for another
+        device's EID. Returns the eventEntries list (empty when nothing is
+        registered). See testbed/ping-sm-ds/notes/03-eid-enumeration.md."""
+        return smds.discover(self.get_eid())
 
     def _authenticate_server(self, init_resp: dict, matching_id: str) -> dict:
         transaction_id = bytes.fromhex(init_resp["transactionId"])

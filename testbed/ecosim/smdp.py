@@ -14,7 +14,7 @@ from dataclasses import dataclass
 from cryptography import x509
 from cryptography.hazmat.primitives.asymmetric import ec
 
-from . import codec, crypto, protocol
+from . import codec, crypto, protocol, status
 from .pki import PKI, require_role, verify_chain
 
 
@@ -30,6 +30,11 @@ class Order:
     # order. None reproduces the (default, more common) matchingId-only
     # ordering flow with no per-device binding.
     eid: str | None = None
+    # Inventory pool for this order. None = fixed profile, unlimited re-issue of
+    # the same ICCID (matches live QRF-SPEEDTEST). A finite int decrements on each
+    # successful consumption; at 0 the campaign pool is exhausted (live RedteaGO
+    # 9.4/10.1). Independent of the installed-collision _consumed set.
+    pool: int | None = None
 
 
 @dataclass
@@ -50,6 +55,10 @@ class SmDpPlus:
         self._orders: dict[str, Order] = {}
         self._transactions: dict[str, _Transaction] = {}
         self._notifications: list[tuple[int, bytes]] = []
+        # matchingIds whose profile is still installed on some eUICC. Re-downloading
+        # one is refused (live 8.2.6/3.8) until the eUICC deletes the profile, which
+        # calls release_matching_id and frees the code for re-download.
+        self._consumed: set[str] = set()
 
     def register_order(
         self,
@@ -59,6 +68,7 @@ class SmDpPlus:
         sp_name: str,
         profile_class: int,
         eid: str | None = None,
+        pool: int | None = None,
     ) -> None:
         self._orders[matching_id] = Order(
             matching_id=matching_id,
@@ -67,7 +77,13 @@ class SmDpPlus:
             sp_name=sp_name,
             profile_class=profile_class,
             eid=eid,
+            pool=pool,
         )
+
+    def release_matching_id(self, matching_id: str) -> None:
+        """Free a consumed matchingId for re-download (models the eUICC deleting the
+        installed profile). Reproduces the live delete->redownload behavior."""
+        self._consumed.discard(matching_id)
 
     def initiate_authentication(
         self, euicc_challenge: bytes, euicc_info1: bytes, smdp_address: str
@@ -88,14 +104,14 @@ class SmDpPlus:
             server_otsk=server_otsk, euicc_challenge=euicc_challenge
         )
 
-        return {
-            "transactionId": transaction_id_hex,
-            "serverSigned1": codec.b64(server_signed1),
-            "serverSignature1": codec.b64(server_signature1),
-            "serverCertificate": codec.b64(self.pki.dp_auth.cert_der()),
-            "euiccCiPKIdToBeUsed": codec.b64(self.pki.ci_public_key_id()),
-            "serverOtpk": codec.b64(server_otpk),
-        }
+        return status.success_envelope(
+            transactionId=transaction_id_hex,
+            serverSigned1=codec.b64(server_signed1),
+            serverSignature1=codec.b64(server_signature1),
+            serverCertificate=codec.b64(self.pki.dp_auth.cert_der()),
+            euiccCiPKIdToBeUsed=codec.b64(self.pki.ci_public_key_id()),
+            serverOtpk=codec.b64(server_otpk),
+        )
 
     def authenticate_client(
         self, req: dict, ci_cert: x509.Certificate, authenticated_eid: str | None = None,
@@ -114,29 +130,41 @@ class SmDpPlus:
         transaction_id_hex = req["transactionId"]
         tx = self._transactions.get(transaction_id_hex)
         if tx is None:
-            raise ValueError(f"unknown transactionId {transaction_id_hex!r}")
+            raise status.RspError(status.TRANSACTION_UNKNOWN, transaction_id_hex)
 
         euicc_cert = x509.load_der_x509_certificate(codec.unb64(req["euiccCertificate"]))
         eum_cert = x509.load_der_x509_certificate(codec.unb64(req["eumCertificate"]))
 
         if not (verify_chain(euicc_cert, eum_cert) and verify_chain(eum_cert, ci_cert)):
-            raise ValueError("eUICC certificate chain does not verify to the given CI")
+            raise status.RspError(
+                status.EUICC_VERIFICATION_FAILED,
+                detail="eUICC certificate chain does not verify to the given CI",
+            )
         require_role(euicc_cert, "euicc")
         require_role(eum_cert, "eum")
 
         euicc_signed1 = codec.unb64(req["euiccSigned1"])
         euicc_signature1 = codec.unb64(req["euiccSignature1"])
         if not crypto.verify(euicc_cert.public_key(), euicc_signature1, euicc_signed1):
-            raise ValueError("euiccSignature1 does not verify over euiccSigned1")
+            raise status.RspError(
+                status.EUICC_VERIFICATION_FAILED,
+                detail="euiccSignature1 does not verify over euiccSigned1",
+            )
 
         tx.euicc_otpk = codec.unb64(req["euiccOtpk"])
 
         if not self._orders:
-            raise ValueError("no registered order for this SM-DP+")
+            raise status.RspError(
+                status.MATCHING_ID_UNKNOWN, detail="no registered order for this SM-DP+"
+            )
         # SGP.22 SS3.1.3 step 3: the SM-DP+ binds the session to the pending order
         # named by the eUICC-attested matchingId. This is the sole backstop against
         # a matchingId the LPA/eUICC hop may have tampered (the eUICC never checks it).
         order = self._select_order(euicc_signed1, authenticated_eid)
+        # Re-downloading a code whose profile is still installed is refused (live
+        # 8.2.6/3.8). release_matching_id (eUICC deletes the profile) clears this.
+        if order.matching_id in self._consumed:
+            raise status.RspError(status.MATCHING_ID_REFUSED, order.matching_id)
         tx.order = order
 
         profile_metadata = codec.store_metadata(
@@ -149,13 +177,13 @@ class SmDpPlus:
         smdp_signed2 = protocol.concat_len(transaction_id, cc_required_flag, tx.euicc_otpk)
         smdp_signature2 = crypto.sign(self.pki.dp_pb.private_key, smdp_signed2)
 
-        return {
-            "transactionId": transaction_id_hex,
-            "profileMetadata": codec.b64(profile_metadata),
-            "smdpSigned2": codec.b64(smdp_signed2),
-            "smdpSignature2": codec.b64(smdp_signature2),
-            "smdpPbCertificate": codec.b64(self.pki.dp_pb.cert_der()),
-        }
+        return status.success_envelope(
+            transactionId=transaction_id_hex,
+            profileMetadata=codec.b64(profile_metadata),
+            smdpSigned2=codec.b64(smdp_signed2),
+            smdpSignature2=codec.b64(smdp_signature2),
+            smdpPbCertificate=codec.b64(self.pki.dp_pb.cert_der()),
+        )
 
     def _select_order(self, euicc_signed1: bytes, authenticated_eid: str | None = None) -> Order:
         """Recover the eUICC-attested matchingId from euiccSigned1 and look up its order.
@@ -173,15 +201,22 @@ class SmDpPlus:
         fields = protocol.read_len_fields(euicc_signed1)
         ctx = fields[4] if len(fields) >= 5 else b""
         if not ctx:
-            raise ValueError("AuthenticateClient: euiccSigned1 carries no ctxParams1/matchingId")
+            raise status.RspError(
+                status.MATCHING_ID_UNKNOWN,
+                detail="AuthenticateClient: euiccSigned1 carries no ctxParams1/matchingId",
+            )
         matching_id = codec.parse_matching_id(ctx)
         order = self._orders.get(matching_id)
         if order is None:
-            raise ValueError(f"no pending order for matchingId {matching_id!r}")
+            raise status.RspError(status.MATCHING_ID_UNKNOWN, matching_id)
         if order.eid is not None and order.eid != authenticated_eid:
-            raise ValueError(
-                f"eidMismatch: order for matchingId {matching_id!r} is bound to eid "
-                f"{order.eid!r}, but the authenticating eUICC reports eid {authenticated_eid!r}"
+            raise status.RspError(
+                status.EID_REFUSED,
+                authenticated_eid,
+                detail=(
+                    f"eidMismatch: order for matchingId {matching_id!r} is bound to eid "
+                    f"{order.eid!r}, but the authenticating eUICC reports eid {authenticated_eid!r}"
+                ),
             )
         return order
 
@@ -191,16 +226,21 @@ class SmDpPlus:
         """ES9+ GetBoundProfilePackage: seal the profile under the ES8+ session key."""
         tx = self._transactions.get(transaction_id_hex)
         if tx is None:
-            raise ValueError(f"unknown transactionId {transaction_id_hex!r}")
+            raise status.RspError(status.TRANSACTION_UNKNOWN, transaction_id_hex)
         if tx.euicc_otpk is None or tx.order is None:
             raise ValueError("transaction has not completed AuthenticateClient yet")
+
+        order = tx.order
+        # Campaign inventory: a finite pool that has hit 0 is exhausted (live
+        # RedteaGO 9.4/10.1). None = fixed profile, unlimited re-issue.
+        if order.pool is not None and order.pool <= 0:
+            raise status.RspError(status.POOL_EMPTY, order.iccid)
 
         transaction_id = bytes.fromhex(transaction_id_hex)
         session_key = protocol.session_key(
             tx.server_otsk, protocol.load_point(tx.euicc_otpk), transaction_id
         )
 
-        order = tx.order
         store_metadata_wire = codec.store_metadata(
             bytes.fromhex(order.iccid), order.profile_name, order.sp_name, order.profile_class
         )
@@ -208,12 +248,18 @@ class SmDpPlus:
             session_key, store_metadata_wire + b"||" + profile_body, aad=transaction_id
         )
 
-        return {
-            "transactionId": transaction_id_hex,
-            "serverOtpk": codec.b64(protocol.point_bytes(tx.server_otsk)),
-            "sealedProfile": codec.b64(sealed),
-            "metadataPreview": codec.b64(store_metadata_wire),
-        }
+        # Successful consumption: the profile is now installed (blocks re-download
+        # until release_matching_id) and one unit of finite inventory is spent.
+        self._consumed.add(order.matching_id)
+        if order.pool is not None:
+            order.pool -= 1
+
+        return status.success_envelope(
+            transactionId=transaction_id_hex,
+            serverOtpk=codec.b64(protocol.point_bytes(tx.server_otsk)),
+            sealedProfile=codec.b64(sealed),
+            metadataPreview=codec.b64(store_metadata_wire),
+        )
 
     def handle_notification(self, notification: bytes, seq: int, euicc_cert_der: bytes) -> None:
         """ES9+ HandleNotification: verify euiccSignPIR before trusting anything in it.

@@ -81,13 +81,13 @@ def run() -> list[record.Finding]:
     # A profile is legitimately provisioned/waiting for the victim's EID (their
     # carrier registered it via SM-DS). The attacker forwards/triggers it.
     smds = SmDs()
-    smds.register_event(victim_eid, event_id="carrier-evt-1", smdp_address="smdp.ecosim.test")
+    smds.register_event(victim_eid, event_id="carrier-evt-1", rsp_server_address="smdp.ecosim.test")
     victim2_lpa, victim2_euicc = _make_device(pki, smdp, seed=0x2C2)
     # (fresh device sharing the same EID-in-cert PKI models "the victim's device")
     carrier_ac = attacker_mno.order_profile("Victim-Carrier-Plan", "VictimCarrier")
     # The attacker, sitting on C1, observes the SM-DS event for the victim's EID
     # and forwards the corresponding activation code to the device to trigger install.
-    discovered = smds.discover(victim_eid)
+    discovered = smds.discover_unauthenticated(victim_eid)
     forwarded = len(discovered) > 0
     result2 = victim2_lpa.download_profile(carrier_ac.encode())
     findings.append(record.Finding(
