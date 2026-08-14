@@ -1,0 +1,69 @@
+sequenceDiagram
+    autonumber
+    participant M as UE modem Shannon g5300q<br/>active eSIM zz_truphone
+    participant N as E-UTRAN eNB<br/>PCI 310 Band 5
+    participant E as EPC MME<br/>Verizon 311/480 roaming
+
+    Note over M: Capture path — dmd streams /dev/umts_dm0 → .sdm → SCAT (-t sec)<br/>SDM Start metadata leaks device IMEI 354977435253142 + IMEI2 + confpack zz_truphone
+    Note over M,E: Home PLMN 234/25 (Truphone) roaming on Verizon 311/480. Combined EPS/IMSI attach, GUTI-based.
+    Note over M,E: PROTECTION TAG on every message —<br/>[BCAST] unauthenticated broadcast · [PLAIN] NAS/RRC, no integrity + no cipher (spoofable)<br/>[INTEG] integrity-protected, NOT ciphered (readable, tamper-evident) · [CIPHER] ciphered on air<br/>NB: Shannon logs NAS post-decipher, so a captured header-type 0 after security is a log artifact, not the on-air state.
+
+    rect rgba(128,128,128,0.08)
+    Note over M,E: Phase 0 — airplane ON forces graceful detach (t≈36.3s)
+    M->>E: ESM PDN disconnect request [CIPHER]<br/>PTI, linked EPS bearer id
+    E->>M: Deactivate EPS bearer context request [CIPHER]<br/>EPS bearer id, ESM cause = 36 regular deactivation
+    M->>E: Deactivate EPS bearer context accept [CIPHER]<br/>EPS bearer id, PTI
+    M->>E: EMM Detach request [PLAIN]<br/>detach type = combined EPS/IMSI, switch-off · EPS mobile identity = GUTI · sec-hdr type 0
+    end
+
+    rect rgba(70,130,180,0.10)
+    Note over M,N: Phase 1 — airplane OFF, cell acquisition (t≈37.77s)
+    N-->>M: MIB [BCAST]<br/>BCCH-BCH · SFN=228 · dl-Bandwidth · PHICH cfg
+    N-->>M: SIB1 [BCAST]<br/>PLMN-id 311/480 · TAC 16898 · cellIdentity · cellBarred=notBarred · SI scheduling
+    N-->>M: SIB2/3/4/5/8/15 [BCAST]<br/>RACH cfg · PRACH · UL power ctrl · resel thresholds · intra/inter-freq neighbours · CDMA2000
+    end
+
+    rect rgba(128,128,128,0.08)
+    Note over M,E: Phase 2 — RRC connection setup + Attach request piggybacked (pre-AS-security)
+    M->>N: RRCConnectionRequest [PLAIN]<br/>UL-CCCH · ue-Identity = S-TMSI (from GUTI) · establishmentCause = mo-Signalling
+    N-->>M: RRCConnectionSetup [PLAIN]<br/>DL-CCCH · SRB1 config (RLC AM, logicalChannelConfig)
+    M->>N: RRCConnectionSetupComplete [PLAIN]<br/>selectedPLMN-Identity=1 · dedicatedInfoNAS wraps ↓ NAS Attach request [INTEG] ↓
+    Note over M,E: NAS Attach request [INTEG] — sec-hdr type 1 (integrity, reused GUTI ctx; NOT ciphered)<br/>EPS attach type = combined EPS/IMSI · old GUTI · UE network capability (EIA/EEA/UEA) · DRX param · ESM msg container →<br/>PDN connectivity request: request type = initial · PDN type = IPv4v6 · ESM info transfer flag = 1 · APN requested via ESM info<br/>(cold attach with no cached NAS context would send this as [PLAIN] type 0)
+    N->>E: Initial UE message (S1AP) [CIPHER]<br/>relays NAS Attach request · eNB UE S1AP id · TAI · E-UTRAN CGI
+    end
+
+    rect rgba(70,130,180,0.10)
+    Note over M,E: Phase 3 — identity solicitation (PLAIN) then ESM info (CIPHER)
+    E->>M: EMM Identity request [PLAIN]<br/>identity type = IMEISV · sec-hdr type 0
+    M->>E: EMM Identity response [PLAIN]<br/>mobile identity = IMEISV 35497743525315•• (device IMEI2 + SVN) · sec-hdr type 0
+    Note over M,E: PERMANENT EQUIPMENT ID IN THE CLEAR — full IMEISV over the air, unciphered, before AS security.<br/>tshark: "Plain NAS message, not security protected". This is the IMSI/IMEI-catcher primitive.<br/>No EPS-AKA Authentication req/resp this attach — network reused the GUTI security context.
+    E->>M: ESM information request [CIPHER]<br/>PTI · request for APN + PCO behind NAS security
+    M->>E: ESM information response [CIPHER]<br/>APN = truphone.com.mnc025.mcc234.gprs · PCO (DNS req, IPCP) — deferred behind security, NOT leaked on air
+    end
+
+    rect rgba(128,128,128,0.08)
+    Note over M,E: Phase 4 — AS (RRC) security + UE capability (t≈40.46s)
+    E->>M: RRC SecurityModeCommand [PLAIN→establishes AS]<br/>securityAlgorithmConfig: cipheringAlgorithm=eea · integrityProtAlgorithm=eia · integrity-protected with K_RRCint
+    M->>E: RRC SecurityModeComplete [INTEG]<br/>SRB1 now integrity+cipher active (AS security established)
+    Note over M,E: This is the RRC (Access Stratum) SMC — NOT a NAS SMC.<br/>No NAS Security Mode Command ran: the reused GUTI NAS context was already active from before this attach.
+    E->>M: UECapabilityEnquiry [CIPHER]<br/>ue-CapabilityRequest = eutra
+    M->>E: UECapabilityInformation [CIPHER]<br/>UE-EUTRA-Capability: band combos, CA, category, feature groups
+    end
+
+    rect rgba(70,130,180,0.10)
+    Note over M,E: Phase 5 — attach accept + default bearer (CIPHER, AS-protected)
+    E->>M: RRCConnectionReconfiguration [CIPHER]<br/>radioResourceConfigDedicated · dedicatedInfoNAS wraps ↓ NAS Attach accept ↓
+    Note over M,E: NAS Attach accept [CIPHER] — EPS attach result = combined EPS/IMSI · GUTI reallocation ·<br/>TAI list (311/480, TAC 16898) · T3412 periodic-TAU timer · T3402 ·<br/>+ Activate default EPS bearer context request: EPS bearer id · EPS QoS/QCI · APN · PDN address (IPv4v6) · APN-AMBR
+    M->>E: RRCConnectionReconfigurationComplete [CIPHER]
+    M->>E: NAS Attach complete [CIPHER]<br/>wraps Activate default EPS bearer context accept (EPS bearer id)
+    E->>M: EMM information [CIPHER]<br/>full + short network name · UTC time + local time zone + daylight saving
+    E->>M: UEInformationRequest-r9 [CIPHER]
+    M->>E: UEInformationResponse-r9 [CIPHER]
+    end
+
+    rect rgba(128,128,128,0.08)
+    Note over M,E: Phase 6 — SMS over NAS (post-attach)
+    E->>M: DL NAS transport [CIPHER]<br/>wraps CP-DATA / RP-DATA — 11-fragment concatenated SMS (TP-UD)
+    M->>E: UL NAS transport [CIPHER]<br/>wraps CP-ACK / RP-ACK
+    Note over M,E: Header-type 0 appears in the log here but this is post-attach → CIPHERED on air.<br/>The type-0 is the Shannon post-decipher log artifact, NOT cleartext. SMS body left in session capture only.
+    end
