@@ -45,7 +45,7 @@ def av_download(serial, sess, args):
     # a server-side failure (e.g. matchingId refused / pool empty) is still a
     # valid captured outcome — don't raise; the RSP plaintext is the deliverable.
     r = _activity(serial, sess, "download", args.backend, timeout=180,
-                  raise_on_fail=False, code=args.code)
+                  raise_on_fail=False, code=args.code, imei=getattr(args, "imei", None))
     r["rsp"] = _extract_rsp(sess.read_log())
     sess.save("rsp.json", r["rsp"])
     return r
@@ -236,6 +236,8 @@ def build_parser() -> argparse.ArgumentParser:
     sub.add_parser("notifications")
     d = sub.add_parser("download"); d.add_argument("code")
     d.add_argument("--capture-rsp", action="store_true", default=True)
+    d.add_argument("--imei", help="optional IMEI to place in ES9+ AuthenticateClient "
+                                  "ctxParams1.deviceInfo (SGP.22 SS5.7.13); omitted if unset")
     for name in ("enable", "disable"):
         p = sub.add_parser(name); p.add_argument("target", help="profile index (#N)")
     dele = sub.add_parser("delete"); dele.add_argument("target")
