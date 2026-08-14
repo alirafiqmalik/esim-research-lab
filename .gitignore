@@ -15,3 +15,6 @@ bugreport*.zip
 # raw device logcat captures (bulky; the parsed ES9+ chain is kept in rsp.json)
 testbed/profile-download/logs/**/logcat.txt
 testbed/es9-message-flow/logs/**/logcat.txt
+
+# non-root capture output: holds unredacted IMEI/ICCID/account + full bugreport
+testbed/nonroot-rsp-capture/esim-rsp-capture/
