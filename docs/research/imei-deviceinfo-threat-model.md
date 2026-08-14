@@ -139,6 +139,31 @@ Two limits hold in every case:
   interception exposes ES9+ transport data (including `deviceInfo`), never the
   profile keys.
 
+## Spoofing the deviceInfo IMEI
+
+The field is caller-controlled, so it spoofs trivially. That does not weaken RSP.
+
+- The value comes from the LPA, not the eUICC. On OpenEUICC the `download` op reads
+  `--es imei` verbatim into `ProfileDownloadInput`; our `--imei` flag sets it to any
+  string. The eUICC signs whatever it receives — SGP.22 §5.7.13 has it neither check
+  nor use `deviceInfo`.
+- We sent a placeholder, a junk-TAC synthetic IMEI, and a valid-TAC IMEI. All three
+  installed the same profile. No SM-DP+ validated the value.
+- Spoofable is not insecure. The download is secured by mutual certificate
+  authentication (eUICC certificate + `CERT.DPauth`, both chaining to a GSMA CI) and
+  the profile is encrypted to the secure element. The IMEI is metadata. Spoofing it
+  cannot fetch an unauthorized profile, impersonate another eUICC, or decrypt a
+  profile.
+- The weakness sits with whoever trusts the field. A party that gates on `deviceInfo`
+  (device eligibility, fraud scoring, blocklist enforcement at download) trusts an
+  unauthenticated value. One flag defeats that check. No SM-DP+ tested did this.
+- For the user, spoofing is a privacy defense, not an attack. Substituting or omitting
+  the IMEI withholds the real one from the operator. The honest default sends the real
+  IMEI and pays the exposure; the spoof is the mitigation.
+
+The cellular IMEI the modem reports at attach is a separate identifier with a separate
+threat model — see `cellular-imei-spoofing-and-cloning.md`.
+
 ## Summary
 
 | Question | Answer |
