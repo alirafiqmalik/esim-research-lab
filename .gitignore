@@ -18,3 +18,9 @@ testbed/es9-message-flow/logs/**/logcat.txt
 
 # non-root capture output: holds unredacted IMEI/ICCID/account + full bugreport
 testbed/nonroot-rsp-capture/esim-rsp-capture/
+
+# baseband captures hold real subscriber traffic (IMEISV, TMSI, SMS) — never commit
+*.sdm
+*.pcap
+*.qmdl
+testbed/baseband-attach/scripts/out/

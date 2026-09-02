@@ -1,0 +1,202 @@
+1	0.000000000	LTE RRC BCCH_BCH	MasterInformationBlock (SFN=66)
+2	0.000000000	LTE RRC DL_SCH	SystemInformationBlockType1
+3	0.000000000	LTE RRC DL_SCH	SystemInformation [ SIB2 ]
+4	1.574000000	LTE RRC DL_SCH	SystemInformation [ SIB3 ]
+5	1.574000000	LTE RRC DL_SCH	SystemInformation [ SIB5 ]
+6	1.574000000	LTE RRC DL_SCH	SystemInformation [ SIB4 ]
+7	1.574000000	LTE RRC DL_SCH	SystemInformation [ SIB24 ]
+8	1.576000000	GSMTAP/NAS-EPS	PDN connectivity request
+9	1.576000000	GSMTAP/NAS-EPS	Attach request, PDN connectivity request
+10	1.576000000	GSMTAP/NAS-EPS	Attach request, PDN connectivity request
+11	1.576000000	LTE RRC UL_CCCH	RRCConnectionRequest
+12	1.600000000	LTE RRC BCCH_BCH	MasterInformationBlock (SFN=90)
+13	1.601000000	LTE RRC DL_SCH	SystemInformationBlockType1
+14	1.601000000	GSMTAP/NAS-EPS	Attach request, PDN connectivity request
+15	1.601000000	GSMTAP/NAS-EPS	Attach request, PDN connectivity request
+16	1.601000000	LTE RRC UL_CCCH	RRCConnectionRequest
+17	1.601000000	LTE RRC DL_CCCH	RRCConnectionSetup
+18	1.601000000	LTE RRC UL_DCCH/NAS-EPS	RRCConnectionSetupComplete, Attach request, PDN connectivity request
+19	1.602000000	LTE RRC DL_DCCH/NAS-EPS	DLInformationTransfer
+20	1.602000000	GSMTAP/NAS-EPS	
+21	1.602000000	GSMTAP/NAS-EPS	Identity request
+22	1.602000000	GSMTAP/NAS-EPS	Identity response
+23	1.602000000	GSMTAP/NAS-EPS	
+24	1.602000000	LTE RRC UL_DCCH/NAS-EPS	ULInformationTransfer
+25	1.602000000	LTE RRC DL_DCCH/NAS-EPS	DLInformationTransfer
+26	1.602000000	GSMTAP/NAS-EPS	
+27	1.602000000	GSMTAP/NAS-EPS	ESM information request
+28	1.602000000	GSMTAP/NAS-EPS	ESM information response
+29	1.602000000	GSMTAP/NAS-EPS	
+30	1.602000000	LTE RRC UL_DCCH/NAS-EPS	ULInformationTransfer
+31	1.603000000	LTE RRC DL_DCCH	SecurityModeCommand
+32	1.603000000	LTE RRC UL_DCCH	SecurityModeComplete
+33	1.603000000	LTE RRC DL_DCCH	UECapabilityEnquiry
+34	2.741000000	LTE RRC UL_DCCH	UECapabilityInformation
+35	2.741000000	LTE RRC DL_DCCH	UECapabilityEnquiry
+36	2.741000000	LTE RRC UL_DCCH	UECapabilityInformation
+37	2.741000000	LTE RRC DL_DCCH/NAS-EPS	RRCConnectionReconfiguration
+38	2.742000000	LTE RRC PCCH	Paging (1 PagingRecord)
+39	2.742000000	LTE RRC UL_DCCH	RRCConnectionReconfigurationComplete
+40	2.742000000	GSMTAP/NAS-EPS	
+41	2.742000000	GSMTAP/NAS-EPS	Attach accept, Activate default EPS bearer context request (PDN type IPv4 only allowed)
+42	2.742000000	GSMTAP/NAS-EPS	Activate default EPS bearer context request (PDN type IPv4 only allowed)
+43	2.742000000	GSMTAP/NAS-EPS	Activate default EPS bearer context accept
+44	2.742000000	GSMTAP/NAS-EPS	Attach complete, Activate default EPS bearer context accept
+45	2.742000000	GSMTAP/NAS-EPS	
+46	2.742000000	LTE RRC UL_DCCH/NAS-EPS	ULInformationTransfer
+47	2.742000000	LTE RRC PCCH	Paging (1 PagingRecord)
+48	2.743000000	LTE RRC PCCH	Paging (1 PagingRecord)
+49	2.743000000	LTE RRC DL_DCCH/NAS-EPS	DLInformationTransfer
+50	2.743000000	GSMTAP/NAS-EPS	
+51	2.743000000	GSMTAP/NAS-EPS	EMM information
+52	2.743000000	LTE RRC PCCH	Paging (1 PagingRecord)
+53	2.746000000	LTE RRC PCCH	Paging (2 PagingRecords)
+54	2.746000000	LTE RRC PCCH	Paging (1 PagingRecord)
+55	2.747000000	LTE RRC PCCH	Paging (1 PagingRecord)
+56	2.747000000	LTE RRC PCCH	Paging (1 PagingRecord)
+57	2.747000000	LTE RRC PCCH	Paging (1 PagingRecord)
+58	2.747000000	GSMTAP/NAS-EPS	PDN connectivity request
+59	2.747000000	GSMTAP/NAS-EPS	
+60	2.747000000	LTE RRC UL_DCCH/NAS-EPS	ULInformationTransfer
+61	2.747000000	LTE RRC PCCH	Paging (1 PagingRecord)
+62	2.747000000	LTE RRC PCCH	Paging (1 PagingRecord)
+63	2.747000000	LTE RRC PCCH	Paging (1 PagingRecord)
+64	2.751000000	LTE RRC PCCH	Paging (1 PagingRecord)
+65	2.751000000	LTE RRC PCCH	Paging (1 PagingRecord)
+66	2.751000000	LTE RRC PCCH	Paging (1 PagingRecord)
+67	2.751000000	LTE RRC DL_DCCH/NAS-EPS	RRCConnectionReconfiguration
+68	2.751000000	GSMTAP/NAS-EPS	
+69	2.751000000	GSMTAP/NAS-EPS	Activate default EPS bearer context request (PDN type IPv4 only allowed)
+70	2.751000000	LTE RRC UL_DCCH	RRCConnectionReconfigurationComplete
+71	2.751000000	GSMTAP/NAS-EPS	Activate default EPS bearer context accept
+72	2.751000000	GSMTAP/NAS-EPS	
+73	2.751000000	LTE RRC UL_DCCH/NAS-EPS	ULInformationTransfer
+74	2.752000000	LTE RRC PCCH	Paging (1 PagingRecord)
+75	2.752000000	LTE RRC PCCH	Paging (2 PagingRecords)
+76	2.752000000	LTE RRC PCCH	Paging (1 PagingRecord)
+77	2.767000000	LTE RRC PCCH	Paging (1 PagingRecord)
+78	2.767000000	LTE RRC PCCH	Paging (1 PagingRecord)
+79	2.767000000	LTE RRC PCCH	Paging (1 PagingRecord)
+80	2.767000000	LTE RRC PCCH	Paging (1 PagingRecord)
+81	2.767000000	LTE RRC PCCH	Paging (1 PagingRecord)
+82	2.768000000	LTE RRC PCCH	Paging (2 PagingRecords)
+83	2.768000000	LTE RRC PCCH	Paging (1 PagingRecord)
+84	2.768000000	LTE RRC PCCH	Paging (1 PagingRecord)
+85	6.425000000	LTE RRC PCCH	Paging (2 PagingRecords)
+86	6.429000000	LTE RRC PCCH	Paging (1 PagingRecord)
+87	6.429000000	LTE RRC PCCH	Paging (1 PagingRecord)
+88	6.429000000	LTE RRC PCCH	Paging (1 PagingRecord)
+89	6.429000000	LTE RRC PCCH	Paging (1 PagingRecord)
+90	6.431000000	LTE RRC PCCH	Paging (1 PagingRecord)
+91	6.431000000	LTE RRC PCCH	Paging (1 PagingRecord)
+92	6.431000000	LTE RRC PCCH	Paging (3 PagingRecords)
+93	6.431000000	LTE RRC PCCH	Paging (1 PagingRecord)
+94	6.431000000	LTE RRC PCCH	Paging (1 PagingRecord)
+95	6.432000000	LTE RRC PCCH	Paging (1 PagingRecord)
+96	6.432000000	LTE RRC PCCH	Paging (3 PagingRecords)
+97	6.432000000	LTE RRC PCCH	Paging (1 PagingRecord)
+98	6.432000000	LTE RRC PCCH	Paging (1 PagingRecord)
+99	6.433000000	LTE RRC PCCH	Paging (1 PagingRecord)
+100	6.435000000	LTE RRC PCCH	Paging (1 PagingRecord)
+101	6.435000000	LTE RRC PCCH	Paging (1 PagingRecord)
+102	6.436000000	LTE RRC PCCH	Paging (1 PagingRecord)
+103	6.436000000	LTE RRC PCCH	Paging (2 PagingRecords)
+104	6.437000000	LTE RRC PCCH	Paging (4 PagingRecords)
+105	6.437000000	LTE RRC PCCH	Paging (2 PagingRecords)
+106	6.438000000	LTE RRC PCCH	Paging (1 PagingRecord)
+107	6.438000000	LTE RRC PCCH	Paging (1 PagingRecord)
+108	6.438000000	LTE RRC PCCH	Paging (1 PagingRecord)
+109	6.467000000	LTE RRC PCCH	Paging (1 PagingRecord)
+110	6.467000000	LTE RRC PCCH	Paging (1 PagingRecord)
+111	6.469000000	LTE RRC PCCH	Paging (1 PagingRecord)
+112	6.471000000	LTE RRC PCCH	Paging (2 PagingRecords)
+113	6.471000000	LTE RRC PCCH	Paging (1 PagingRecord)
+114	6.473000000	LTE RRC PCCH	Paging (1 PagingRecord)
+115	6.473000000	LTE RRC PCCH	Paging (1 PagingRecord)
+116	6.474000000	LTE RRC PCCH	Paging (1 PagingRecord)
+117	6.484000000	LTE RRC PCCH	Paging (1 PagingRecord)
+118	6.487000000	LTE RRC PCCH	Paging (1 PagingRecord)
+119	11.866000000	LTE RRC PCCH	Paging (1 PagingRecord)
+120	11.867000000	LTE RRC DL_DCCH	RRCConnectionReconfiguration
+121	11.867000000	LTE RRC UL_DCCH	RRCConnectionReconfigurationComplete
+122	11.867000000	LTE RRC UL_DCCH	MeasurementReport
+123	11.883000000	LTE RRC PCCH	Paging (1 PagingRecord)
+124	15.446000000	LTE RRC UL_DCCH	MeasurementReport
+125	15.448000000	LTE RRC DL_DCCH	RRCConnectionRelease [cause=other]
+126	15.449000000	LTE RRC BCCH_BCH	MasterInformationBlock (SFN=137)
+127	15.450000000	LTE RRC DL_SCH	SystemInformationBlockType1
+128	15.481000000	LTE RRC PCCH	Paging (1 PagingRecord)
+129	15.481000000	GSMTAP/NAS-EPS	Service request
+130	15.481000000	LTE RRC UL_CCCH	RRCConnectionRequest
+131	15.483000000	LTE RRC DL_CCCH	RRCConnectionSetup
+132	15.483000000	LTE RRC UL_DCCH/NAS-EPS	RRCConnectionSetupComplete, Service request
+133	15.485000000	LTE RRC DL_DCCH	SecurityModeCommand
+134	15.485000000	LTE RRC UL_DCCH	SecurityModeComplete
+135	15.485000000	LTE RRC DL_DCCH	RRCConnectionReconfiguration
+136	15.487000000	LTE RRC PCCH	Paging (1 PagingRecord)
+137	15.487000000	LTE RRC UL_DCCH	RRCConnectionReconfigurationComplete
+138	15.487000000	LTE RRC PCCH	Paging (1 PagingRecord)
+139	15.487000000	LTE RRC PCCH	Paging (1 PagingRecord)
+140	15.489000000	LTE RRC PCCH	Paging (1 PagingRecord)
+141	15.490000000	LTE RRC PCCH	Paging (1 PagingRecord)
+142	15.493000000	LTE RRC PCCH	Paging (2 PagingRecords)
+143	15.493000000	LTE RRC PCCH	Paging (1 PagingRecord)
+144	15.495000000	LTE RRC PCCH	Paging (1 PagingRecord)
+145	19.645000000	LTE RRC PCCH	Paging (1 PagingRecord)
+146	19.650000000	LTE RRC PCCH	Paging (1 PagingRecord)
+147	19.685000000	LTE RRC DL_DCCH	RRCConnectionReconfiguration
+148	19.685000000	LTE RRC UL_DCCH	RRCConnectionReconfigurationComplete
+149	19.686000000	LTE RRC PCCH	Paging (1 PagingRecord)
+150	19.686000000	LTE RRC UL_DCCH	MeasurementReport
+151	19.697000000	LTE RRC PCCH	Paging (1 PagingRecord)
+152	19.698000000	LTE RRC PCCH	Paging (1 PagingRecord)
+153	22.069000000	LTE RRC DL_DCCH	RRCConnectionReconfiguration
+154	22.069000000	LTE RRC UL_DCCH	RRCConnectionReconfigurationComplete
+155	22.073000000	LTE RRC PCCH	Paging (1 PagingRecord)
+156	22.074000000	LTE RRC PCCH	Paging (1 PagingRecord)
+157	22.077000000	LTE RRC PCCH	Paging (1 PagingRecord)
+158	22.078000000	LTE RRC PCCH	Paging (1 PagingRecord)
+159	22.110000000	LTE RRC PCCH	Paging (3 PagingRecords)
+160	22.111000000	LTE RRC UL_DCCH	MeasurementReport
+161	22.112000000	LTE RRC DL_DCCH	RRCConnectionReconfiguration
+162	22.113000000	LTE RRC UL_DCCH	RRCConnectionReconfigurationComplete
+163	22.113000000	LTE RRC BCCH_BCH	MasterInformationBlock (SFN=85)
+164	22.116000000	LTE RRC DL_SCH	SystemInformationBlockType1
+165	22.116000000	LTE RRC DL_DCCH	RRCConnectionReconfiguration
+166	22.116000000	LTE RRC UL_DCCH	RRCConnectionReconfigurationComplete
+167	22.116000000	LTE RRC PCCH	Paging (2 PagingRecords)
+168	22.118000000	LTE RRC PCCH	Paging (1 PagingRecord)
+169	22.118000000	LTE RRC DL_SCH	SystemInformation [ SIB2 ]
+170	22.119000000	LTE RRC DL_DCCH	RRCConnectionReconfiguration
+171	22.119000000	LTE RRC UL_DCCH	RRCConnectionReconfigurationComplete
+172	22.119000000	LTE RRC PCCH	Paging (1 PagingRecord)
+173	22.119000000	LTE RRC PCCH	Paging (1 PagingRecord)
+174	22.119000000	LTE RRC UL_DCCH	MeasurementReport
+175	22.119000000	LTE RRC PCCH	Paging (2 PagingRecords)
+176	22.121000000	LTE RRC PCCH	Paging (1 PagingRecord)
+177	22.121000000	LTE RRC PCCH	Paging (1 PagingRecord)
+178	22.122000000	LTE RRC PCCH	Paging (1 PagingRecord)
+179	22.123000000	LTE RRC DL_SCH	SystemInformation [ SIB3 ]
+180	22.123000000	LTE RRC DL_SCH	SystemInformation [ SIB5 ]
+181	22.123000000	LTE RRC DL_SCH	SystemInformation [ SIB4 ]
+182	22.123000000	LTE RRC PCCH	Paging (2 PagingRecords)
+183	22.123000000	LTE RRC DL_SCH	SystemInformation [ SIB24 ]
+184	22.125000000	LTE RRC PCCH	Paging (1 PagingRecord)
+185	22.125000000	LTE RRC PCCH	Paging (1 PagingRecord)
+186	22.126000000	LTE RRC UL_DCCH	MeasurementReport
+187	22.126000000	LTE RRC DL_DCCH	RRCConnectionReconfiguration
+188	22.126000000	LTE RRC UL_DCCH	RRCConnectionReconfigurationComplete
+189	22.126000000	LTE RRC PCCH	Paging (1 PagingRecord)
+190	22.127000000	LTE RRC PCCH	Paging (2 PagingRecords)
+191	25.068000000	LTE RRC PCCH	Paging (1 PagingRecord)
+192	25.072000000	LTE RRC PCCH	Paging (1 PagingRecord)
+193	25.072000000	LTE RRC PCCH	Paging (1 PagingRecord)
+194	25.072000000	LTE RRC PCCH	Paging (2 PagingRecords)
+195	25.106000000	LTE RRC PCCH	Paging (1 PagingRecord)
+196	25.111000000	LTE RRC PCCH	Paging (1 PagingRecord)
+197	25.111000000	LTE RRC PCCH	Paging (1 PagingRecord)
+198	25.113000000	LTE RRC PCCH	Paging (1 PagingRecord)
+199	25.119000000	LTE RRC PCCH	Paging (1 PagingRecord)
+200	25.121000000	LTE RRC PCCH	Paging (1 PagingRecord)
+201	28.005000000	LTE RRC PCCH	Paging (2 PagingRecords)
+202	28.010000000	LTE RRC PCCH	Paging (1 PagingRecord)
