@@ -1,4 +1,7 @@
-# Docs index
+# Documentation
+
+Start with the [project overview](../README.md), [experiment catalog](../testbed/README.md),
+or [repository guide](repository-guide.md).
 
 Canonical entry point: [reference/euicc-api.md](reference/euicc-api.md) — the
 source-verified eUICC API layer map (command → APDU tag → exposure).
@@ -30,7 +33,5 @@ source-verified eUICC API layer map (command → APDU tag → exposure).
 
 ## Other locations
 
-- `diagrams/` — RSP flow diagrams (`.dot` sources + rendered `.png`/`.svg`).
-- `msd/` — message-sequence diagram for RSP download.
+- [diagrams/](diagrams/README.md) — RSP flow diagrams, sources, and reusable templates.
 - `archive/` — frozen historical notes.
-</content>

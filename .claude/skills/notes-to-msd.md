@@ -10,27 +10,27 @@ into a message sequence diagram in DOT. The diagram MUST match the notes exactly
 and MUST favour symbols/equations over prose.
 
 Tooling (already set up):
-- Template:  `tools/msd/template.dot`
-- Render:    `tools/msd/render.sh <file.dot>`  → `.svg` + `.png` (also syntax-validates)
-- Verify:    `tools/msd/analyze.sh <file.dot>` → ordered message list + actor list
+- Template:  `docs/diagrams/templates/template.dot`
+- Render:    `scripts/msd/render.sh <file.dot>`  → `.svg` + `.png` (also syntax-validates)
+- Verify:    `scripts/msd/analyze.sh <file.dot>` → ordered message list + actor list
 - A `PostToolUse` hook auto-renders any `.dot` you Write/Edit (so a render failure
   surfaces immediately).
-- Worked example: `docs/msd/rsp-download.dot` (the SGP.22 RSP handshake).
+- Worked example: `docs/diagrams/rsp-download.dot` (the SGP.22 RSP handshake).
 
 ## Workflow
 
 1. **Extract the procedure.** From the notes, list in order: the actors
    (participants), and each step as `⟨sender, receiver, message⟩`. Note any
    in-actor computation/check that gates the next message.
-2. **Write the DOT.** Copy `tools/msd/template.dot`. Set the title, one
+2. **Write the DOT.** Copy `docs/diagrams/templates/template.dot`. Set the title, one
    `role="actor"` header box per participant (fix order with the invisible
    `A -> B -> C` edge), and add one lifeline-waypoint row per time step.
 3. **One message edge per step**, carrying `kind="msg"`, `seq="<n>"` (1,2,3,…),
    and a `label` in math notation (below). Solid arrow = request/forward,
    dashed arrow = response/return.
-4. **Render:** `bash tools/msd/render.sh <file.dot>`. Fix any syntax error it
+4. **Render:** `bash scripts/msd/render.sh <file.dot>`. Fix any syntax error it
    reports before continuing.
-5. **Verify correctness (required):** run `bash tools/msd/analyze.sh <file.dot>`
+5. **Verify correctness (required):** run `bash scripts/msd/analyze.sh <file.dot>`
    and check the extracted list against the notes — see the checklist.
 
 ## DOT conventions

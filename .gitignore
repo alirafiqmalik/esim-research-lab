@@ -7,6 +7,9 @@ venv/
 .venv/
 .sessions/
 .temp/
+tmp/
+.pytest_cache/
+build/
 *.mitm
 *.har
 bugreport*.zip

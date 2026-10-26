@@ -3,8 +3,10 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "esim"
+name = "esim-research-lab"
 version = "0.1.0"
+description = "Android eSIM inspection, RSP capture, and protocol research tools"
+readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "click>=8.0",
@@ -16,6 +18,13 @@ esim = "esim.cli:main"
 
 [project.optional-dependencies]
 dev = ["pytest>=8.0", "pytest-mock>=3.0"]
+
+[project.urls]
+Repository = "https://github.com/alirafiqmalik/esim-research-lab"
+Documentation = "https://github.com/alirafiqmalik/esim-research-lab/blob/main/README.md"
+
+[tool.hatch.build.targets.wheel]
+packages = ["esim"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -10,16 +10,18 @@ not English.
 
 ```bash
 # parse + render SVG+PNG
-tools/msd/render_msd.sh <capture.log> <out-basename> ["Title"]
+scripts/msd/render_msd.sh <capture.log> <out-basename> ["Title"]
 
 # just the DOT (or verify parse first)
-python3 tools/msd/rsp_to_msd.py <capture.log> -o out.dot --title "..."
-python3 tools/msd/rsp_to_msd.py <capture.log> --check   # prints parsed sequence
+python3 scripts/msd/rsp_to_msd.py <capture.log> -o out.dot --title "..."
+python3 scripts/msd/rsp_to_msd.py <capture.log> --check   # prints parsed sequence
 ```
 
 Input: any log containing `HttpInterfaceImpl` ES9+ lines (`transmit(url=…/es9plus/<fn>)`,
 `HTTP tx = …`, `transmit responseCode = …`, `HTTP response body = …`). Our captures
-live under `sessions/*/capture.txt`.
+live under `.sessions/*/capture.txt`.
+
+Reusable templates live in [docs/diagrams/templates/](../../docs/diagrams/templates/).
 
 ## Actors / notation
 
